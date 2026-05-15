@@ -5,54 +5,72 @@
     $isEnc = $user?->hasRole('encarregado');
 @endphp
 
-<aside class="sidebar scroll-thin">
+<aside class="sidebar scroll-thin" data-sidebar>
     <nav class="py-4">
-        <x-sidebar-link :href="route('dashboard')" icon="layout-dashboard" :active="request()->routeIs('dashboard')">
-            {{ __('Dashboard') }}
-        </x-sidebar-link>
+        <div class="sb-group" data-sb-group="main">
+            <div class="sb-group-items">
+                <x-sidebar-link :href="route('dashboard')" icon="layout-dashboard" :active="request()->routeIs('dashboard')" :label="__('Dashboard')">
+                    {{ __('Dashboard') }}
+                </x-sidebar-link>
+            </div>
+        </div>
 
         @if($isAdmin)
-            <div class="sidebar-section">Pessoas</div>
-            <x-sidebar-link :href="route('users.index')" icon="users" :active="request()->routeIs('users.*')">{{ __('Users') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('funcionarios.index')" icon="briefcase" :active="request()->routeIs('funcionarios.*')">{{ __('Staff') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('professores.index')" icon="user-cog" :active="request()->routeIs('professores.*')">{{ __('Teachers') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('alunos.index')" icon="graduation-cap" :active="request()->routeIs('alunos.*')">{{ __('Students') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('encarregados.index')" icon="user-check" :active="request()->routeIs('encarregados.*')">{{ __('Guardians') }}</x-sidebar-link>
+            <x-sidebar-section :title="__('People')" group="people">
+                <x-sidebar-link :href="route('users.index')" icon="users" :active="request()->routeIs('users.*')" :label="__('Users')">{{ __('Users') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('funcionarios.index')" icon="briefcase" :active="request()->routeIs('funcionarios.*')" :label="__('Staff')">{{ __('Staff') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('professores.index')" icon="user-cog" :active="request()->routeIs('professores.*')" :label="__('Teachers')">{{ __('Teachers') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('alunos.index')" icon="graduation-cap" :active="request()->routeIs('alunos.*')" :label="__('Students')">{{ __('Students') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('encarregados.index')" icon="user-check" :active="request()->routeIs('encarregados.*')" :label="__('Guardians')">{{ __('Guardians') }}</x-sidebar-link>
+            </x-sidebar-section>
 
-            <div class="sidebar-section">{{ __('Academic Structure') }}</div>
-            <x-sidebar-link :href="route('anos.index')" icon="calendar" :active="request()->routeIs('anos.*')">{{ __('Academic Years') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('trimestres.index')" icon="calendar-clock" :active="request()->routeIs('trimestres.*')">{{ __('Terms') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('classes.index')" icon="layers" :active="request()->routeIs('classes.*')">{{ __('Classes') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('cursos.index')" icon="award" :active="request()->routeIs('cursos.*')">{{ __('Courses') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('turmas.index')" icon="users-round" :active="request()->routeIs('turmas.*')">{{ __('Class Groups') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('disciplinas.index')" icon="book-open" :active="request()->routeIs('disciplinas.*')">{{ __('Subjects List') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('matriculas.index')" icon="file-text" :active="request()->routeIs('matriculas.*')">{{ __('Enrollments') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('atribuicoes.index')" icon="link" :active="request()->routeIs('atribuicoes.*')">{{ __('Assignments') }}</x-sidebar-link>
+            <x-sidebar-section :title="__('Academic Structure')" group="academic">
+                <x-sidebar-link :href="route('anos.index')" icon="calendar" :active="request()->routeIs('anos.*')" :label="__('Academic Years')">{{ __('Academic Years') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('trimestres.index')" icon="calendar-clock" :active="request()->routeIs('trimestres.*')" :label="__('Terms')">{{ __('Terms') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('classes.index')" icon="layers" :active="request()->routeIs('classes.*')" :label="__('Classes')">{{ __('Classes') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('cursos.index')" icon="award" :active="request()->routeIs('cursos.*')" :label="__('Courses')">{{ __('Courses') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('turmas.index')" icon="users-round" :active="request()->routeIs('turmas.*')" :label="__('Class Groups')">{{ __('Class Groups') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('disciplinas.index')" icon="book-open" :active="request()->routeIs('disciplinas.*')" :label="__('Subjects List')">{{ __('Subjects List') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('matriculas.index')" icon="file-text" :active="request()->routeIs('matriculas.*')" :label="__('Enrollments')">{{ __('Enrollments') }}</x-sidebar-link>
+                <x-sidebar-link :href="route('atribuicoes.index')" icon="link" :active="request()->routeIs('atribuicoes.*')" :label="__('Assignments')">{{ __('Assignments') }}</x-sidebar-link>
+            </x-sidebar-section>
         @endif
 
         @if($isAdmin || $isProf)
-            <div class="sidebar-section">{{ __('Operation') }}</div>
-            <x-sidebar-link :href="route('aulas.index')" icon="clipboard-check" :active="request()->routeIs('aulas.*') || request()->routeIs('presencas.*')">
-                {{ __('Lessons') }} / {{ __('Attendance') }}
-            </x-sidebar-link>
-            <x-sidebar-link :href="route('avaliacoes.index')" icon="clipboard-list" :active="request()->routeIs('avaliacoes.*') || request()->routeIs('notas.*')">
-                {{ __('Evaluations') }}
-            </x-sidebar-link>
-            <x-sidebar-link :href="route('pautas.index')" icon="table-2" :active="request()->routeIs('pautas.*')">
-                {{ __('Gradebook') }}
-            </x-sidebar-link>
+            <x-sidebar-section :title="__('Operation')" group="operation">
+                <x-sidebar-link :href="route('aulas.index')" icon="clipboard-check" :active="request()->routeIs('aulas.*') || request()->routeIs('presencas.*')" :label="__('Lessons') . ' / ' . __('Attendance')">
+                    {{ __('Lessons') }} / {{ __('Attendance') }}
+                </x-sidebar-link>
+                <x-sidebar-link :href="route('avaliacoes.index')" icon="clipboard-list" :active="request()->routeIs('avaliacoes.*') || request()->routeIs('notas.*')" :label="__('Evaluations')">
+                    {{ __('Evaluations') }}
+                </x-sidebar-link>
+                <x-sidebar-link :href="route('pautas.index')" icon="table-2" :active="request()->routeIs('pautas.*')" :label="__('Gradebook')">
+                    {{ __('Gradebook') }}
+                </x-sidebar-link>
+                <x-sidebar-link :href="route('horarios.index')" icon="calendar-days" :active="request()->routeIs('horarios.*')" :label="__('Schedules')">
+                    {{ __('Schedules') }}
+                </x-sidebar-link>
+            </x-sidebar-section>
         @endif
+
+        <x-sidebar-section :title="__('Calendar')" group="calendar">
+            <x-sidebar-link :href="route('eventos.index')" icon="calendar-heart" :active="request()->routeIs('eventos.*')" :label="__('School Calendar')">
+                {{ __('School Calendar') }}
+            </x-sidebar-link>
+        </x-sidebar-section>
 
         @if($isEnc)
-            <div class="sidebar-section">{{ __('My Children') }}</div>
-            <x-sidebar-link :href="route('meus-educandos.index')" icon="users-round" :active="request()->routeIs('meus-educandos.*')">
-                {{ __('My Children') }}
-            </x-sidebar-link>
+            <x-sidebar-section :title="__('My Children')" group="children">
+                <x-sidebar-link :href="route('meus-educandos.index')" icon="users-round" :active="request()->routeIs('meus-educandos.*')" :label="__('My Children')">
+                    {{ __('My Children') }}
+                </x-sidebar-link>
+            </x-sidebar-section>
         @endif
 
-        <div class="sidebar-section">{{ __('Communication') }}</div>
-        <x-sidebar-link :href="route('comunicados.index')" icon="megaphone" :active="request()->routeIs('comunicados.*')">
-            {{ __('Announcements') }}
-        </x-sidebar-link>
+        <x-sidebar-section :title="__('Communication')" group="communication">
+            <x-sidebar-link :href="route('comunicados.index')" icon="megaphone" :active="request()->routeIs('comunicados.*')" :label="__('Announcements')">
+                {{ __('Announcements') }}
+            </x-sidebar-link>
+        </x-sidebar-section>
     </nav>
 </aside>

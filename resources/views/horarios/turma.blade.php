@@ -4,7 +4,7 @@
             <x-turma-label :turma="$turma" :showAno="true" />
         </x-slot>
         <x-slot name="actions">
-            <x-btn variant="primary" icon="printer" href="javascript:print()">{{ __('Print') }}</x-btn>
+            <x-btn variant="danger" icon="file-down" :href="route('horarios.turma.pdf', $turma)">{{ __('Export PDF') }}</x-btn>
             <x-btn variant="secondary" :href="route('horarios.index')">{{ __('Back') }}</x-btn>
         </x-slot>
     </x-page-header>
