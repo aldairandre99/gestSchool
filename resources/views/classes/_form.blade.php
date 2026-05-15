@@ -1,17 +1,31 @@
 @php($classe = $classe ?? null)
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <x-input name="nome" :label="__('Name')" :value="$classe?->nome" required />
-    <x-input name="ordem" :label="__('Order')" type="number" :value="$classe?->ordem ?? 0" />
-    <x-input name="nivel" :label="__('Level')" :value="$classe?->nivel" />
-</div>
+<div x-data="{ nivel: '{{ old('nivel', $classe?->nivel ?? 'ensino_base') }}' }">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <x-input name="nome" :label="__('Name')" :value="$classe?->nome" required />
+        <div class="form-group">
+            <label class="form-label">Nível <span class="text-danger">*</span></label>
+            <select name="nivel" x-model="nivel" required class="form-select">
+                <option value="ensino_base">Ensino de Base</option>
+                <option value="ensino_medio">Ensino Médio</option>
+            </select>
+        </div>
+        <x-input name="ordem" :label="__('Order')" type="number" :value="$classe?->ordem ?? 0" />
+    </div>
 
-<div class="form-group">
-    <label class="form-label">{{ __('Subjects') }}</label>
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-4 border border-gray-100 rounded bg-gray-50">
-        @php($selected = collect(old('disciplinas', $classe?->disciplinas->pluck('id')->all() ?? [])))
-        @foreach($disciplinas as $d)
-            <x-checkbox name="disciplinas[]" :value="$d->id" :checked="$selected->contains($d->id)" :hiddenFallback="false" :label="$d->nome" />
-        @endforeach
+    <div x-show="nivel === 'ensino_base'" class="form-group">
+        <label class="form-label">Disciplinas obrigatórias (ensino de base)</label>
+        <p class="form-help mb-2">Todos os alunos desta classe terão estas disciplinas.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-4 border border-gray-100 rounded bg-gray-50">
+            @php($selected = collect(old('disciplinas', $classe?->disciplinas->pluck('id')->all() ?? [])))
+            @foreach($disciplinas as $d)
+                <x-checkbox name="disciplinas[]" :value="$d->id" :checked="$selected->contains($d->id)" :hiddenFallback="false" :label="$d->nome" />
+            @endforeach
+        </div>
+    </div>
+
+    <div x-show="nivel === 'ensino_medio'" x-cloak class="alert alert-info">
+        Para classes do ensino médio as disciplinas variam por curso.
+        Configure-as via <a href="{{ route('cursos.index') }}" class="font-semibold underline">Cursos</a>.
     </div>
 </div>
 
