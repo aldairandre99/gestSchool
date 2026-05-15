@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnoLectivo;
 use App\Models\Atribuicao;
 use App\Models\Horario;
 use App\Models\Professor;
@@ -103,13 +104,28 @@ class HorarioController extends Controller
             ->get()
             ->keyBy(fn ($h) => $h->dia_semana . '-' . $h->tempo);
 
+        $tempos = config('escola.tempos_lectivos');
+        $diasLectivos = config('escola.dias_lectivos', [1, 2, 3, 4, 5]);
+
+        // Pré-inicializa todos os slots para que o Alpine.x-model tenha estrutura completa
+        $initialSlots = [];
+        foreach ($diasLectivos as $d) {
+            foreach (array_keys($tempos) as $t) {
+                $h = $horariosActuais->get($d . '-' . $t);
+                $initialSlots[$d][$t] = [
+                    'atribuicao_id' => $h?->atribuicao_id ? (string) $h->atribuicao_id : '',
+                    'sala' => $h?->sala ?? '',
+                ];
+            }
+        }
+
         return view('horarios.bulk-turma', [
             'turma' => $turma,
             'atribuicoes' => $atribuicoes,
-            'horariosActuais' => $horariosActuais,
-            'tempos' => config('escola.tempos_lectivos'),
+            'initialSlots' => $initialSlots,
+            'tempos' => $tempos,
             'diasSemana' => Horario::diasSemana(),
-            'diasLectivos' => config('escola.dias_lectivos', [1,2,3,4,5]),
+            'diasLectivos' => $diasLectivos,
         ]);
     }
 
@@ -192,6 +208,126 @@ class HorarioController extends Controller
         });
 
         return redirect()->route('horarios.turma', $turma)
+            ->with('status', sprintf(__('%d slots saved.'), count($aGravar)));
+    }
+
+    /**
+     * Grelha de bulk edit do horário de um professor — todas as suas atribuições do ano activo.
+     */
+    public function bulkProfessor(Request $request, Professor $professor)
+    {
+        $professor->load('user');
+
+        $anoActivo = AnoLectivo::activo();
+
+        $atribuicoes = Atribuicao::with(['disciplina', 'turma.classe', 'turma.curso'])
+            ->where('professor_id', $professor->id)
+            ->when($anoActivo, fn ($q) => $q->where('ano_lectivo_id', $anoActivo->id))
+            ->get()
+            ->sortBy(fn ($a) => $a->turma->classe->nome . $a->turma->nome . $a->disciplina->nome);
+
+        $horariosActuais = Horario::whereHas('atribuicao', fn ($q) => $q->where('professor_id', $professor->id)
+                ->when($anoActivo, fn ($qq) => $qq->where('ano_lectivo_id', $anoActivo->id)))
+            ->get()
+            ->keyBy(fn ($h) => $h->dia_semana . '-' . $h->tempo);
+
+        $tempos = config('escola.tempos_lectivos');
+        $diasLectivos = config('escola.dias_lectivos', [1, 2, 3, 4, 5]);
+
+        $initialSlots = [];
+        foreach ($diasLectivos as $d) {
+            foreach (array_keys($tempos) as $t) {
+                $h = $horariosActuais->get($d . '-' . $t);
+                $initialSlots[$d][$t] = [
+                    'atribuicao_id' => $h?->atribuicao_id ? (string) $h->atribuicao_id : '',
+                    'sala' => $h?->sala ?? '',
+                ];
+            }
+        }
+
+        return view('horarios.bulk-professor', [
+            'professor' => $professor,
+            'atribuicoes' => $atribuicoes,
+            'initialSlots' => $initialSlots,
+            'tempos' => $tempos,
+            'diasSemana' => Horario::diasSemana(),
+            'diasLectivos' => $diasLectivos,
+            'anoActivo' => $anoActivo,
+        ]);
+    }
+
+    public function bulkProfessorStore(Request $request, Professor $professor)
+    {
+        $slots = $request->input('slots', []);
+
+        $anoActivo = AnoLectivo::activo();
+
+        $validIds = Atribuicao::where('professor_id', $professor->id)
+            ->when($anoActivo, fn ($q) => $q->where('ano_lectivo_id', $anoActivo->id))
+            ->pluck('id')->all();
+
+        $aGravar = [];
+
+        foreach ($slots as $dia => $temposArr) {
+            $dia = (int) $dia;
+            if (! in_array($dia, [1,2,3,4,5,6,7], true)) continue;
+
+            foreach ($temposArr as $tempo => $info) {
+                $tempo = (int) $tempo;
+                if (! array_key_exists($tempo, config('escola.tempos_lectivos'))) continue;
+
+                $atrId = $info['atribuicao_id'] ?? null;
+                if (! $atrId) continue;
+                if (! in_array((int) $atrId, $validIds, true)) {
+                    return back()->withErrors(['slots' => sprintf(__('Invalid assignment for this teacher in slot %d/%dº.'), $dia, $tempo)])->withInput();
+                }
+
+                $atribuicao = Atribuicao::find($atrId);
+
+                // Conflito por TURMA: a turma alvo já tem aula nesse slot (de outro professor)?
+                $conflitoTurma = Horario::where('dia_semana', $dia)
+                    ->where('tempo', $tempo)
+                    ->whereHas('atribuicao', function ($q) use ($atribuicao, $professor) {
+                        $q->where('turma_id', $atribuicao->turma_id)
+                          ->where('professor_id', '!=', $professor->id);
+                    })
+                    ->with(['atribuicao.disciplina', 'atribuicao.professor.user', 'atribuicao.turma.classe'])
+                    ->first();
+
+                if ($conflitoTurma) {
+                    return back()->withErrors([
+                        'slots' => sprintf(
+                            __('Schedule conflict: class %s already has %s with %s (day %s, period %d).'),
+                            $conflitoTurma->atribuicao->turma->nome_completo,
+                            $conflitoTurma->atribuicao->disciplina->nome,
+                            $conflitoTurma->atribuicao->professor->user->name,
+                            $dia,
+                            $tempo
+                        ),
+                    ])->withInput();
+                }
+
+                $aGravar[] = [
+                    'atribuicao_id' => $atrId,
+                    'dia_semana' => $dia,
+                    'tempo' => $tempo,
+                    'sala' => $info['sala'] ?: null,
+                ];
+            }
+        }
+
+        DB::transaction(function () use ($professor, $anoActivo, $aGravar) {
+            // Clean slate: apaga só horários DESTE professor (no ano activo)
+            Horario::whereHas('atribuicao', fn ($q) => $q->where('professor_id', $professor->id)
+                    ->when($anoActivo, fn ($qq) => $qq->where('ano_lectivo_id', $anoActivo->id)))
+                ->delete();
+
+            foreach ($aGravar as $row) {
+                Horario::create($row);
+            }
+        });
+
+        return redirect()->route('horarios.professor', $professor)
             ->with('status', sprintf(__('%d slots saved.'), count($aGravar)));
     }
 

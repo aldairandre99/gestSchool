@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Aluno;
 use App\Models\Encarregado;
 use App\Models\User;
+use App\Services\BoletimService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -75,10 +76,27 @@ class AlunoController extends Controller
         return redirect()->route('alunos.index')->with('status', __('Resource created successfully.'));
     }
 
-    public function show(Aluno $aluno)
+    public function show(Aluno $aluno, BoletimService $boletimService)
     {
-        $aluno->load(['user', 'encarregados.user']);
-        return view('alunos.show', compact('aluno'));
+        $aluno->load([
+            'user',
+            'encarregados.user',
+            'matriculas' => fn ($q) => $q->orderByDesc('ano_lectivo_id'),
+            'matriculas.turma.classe',
+            'matriculas.turma.curso',
+            'matriculas.turma.directorTurma.user',
+            'matriculas.anoLectivo',
+        ]);
+
+        $resumos = [];
+        foreach ($aluno->matriculas as $m) {
+            $resumos[$m->id] = $boletimService->quickSummary($m);
+        }
+
+        $matriculaActiva = $aluno->matriculas->firstWhere('estado', 'activa');
+        $boletim = $matriculaActiva ? $boletimService->build($matriculaActiva) : null;
+
+        return view('alunos.show', compact('aluno', 'resumos', 'matriculaActiva', 'boletim'));
     }
 
     public function edit(Aluno $aluno)
