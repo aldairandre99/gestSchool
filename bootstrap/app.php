@@ -14,9 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [
-            \App\Http\Middleware\SetLocale::class,
-        ]);
+        // SetLocale corre como global para que funcione em qualquer rota,
+        // inclusive 404 (onde o middleware do grupo web pode não correr).
+        $middleware->append(\App\Http\Middleware\SetLocale::class);
+
+        // O cookie de locale fica fora da encriptação para que rotas
+        // sem sessão (ex: 404 sem auth) também o consigam ler.
+        $middleware->encryptCookies(except: ['gestschool_locale']);
 
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
