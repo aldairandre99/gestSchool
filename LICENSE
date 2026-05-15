@@ -1,0 +1,202 @@
+Licença Pública gestSchool — Versão 1.0
+=========================================
+
+Copyright (c) 2026 Arsénio Muanda
+
+PREÂMBULO
+---------
+
+O gestSchool é um sistema de gestão escolar criado para servir, em primeiro lugar,
+as escolas públicas e as instituições educativas sem fins lucrativos do espaço
+lusófono — começando por Angola. Esta licença define os termos sob os quais o
+software pode ser usado, modificado e partilhado nesta primeira fase do projecto.
+
+A intenção é tornar a tecnologia acessível a quem mais dela precisa, sem permitir
+a sua transformação em produto comercial. O autor reserva-se o direito de, em
+fases futuras, publicar o software sob uma licença mais permissiva (por exemplo,
+MIT ou Apache 2.0). Quaisquer cópias ou versões já distribuídas ao abrigo desta
+Licença permanecem regidas por estes termos.
+
+
+1. DEFINIÇÕES
+-------------
+
+1.1. "Software" designa o código-fonte, documentação, ficheiros de configuração,
+     migrações, seeders, traduções e quaisquer outros artefactos contidos neste
+     repositório, bem como qualquer cópia ou trabalho derivado.
+
+1.2. "Autor" designa Arsénio Muanda, titular dos direitos de autor originais.
+
+1.3. "Utilizador Elegível" designa exclusivamente:
+     a) Estabelecimentos de ensino públicos, financiados total ou parcialmente
+        por um Estado (ensino primário, secundário, médio ou superior);
+     b) Organizações educativas sem fins lucrativos legalmente constituídas,
+        incluindo instituições particulares de solidariedade social (IPSS),
+        organizações não-governamentais (ONG), missões religiosas e fundações
+        cuja actividade educativa não tenha por objectivo o lucro;
+     c) Pessoas singulares que usem o Software exclusivamente para fins de
+        estudo pessoal, investigação académica ou avaliação técnica.
+
+1.4. "Utilização Comercial" designa qualquer utilização do Software cujo
+     propósito directo ou indirecto seja a obtenção de lucro, incluindo mas não
+     limitado a:
+     a) Venda, sublicenciamento ou aluguer do Software;
+     b) Oferta do Software como Serviço (SaaS) mediante pagamento;
+     c) Cobrança por instalação, alojamento, configuração, customização,
+        formação, suporte técnico ou qualquer outro serviço prestado em torno
+        do Software;
+     d) Integração do Software num produto ou serviço pago.
+
+1.5. "Contribuição" designa qualquer alteração, adição ou correcção ao Software
+     submetida por terceiros ao repositório oficial.
+
+
+2. DIREITOS CONCEDIDOS
+----------------------
+
+Sujeito ao integral cumprimento desta Licença, é concedido a qualquer Utilizador
+Elegível, gratuitamente e a título não-exclusivo, o direito de:
+
+2.1. Descarregar, instalar, executar e usar o Software para fins educativos
+     próprios, sem limite de utilizadores ou de tempo;
+
+2.2. Estudar o funcionamento do Software e modificar o seu código-fonte para
+     adaptar às necessidades específicas da sua instituição;
+
+2.3. Distribuir cópias do Software (originais ou modificadas) a outros
+     Utilizadores Elegíveis, desde que sob esta mesma Licença e gratuitamente.
+
+
+3. RESTRIÇÕES
+-------------
+
+São expressamente proibidas as seguintes utilizações:
+
+3.1. Qualquer Utilização Comercial, conforme definida na cláusula 1.4, mesmo
+     que prestada a um Utilizador Elegível;
+
+3.2. A distribuição do Software, ou de versões modificadas, a quem não seja
+     Utilizador Elegível;
+
+3.3. A remoção, alteração ou ocultação dos avisos de copyright, desta Licença,
+     ou de qualquer atribuição ao Autor presente no código ou na interface;
+
+3.4. A apresentação do Software como produto próprio ou sob outra marca, de
+     forma a induzir em erro quanto à sua origem;
+
+3.5. O sublicenciamento sob termos diferentes desta Licença.
+
+
+4. ATRIBUIÇÃO
+-------------
+
+Qualquer cópia ou versão modificada do Software deve preservar:
+
+4.1. O presente ficheiro LICENSE, sem alterações;
+
+4.2. Os avisos de copyright existentes no código-fonte;
+
+4.3. Uma referência visível ao projecto original (por exemplo, no rodapé da
+     interface ou no ficheiro README) com ligação para o repositório oficial:
+     https://github.com/arseniomuanda/gestSchool
+
+
+5. CONTRIBUIÇÕES
+----------------
+
+5.1. Ao submeter uma Contribuição ao repositório oficial, o contribuidor
+     declara ser o autor da mesma (ou ter autorização para a submeter) e
+     concorda em licenciá-la sob esta mesma Licença.
+
+5.2. O contribuidor mantém os seus direitos de autor sobre a Contribuição mas
+     concede ao Autor e a todos os Utilizadores Elegíveis uma licença
+     perpétua, mundial, gratuita e não-exclusiva para usar, modificar e
+     distribuir a Contribuição nos termos desta Licença.
+
+5.3. Caso o Autor decida, em fases futuras, mudar a Licença do Software para
+     uma licença mais permissiva (por exemplo, MIT ou Apache 2.0), tal mudança
+     só será aplicada a Contribuições cujos autores tenham dado consentimento
+     expresso. Contribuições anteriores sem consentimento permanecerão
+     disponíveis sob esta Licença, podendo ser removidas ou reescritas se
+     necessário.
+
+
+6. SEM GARANTIA
+---------------
+
+O Software é fornecido "TAL COMO ESTÁ", sem qualquer garantia, expressa ou
+implícita, incluindo mas não limitada a garantias de comercialização, adequação
+a um propósito específico, ou não-violação de direitos de terceiros.
+
+O Autor não garante que o Software seja livre de erros, que satisfaça os
+requisitos do Utilizador Elegível, ou que o seu funcionamento seja ininterrupto
+ou seguro.
+
+A responsabilidade pela validação do Software para uso institucional, incluindo
+a conformidade com a legislação aplicável em matéria de protecção de dados de
+menores, é exclusiva do Utilizador Elegível.
+
+
+7. LIMITAÇÃO DE RESPONSABILIDADE
+--------------------------------
+
+Em nenhuma circunstância será o Autor responsável por quaisquer danos directos,
+indirectos, incidentais, especiais, exemplares ou consequenciais (incluindo mas
+não limitados a perda de dados, perda de receita, ou interrupção de actividade)
+decorrentes da utilização ou impossibilidade de utilização do Software, mesmo
+que tenha sido avisado da possibilidade de tais danos.
+
+
+8. CESSAÇÃO
+-----------
+
+8.1. O incumprimento de qualquer cláusula desta Licença determina a cessação
+     automática dos direitos concedidos, sem necessidade de notificação prévia.
+
+8.2. Em caso de cessação, o Utilizador deve cessar imediatamente toda a
+     utilização do Software e destruir todas as cópias na sua posse.
+
+8.3. As cláusulas 6 (Sem Garantia), 7 (Limitação de Responsabilidade) e 9
+     (Lei Aplicável) sobrevivem à cessação desta Licença.
+
+
+9. LEI APLICÁVEL
+----------------
+
+Esta Licença é regida pela lei da República de Angola. Qualquer litígio
+decorrente da sua interpretação ou execução será submetido à jurisdição dos
+tribunais competentes da comarca de Luanda, com expressa renúncia a qualquer
+outro foro.
+
+
+10. LICENCIAMENTO ALTERNATIVO
+-----------------------------
+
+Instituições que não se enquadrem na definição de Utilizador Elegível e que
+pretendam usar o Software podem solicitar uma licença comercial directa ao
+Autor através do contacto disponível no repositório oficial. O Autor reserva-se
+o direito de aceitar ou recusar tais pedidos a seu critério exclusivo.
+
+
+11. REVISÕES DA LICENÇA
+-----------------------
+
+11.1. O Autor pode publicar versões revistas desta Licença. Cada versão receberá
+      um número distinto.
+
+11.2. As cópias do Software já distribuídas mantêm-se regidas pela versão da
+      Licença que as acompanhava no momento da obtenção. O Utilizador pode, em
+      alternativa, optar por aplicar uma versão posterior, se o desejar.
+
+
+--- FIM DA LICENÇA ---
+
+
+NOTA TÉCNICA SPDX
+-----------------
+SPDX-License-Identifier: LicenseRef-gestSchool-Public-1.0
+
+Esta licença não é uma licença open-source aprovada pela Open Source Initiative
+(OSI), por incluir restrições quanto a quem pode usar o Software. É uma licença
+"source-available" — o código-fonte está disponível para consulta, modificação
+e contribuição, mas a sua utilização está limitada aos Utilizadores Elegíveis.

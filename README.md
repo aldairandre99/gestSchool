@@ -1,7 +1,7 @@
 <h1 align="center">gestSchool</h1>
 
 <p align="center">
-  <strong>Sistema de gestão escolar open-source para o ensino angolano.</strong><br>
+  <strong>Sistema de gestão escolar para escolas públicas e instituições sem fins lucrativos.</strong><br>
   Da iniciação ao ensino médio — alunos, professores, matrículas, pautas, boletins e comunicados num único sistema.
 </p>
 
@@ -9,7 +9,8 @@
   <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel 12"></a>
   <a href="https://www.php.net"><img src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white" alt="PHP 8.2+"></a>
   <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind 4"></a>
-  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-Public%20v1.0-blue.svg" alt="gestSchool Public License v1.0"></a>
+  <img src="https://img.shields.io/badge/source-available-orange.svg" alt="Source Available">
   <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome">
 </p>
 
@@ -24,6 +25,11 @@ e comunicação com encarregados de educação.
 Foi pensado a partir da realidade do sistema de ensino angolano — Ensino de Iniciação, Ensino Base e
 Ensino Médio com os cursos técnicos típicos (Informática, Hotelaria, Contabilidade e Gestão, GRH, Físicas
 e Biológicas) — mas a estrutura é genérica e adaptável a outros sistemas educativos lusófonos.
+
+> ⚠️ **Quem pode usar:** Nesta primeira fase, o gestSchool está disponível **exclusivamente para
+> escolas públicas e instituições educativas sem fins lucrativos** (IPSS, ONG, missões, fundações).
+> A utilização comercial, a revenda e a cobrança por serviços associados estão **expressamente proibidas**.
+> Lê a [Licença](LICENSE) antes de usar.
 
 > **Estado:** em desenvolvimento activo. Apto para uso em ambiente de demo/staging; ainda não recomendado
 > para produção sem revisão de segurança e testes adicionais.
@@ -237,8 +243,30 @@ Abre uma [issue](https://github.com/arseniomuanda/gestSchool/issues) com:
 
 ## Licença
 
-Distribuído sob a licença [MIT](https://opensource.org/licenses/MIT) — usa, modifica e partilha
-livremente, inclusive em projectos comerciais.
+Distribuído sob a **[Licença Pública gestSchool v1.0](LICENSE)** — uma licença *source-available*
+desenhada para garantir que o sistema sirva primeiro quem mais precisa.
+
+**O que podes fazer:**
+- ✅ Usar gratuitamente em escolas públicas, IPSS, ONG, missões e outras instituições educativas sem fins lucrativos
+- ✅ Estudar, modificar e adaptar o código às necessidades da tua instituição
+- ✅ Distribuir cópias (originais ou modificadas) a outras instituições elegíveis
+- ✅ Contribuir com melhorias via Pull Request
+
+**O que não podes fazer:**
+- ❌ Vender, sublicenciar ou alugar o software
+- ❌ Oferecer como SaaS pago
+- ❌ Cobrar por instalação, suporte, formação ou qualquer serviço relacionado
+- ❌ Usar em escolas privadas com fins lucrativos
+- ❌ Remover atribuições ao autor original
+
+> **Roadmap da licença:** o autor pretende, em fases futuras, relicenciar o projecto sob uma licença
+> mais permissiva (provavelmente MIT ou Apache 2.0) à medida que o ecossistema amadurece.
+> Instituições não-elegíveis interessadas em usar o sistema podem solicitar licenciamento alternativo
+> via [issue no repositório](https://github.com/arseniomuanda/gestSchool/issues/new).
+
+> **Nota técnica:** esta licença não é uma licença open-source aprovada pela OSI por incluir
+> restrições quanto a quem pode usar. É uma licença *source-available*: o código está aberto para
+> consulta, modificação e contribuição.
 
 ## Autor
 
