@@ -6,6 +6,7 @@ use App\Models\AnoLectivo;
 use App\Models\Classe;
 use App\Models\Evento;
 use App\Models\Turma;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -101,6 +102,52 @@ class EventoController extends Controller
     {
         $evento->delete();
         return redirect()->route('eventos.index')->with('status', __('Resource deleted successfully.'));
+    }
+
+    public function pdf(Request $request)
+    {
+        $ano = $request->integer('ano') ?: now()->year;
+        $mes = max(1, min(12, $request->integer('mes') ?: now()->month));
+        $inicio = Carbon::create($ano, $mes, 1)->startOfMonth();
+        $fim = $inicio->copy()->endOfMonth();
+        $gridStart = $inicio->copy()->startOfWeek(Carbon::MONDAY);
+        $gridEnd = $gridStart->copy()->addDays(41);
+
+        $eventos = Evento::with(['classe', 'turma.classe'])
+            ->visivelPara($request->user())
+            ->noIntervalo($gridStart->toDateString(), $gridEnd->toDateString())
+            ->orderBy('data_inicio')->get();
+
+        $porDia = [];
+        foreach ($eventos as $ev) {
+            $cursor = $ev->data_inicio->copy();
+            $end = $ev->data_fim_efectiva;
+            while ($cursor->lte($end)) {
+                $porDia[$cursor->toDateString()][] = $ev;
+                $cursor->addDay();
+            }
+        }
+
+        $semanas = [];
+        $cursor = $gridStart->copy();
+        for ($w = 0; $w < 6; $w++) {
+            $dias = [];
+            for ($d = 0; $d < 7; $d++) {
+                $dias[] = $cursor->copy();
+                $cursor->addDay();
+            }
+            $semanas[] = $dias;
+        }
+
+        $mesEventos = $eventos->filter(function ($e) use ($inicio, $fim) {
+            return $e->data_inicio->between($inicio, $fim)
+                || ($e->data_fim && $e->data_fim->between($inicio, $fim))
+                || ($e->data_inicio->lt($inicio) && ($e->data_fim ?? $e->data_inicio)->gte($inicio));
+        })->sortBy('data_inicio');
+
+        return Pdf::loadView('pdf.eventos.calendario', compact(
+            'inicio', 'mes', 'ano', 'semanas', 'porDia', 'mesEventos'
+        ))->setPaper('a4', 'landscape')->download(sprintf('calendario-%d-%02d.pdf', $ano, $mes));
     }
 
     protected function options(): array

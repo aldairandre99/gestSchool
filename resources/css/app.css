@@ -38,6 +38,7 @@
     }
     .app-main {
         @apply ms-0 lg:ms-sidebar pt-navbar min-h-screen;
+        transition: margin-inline-start 220ms cubic-bezier(0.4, 0, 0.2, 1);
     }
     .app-content {
         @apply px-4 sm:px-6 lg:px-8 py-8;
@@ -48,7 +49,8 @@
         @apply fixed top-0 inset-x-0 z-30 h-navbar bg-white border-b border-gray-200 flex items-stretch;
     }
     .navbar-brand {
-        @apply hidden lg:flex items-center justify-center w-sidebar h-navbar bg-sidebar text-white;
+        @apply hidden lg:flex items-center justify-center w-sidebar h-navbar bg-sidebar text-white overflow-hidden;
+        transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1);
     }
     .navbar-brand-text {
         @apply text-lg font-bold tracking-wide;
@@ -68,8 +70,10 @@
 
     /* ---------- SIDEBAR ---------- */
     .sidebar {
-        @apply fixed top-navbar bottom-0 start-0 w-sidebar bg-sidebar text-sidebar-text overflow-y-auto z-20;
+        @apply fixed top-navbar bottom-0 start-0 w-sidebar bg-sidebar text-sidebar-text overflow-y-auto overflow-x-hidden z-20;
         @apply hidden lg:block;
+        transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1);
+        scrollbar-gutter: stable;
     }
     .sidebar-section {
         @apply px-6 pt-6 pb-2 text-[10px] uppercase tracking-widest text-sidebar-text/40 font-semibold;
@@ -83,17 +87,73 @@
     .sidebar-link .sidebar-icon {
         @apply w-5 h-5 shrink-0;
     }
-    .sidebar-group {
-        @apply mt-1;
+    .sidebar-link > span {
+        @apply truncate;
     }
-    .sidebar-group-toggle {
-        @apply flex items-center justify-between gap-3 px-6 py-3 w-full text-sm font-medium text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition cursor-pointer;
+
+    /* Collapsible section header (clickable) */
+    .sb-group {
+        @apply mt-0;
     }
-    .sidebar-group-items {
-        @apply bg-black/20;
+    .sidebar-section-toggle {
+        @apply flex items-center justify-between gap-2 w-full px-6 pt-6 pb-2 text-left;
+        @apply text-[10px] uppercase tracking-widest text-sidebar-text/40 font-semibold;
+        @apply hover:text-sidebar-text/70 transition-colors cursor-pointer;
     }
-    .sidebar-group .sidebar-link {
-        @apply pl-14 py-2 text-xs;
+    .sidebar-section-toggle:focus { @apply outline-none; }
+    .sidebar-section-chev {
+        @apply w-3 h-3 transition-transform duration-200 shrink-0;
+    }
+    .sb-group.is-closed .sidebar-section-chev {
+        transform: rotate(-90deg);
+    }
+    .sb-group-items {
+        @apply overflow-hidden;
+        max-height: 9999px;
+        transition: max-height 240ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sb-group.is-closed .sb-group-items {
+        max-height: 0;
+    }
+
+    /* Collapsed (icon-only) mode — class is set on <html> by inline script + JS */
+    @media (min-width: 1024px) {
+        html.sidebar-collapsed .sidebar { width: theme('spacing.sidebar-collapsed'); }
+        html.sidebar-collapsed .navbar-brand { width: theme('spacing.sidebar-collapsed'); }
+        html.sidebar-collapsed .app-main { margin-inline-start: theme('spacing.sidebar-collapsed'); }
+    }
+    html.sidebar-collapsed .sidebar-link {
+        @apply justify-center px-0;
+    }
+    html.sidebar-collapsed .sidebar-link > span,
+    html.sidebar-collapsed .sidebar-section,
+    html.sidebar-collapsed .sidebar-section-toggle,
+    html.sidebar-collapsed .navbar-brand-text {
+        display: none;
+    }
+    html.sidebar-collapsed .sb-group-items {
+        max-height: 9999px !important;
+    }
+    html.sidebar-collapsed .sb-group + .sb-group {
+        @apply mt-2 pt-2;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    html.sidebar-collapsed .navbar-brand::before {
+        content: 'G';
+        @apply text-xl font-extrabold tracking-tight;
+    }
+    /* Subtle tooltip hint when hovering icons in collapsed mode (uses native title attr) */
+    html.sidebar-collapsed .sidebar-link { position: relative; }
+
+    /* Sidebar toggle button visual */
+    .sidebar-toggle-btn {
+        @apply navbar-icon-btn;
+    }
+    html.sidebar-collapsed .sidebar-toggle-icon {
+        transform: rotate(180deg);
+    }
+    .sidebar-toggle-icon {
+        @apply w-5 h-5 transition-transform duration-200;
     }
 
     /* ---------- CARD ---------- */

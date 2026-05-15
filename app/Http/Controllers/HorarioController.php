@@ -6,6 +6,7 @@ use App\Models\Atribuicao;
 use App\Models\Horario;
 use App\Models\Professor;
 use App\Models\Turma;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -82,6 +83,41 @@ class HorarioController extends Controller
     {
         $horario->delete();
         return redirect()->route('horarios.index')->with('status', __('Resource deleted successfully.'));
+    }
+
+    public function turmaPdf(Request $request, Turma $turma)
+    {
+        $turma->load(['classe', 'curso', 'anoLectivo']);
+        $horarios = Horario::whereHas('atribuicao', fn ($q) => $q->where('turma_id', $turma->id))
+            ->with(['atribuicao.disciplina', 'atribuicao.professor.user'])
+            ->get()
+            ->groupBy(fn ($h) => $h->dia_semana . '-' . $h->tempo);
+
+        $filename = sprintf('horario-%s-%s.pdf',
+            str($turma->classe->nome . $turma->nome)->slug(),
+            str($turma->anoLectivo->codigo)->slug()
+        );
+
+        return Pdf::loadView('pdf.horarios.turma', [
+            'turma' => $turma,
+            'horarios' => $horarios,
+        ])->setPaper('a4', 'landscape')->download($filename);
+    }
+
+    public function professorPdf(Request $request, Professor $professor)
+    {
+        $professor->load('user');
+        $horarios = Horario::whereHas('atribuicao', fn ($q) => $q->where('professor_id', $professor->id))
+            ->with(['atribuicao.turma.classe', 'atribuicao.turma.curso', 'atribuicao.disciplina'])
+            ->get()
+            ->groupBy(fn ($h) => $h->dia_semana . '-' . $h->tempo);
+
+        $filename = sprintf('horario-prof-%s.pdf', str($professor->user->name)->slug());
+
+        return Pdf::loadView('pdf.horarios.professor', [
+            'professor' => $professor,
+            'horarios' => $horarios,
+        ])->setPaper('a4', 'landscape')->download($filename);
     }
 
     // ----- helpers -----

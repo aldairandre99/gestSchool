@@ -5,7 +5,6 @@
         </x-slot>
         <x-slot name="actions">
             <x-btn variant="danger" icon="file-down" :href="route('pautas.turma-anual.pdf', array_merge(['turma' => $turma], ['peso_t1' => $calc->pesos[0], 'peso_t2' => $calc->pesos[1], 'peso_t3' => $calc->pesos[2]]))">{{ __('Export PDF') }}</x-btn>
-            <x-btn variant="primary" icon="printer" href="javascript:print()">{{ __('Print') }}</x-btn>
             <x-btn variant="secondary" :href="route('pautas.index')">{{ __('Back') }}</x-btn>
         </x-slot>
     </x-page-header>
