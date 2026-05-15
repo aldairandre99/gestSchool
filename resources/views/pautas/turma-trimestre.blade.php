@@ -3,6 +3,7 @@
         :title="__('Class gradebook for a term')"
         :subtitle="$turma->classe->nome . ' ' . $turma->nome . ($turma->curso ? ' · ' . $turma->curso->sigla : '') . ' · ' . $trimestre->numero . 'º ' . __('Term') . ' · ' . $turma->anoLectivo->codigo">
         <x-slot name="actions">
+            <x-btn variant="danger" icon="file-down" :href="route('pautas.turma-trimestre.pdf', ['turma' => $turma, 'trimestre' => $trimestre])">{{ __('Export PDF') }}</x-btn>
             <x-btn variant="primary" icon="printer" href="javascript:print()">{{ __('Print') }}</x-btn>
             <x-btn variant="secondary" :href="route('pautas.index')">{{ __('Back') }}</x-btn>
         </x-slot>

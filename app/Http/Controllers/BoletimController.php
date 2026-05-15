@@ -6,16 +6,31 @@ use App\Models\AnoLectivo;
 use App\Models\Avaliacao;
 use App\Models\Matricula;
 use App\Models\Trimestre;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class BoletimController extends Controller
 {
     public function show(Request $request, Matricula $matricula)
     {
-        $user = $request->user();
-        $this->ensureCanView($user, $matricula);
+        $this->ensureCanView($request->user(), $matricula);
+        return view('boletim.show', $this->build($matricula));
+    }
 
-        $matricula->load(['aluno.user', 'turma.classe', 'anoLectivo']);
+    public function pdf(Request $request, Matricula $matricula)
+    {
+        $this->ensureCanView($request->user(), $matricula);
+        $data = $this->build($matricula);
+        $filename = sprintf('boletim-%s-%s.pdf',
+            str($matricula->numero_matricula)->slug(),
+            str($matricula->anoLectivo->codigo)->slug()
+        );
+        return Pdf::loadView('pdf.boletim.show', $data)->setPaper('a4', 'portrait')->download($filename);
+    }
+
+    protected function build(Matricula $matricula): array
+    {
+        $matricula->load(['aluno.user', 'turma.classe', 'turma.curso', 'anoLectivo']);
 
         $trimestres = Trimestre::where('ano_lectivo_id', $matricula->ano_lectivo_id)
             ->orderBy('numero')->get();
@@ -50,7 +65,7 @@ class BoletimController extends Controller
             $medias[$discId]['anual'] = $countTri > 0 ? round($somaAnual / $countTri, 2) : null;
         }
 
-        return view('boletim.show', compact('matricula', 'trimestres', 'medias'));
+        return compact('matricula', 'trimestres', 'medias');
     }
 
     protected function ensureCanView($user, Matricula $matricula): void

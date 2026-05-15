@@ -70,12 +70,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/pautas/turma/{turma}/trimestre/{trimestre}', [PautaController::class, 'turmaTrimestre'])->name('pautas.turma-trimestre');
         Route::get('/pautas/turma/{turma}/anual', [PautaController::class, 'turmaAnual'])->name('pautas.turma-anual');
         Route::get('/pautas/turma/{turma}/situacao', [PautaController::class, 'situacao'])->name('pautas.situacao');
-        // Compatibilidade: redirecionar antiga URL para o modo disciplina
+
+        // PDFs
+        Route::get('/pautas/disciplina/{atribuicao}/{trimestre}/pdf', [PautaController::class, 'disciplinaPdf'])->name('pautas.disciplina.pdf');
+        Route::get('/pautas/turma/{turma}/trimestre/{trimestre}/pdf', [PautaController::class, 'turmaTrimestrePdf'])->name('pautas.turma-trimestre.pdf');
+        Route::get('/pautas/turma/{turma}/anual/pdf', [PautaController::class, 'turmaAnualPdf'])->name('pautas.turma-anual.pdf');
+        Route::get('/pautas/turma/{turma}/situacao/pdf', [PautaController::class, 'situacaoPdf'])->name('pautas.situacao.pdf');
+
         Route::get('/pautas/{atribuicao}/{trimestre}', [PautaController::class, 'disciplina'])->name('pautas.show');
     });
 
     // Boletim acessível a direcção, professores e encarregado do aluno
     Route::get('/boletim/{matricula}', [BoletimController::class, 'show'])->name('boletim.show');
+    Route::get('/boletim/{matricula}/pdf', [BoletimController::class, 'pdf'])->name('boletim.pdf');
 
     Route::resource('comunicados', ComunicadoController::class)->parameters(['comunicados' => 'comunicado']);
 

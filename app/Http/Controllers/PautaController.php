@@ -9,6 +9,7 @@ use App\Models\Matricula;
 use App\Models\Trimestre;
 use App\Models\Turma;
 use App\Services\PautaCalculator;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class PautaController extends Controller
@@ -32,12 +33,84 @@ class PautaController extends Controller
     /** MODO 1 — Pauta por disciplina + trimestre */
     public function disciplina(Request $request, Atribuicao $atribuicao, Trimestre $trimestre)
     {
-        $atribuicao->load(['turma.classe', 'turma.curso', 'disciplina']);
+        return view('pautas.disciplina', $this->disciplinaData($atribuicao, $trimestre));
+    }
+
+    /** MODO 2 — Pauta da turma no trimestre */
+    public function turmaTrimestre(Request $request, Turma $turma, Trimestre $trimestre)
+    {
+        return view('pautas.turma-trimestre', $this->turmaTrimestreData($turma, $trimestre));
+    }
+
+    /** MODO 3 — Pauta anual da turma */
+    public function turmaAnual(Request $request, Turma $turma)
+    {
+        return view('pautas.turma-anual', $this->turmaAnualData($turma, $this->pesosFromRequest($request)));
+    }
+
+    /** MODO 4 — Situação final da turma */
+    public function situacao(Request $request, Turma $turma)
+    {
+        return view('pautas.situacao', $this->situacaoData($turma, $this->pesosFromRequest($request)));
+    }
+
+    // ----- PDF exports -----
+
+    public function disciplinaPdf(Request $request, Atribuicao $atribuicao, Trimestre $trimestre)
+    {
+        $data = $this->disciplinaData($atribuicao, $trimestre);
+        $atribuicao->load('professor.user');
+        $data['atribuicao'] = $atribuicao;
+        $filename = sprintf('pauta-%s-%s-%sT.pdf',
+            str($atribuicao->turma->classe->nome . $atribuicao->turma->nome)->slug(),
+            str($atribuicao->disciplina->nome)->slug(),
+            $trimestre->numero
+        );
+        return Pdf::loadView('pdf.pautas.disciplina', $data)->setPaper('a4', 'portrait')->download($filename);
+    }
+
+    public function turmaTrimestrePdf(Request $request, Turma $turma, Trimestre $trimestre)
+    {
+        $data = $this->turmaTrimestreData($turma, $trimestre);
+        $filename = sprintf('pauta-turma-%s-%s-%sT.pdf',
+            str($turma->classe->nome . $turma->nome)->slug(),
+            str($turma->anoLectivo->codigo)->slug(),
+            $trimestre->numero
+        );
+        return Pdf::loadView('pdf.pautas.turma-trimestre', $data)->setPaper('a4', 'landscape')->download($filename);
+    }
+
+    public function turmaAnualPdf(Request $request, Turma $turma)
+    {
+        $pesos = $this->pesosFromRequest($request);
+        $data = $this->turmaAnualData($turma, $pesos);
+        $filename = sprintf('pauta-anual-%s-%s.pdf',
+            str($turma->classe->nome . $turma->nome)->slug(),
+            str($turma->anoLectivo->codigo)->slug()
+        );
+        return Pdf::loadView('pdf.pautas.turma-anual', $data)->setPaper('a4', 'landscape')->download($filename);
+    }
+
+    public function situacaoPdf(Request $request, Turma $turma)
+    {
+        $pesos = $this->pesosFromRequest($request);
+        $data = $this->situacaoData($turma, $pesos);
+        $filename = sprintf('resultados-%s-%s.pdf',
+            str($turma->classe->nome . $turma->nome)->slug(),
+            str($turma->anoLectivo->codigo)->slug()
+        );
+        return Pdf::loadView('pdf.pautas.situacao', $data)->setPaper('a4', 'portrait')->download($filename);
+    }
+
+    // ----- data builders (partilhados entre HTML e PDF) -----
+
+    protected function disciplinaData(Atribuicao $atribuicao, Trimestre $trimestre): array
+    {
+        $atribuicao->load(['turma.classe', 'turma.curso', 'disciplina', 'anoLectivo']);
 
         $avaliacoes = Avaliacao::where('atribuicao_id', $atribuicao->id)
             ->where('trimestre_id', $trimestre->id)
-            ->with('notas')
-            ->orderBy('data')->get();
+            ->with('notas')->orderBy('data')->get();
 
         $matriculas = $this->matriculasDaTurma($atribuicao->turma_id, $atribuicao->ano_lectivo_id);
 
@@ -58,27 +131,23 @@ class PautaController extends Controller
             $medias[$m->id] = $calc->mediaTrimestre($itens);
         }
 
-        return view('pautas.disciplina', compact('atribuicao', 'trimestre', 'avaliacoes', 'matriculas', 'notasMap', 'medias', 'calc'));
+        return compact('atribuicao', 'trimestre', 'avaliacoes', 'matriculas', 'notasMap', 'medias', 'calc');
     }
 
-    /** MODO 2 — Pauta da turma no trimestre (todas as disciplinas × alunos) */
-    public function turmaTrimestre(Request $request, Turma $turma, Trimestre $trimestre)
+    protected function turmaTrimestreData(Turma $turma, Trimestre $trimestre): array
     {
-        $turma->load(['classe', 'curso', 'anoLectivo']);
+        $turma->load(['classe', 'curso', 'anoLectivo', 'directorTurma.user']);
 
         $atribuicoes = Atribuicao::with('disciplina')
             ->where('turma_id', $turma->id)
-            ->where('ano_lectivo_id', $turma->ano_lectivo_id)
-            ->get();
+            ->where('ano_lectivo_id', $turma->ano_lectivo_id)->get();
 
         $matriculas = $this->matriculasDaTurma($turma->id, $turma->ano_lectivo_id);
         $calc = new PautaCalculator();
 
         $todasAvaliacoes = Avaliacao::whereIn('atribuicao_id', $atribuicoes->pluck('id'))
             ->where('trimestre_id', $trimestre->id)
-            ->with('notas')
-            ->get()
-            ->groupBy('atribuicao_id');
+            ->with('notas')->get()->groupBy('atribuicao_id');
 
         $mediasTurma = [];
         foreach ($matriculas as $m) {
@@ -97,31 +166,23 @@ class PautaController extends Controller
             $mediaGeral[$m->id] = $calc->mediaGeral($mediasTurma[$m->id] ?? []);
         }
 
-        return view('pautas.turma-trimestre', compact('turma', 'trimestre', 'atribuicoes', 'matriculas', 'mediasTurma', 'mediaGeral', 'calc'));
+        return compact('turma', 'trimestre', 'atribuicoes', 'matriculas', 'mediasTurma', 'mediaGeral', 'calc');
     }
 
-    /** MODO 3 — Pauta anual da turma */
-    public function turmaAnual(Request $request, Turma $turma)
+    protected function turmaAnualData(Turma $turma, array $pesos): array
     {
-        $pesos = $this->pesosFromRequest($request);
         $calc = new PautaCalculator($pesos);
-
-        $turma->load(['classe', 'curso', 'anoLectivo']);
+        $turma->load(['classe', 'curso', 'anoLectivo', 'directorTurma.user']);
 
         $atribuicoes = Atribuicao::with('disciplina')
             ->where('turma_id', $turma->id)
-            ->where('ano_lectivo_id', $turma->ano_lectivo_id)
-            ->get();
+            ->where('ano_lectivo_id', $turma->ano_lectivo_id)->get();
 
-        $trimestres = Trimestre::where('ano_lectivo_id', $turma->ano_lectivo_id)
-            ->orderBy('numero')->get();
-
+        $trimestres = Trimestre::where('ano_lectivo_id', $turma->ano_lectivo_id)->orderBy('numero')->get();
         $matriculas = $this->matriculasDaTurma($turma->id, $turma->ano_lectivo_id);
 
         $todasAvaliacoes = Avaliacao::whereIn('atribuicao_id', $atribuicoes->pluck('id'))
-            ->with('notas')
-            ->get()
-            ->groupBy(['atribuicao_id', 'trimestre_id']);
+            ->with('notas')->get()->groupBy(['atribuicao_id', 'trimestre_id']);
 
         $mediasAnuais = [];
         $mediasPorTrimestre = [];
@@ -149,73 +210,44 @@ class PautaController extends Controller
             $situacao[$m->id] = $calc->situacao($mediasAnuais[$m->id] ?? []);
         }
 
-        return view('pautas.turma-anual', compact(
-            'turma', 'atribuicoes', 'trimestres', 'matriculas',
-            'mediasAnuais', 'mediasPorTrimestre', 'mediaGeral', 'situacao', 'calc'
-        ));
+        return compact('turma', 'atribuicoes', 'trimestres', 'matriculas',
+            'mediasAnuais', 'mediasPorTrimestre', 'mediaGeral', 'situacao', 'calc');
     }
 
-    /** MODO 4 — Situação final da turma */
-    public function situacao(Request $request, Turma $turma)
+    protected function situacaoData(Turma $turma, array $pesos): array
     {
-        $pesos = $this->pesosFromRequest($request);
-        $calc = new PautaCalculator($pesos);
-
-        $turma->load(['classe', 'curso', 'anoLectivo']);
-
-        $atribuicoes = Atribuicao::with('disciplina')
-            ->where('turma_id', $turma->id)
-            ->where('ano_lectivo_id', $turma->ano_lectivo_id)
-            ->get();
-
-        $trimestres = Trimestre::where('ano_lectivo_id', $turma->ano_lectivo_id)
-            ->orderBy('numero')->get();
-
-        $matriculas = $this->matriculasDaTurma($turma->id, $turma->ano_lectivo_id);
-
-        $todasAvaliacoes = Avaliacao::whereIn('atribuicao_id', $atribuicoes->pluck('id'))
-            ->with('notas')
-            ->get()
-            ->groupBy(['atribuicao_id', 'trimestre_id']);
+        $data = $this->turmaAnualData($turma, $pesos);
+        $calc = $data['calc'];
 
         $resumo = [];
-        foreach ($matriculas as $m) {
-            $mediasAnuais = [];
+        foreach ($data['matriculas'] as $m) {
+            $medias = $data['mediasAnuais'][$m->id] ?? [];
             $negativas = [];
-            foreach ($atribuicoes as $atr) {
-                $mediasTrim = [];
-                foreach ($trimestres as $t) {
-                    $avs = $todasAvaliacoes[$atr->id][$t->id] ?? collect();
-                    $itens = $avs->map(fn ($av) => [
-                        'valor' => $av->notas->firstWhere('matricula_id', $m->id)?->valor,
-                        'peso' => $av->peso,
-                    ])->all();
-                    $mediasTrim[$t->numero] = $calc->mediaTrimestre($itens);
-                }
-                $media = $calc->mediaAnual($mediasTrim);
-                $mediasAnuais[$atr->disciplina_id] = $media;
-                if ($media !== null && $media < $calc->notaMinima) {
+            foreach ($data['atribuicoes'] as $atr) {
+                $v = $medias[$atr->disciplina_id] ?? null;
+                if ($v !== null && $v < $calc->notaMinima) {
                     $negativas[] = $atr->disciplina->nome;
                 }
             }
             $resumo[$m->id] = [
-                'media_geral' => $calc->mediaGeral($mediasAnuais),
-                'situacao' => $calc->situacao($mediasAnuais),
+                'media_geral' => $data['mediaGeral'][$m->id] ?? null,
+                'situacao' => $data['situacao'][$m->id] ?? 'em_curso',
                 'negativas' => $negativas,
             ];
         }
 
-        $agrupado = [
-            'aprovado' => [],
-            'recurso' => [],
-            'reprovado' => [],
-            'em_curso' => [],
-        ];
-        foreach ($matriculas as $m) {
+        $agrupado = ['aprovado' => [], 'recurso' => [], 'reprovado' => [], 'em_curso' => []];
+        foreach ($data['matriculas'] as $m) {
             $agrupado[$resumo[$m->id]['situacao']][] = $m;
         }
 
-        return view('pautas.situacao', compact('turma', 'matriculas', 'resumo', 'agrupado', 'calc'));
+        return [
+            'turma' => $data['turma'],
+            'matriculas' => $data['matriculas'],
+            'resumo' => $resumo,
+            'agrupado' => $agrupado,
+            'calc' => $calc,
+        ];
     }
 
     // ----- helpers -----
