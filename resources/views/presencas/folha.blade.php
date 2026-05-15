@@ -1,7 +1,9 @@
 <x-app-layout>
-    <x-page-header
-        :title="__('Attendance Sheet')"
-        :subtitle="$aula->atribuicao->turma->classe->nome . ' ' . $aula->atribuicao->turma->nome . ' · ' . $aula->atribuicao->disciplina->nome . ' · ' . $aula->data->format('d/m/Y') . ($aula->hora_inicio ? ' · ' . \Carbon\Carbon::parse($aula->hora_inicio)->format('H:i') : '')">
+    <x-page-header :title="__('Attendance Sheet')">
+        <x-slot name="subtitleSlot">
+            <x-turma-label :turma="$aula->atribuicao->turma" /> · {{ $aula->atribuicao->disciplina->nome }} · {{ $aula->data->format('d/m/Y') }}
+            @if($aula->hora_inicio) · {{ \Carbon\Carbon::parse($aula->hora_inicio)->format('H:i') }}@endif
+        </x-slot>
         <x-slot name="actions">
             <x-btn variant="secondary" :href="route('aulas.show', $aula)">{{ __('Back') }}</x-btn>
         </x-slot>

@@ -9,7 +9,7 @@
 
     <x-card>
         <dl class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm">
-            <div><dt class="form-label">{{ __('Class Groups') }}</dt><dd>{{ $avaliacao->atribuicao->turma->classe->nome }} {{ $avaliacao->atribuicao->turma->nome }}</dd></div>
+            <div><dt class="form-label">{{ __('Class Groups') }}</dt><dd><x-turma-label :turma="$avaliacao->atribuicao->turma" /></dd></div>
             <div><dt class="form-label">{{ __('Subjects List') }}</dt><dd>{{ $avaliacao->atribuicao->disciplina->nome }}</dd></div>
             <div><dt class="form-label">{{ __('Term') }}</dt><dd>{{ $avaliacao->trimestre->numero }}º</dd></div>
             <div><dt class="form-label">{{ __('Type') }}</dt><dd>{{ ucfirst(str_replace('_', ' ', $avaliacao->tipo)) }}</dd></div>

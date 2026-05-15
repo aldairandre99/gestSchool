@@ -1,5 +1,9 @@
 <x-app-layout>
-    <x-page-header :title="$turma->classe->nome . ' ' . $turma->nome" :subtitle="__('Edit')" />
+    <x-page-header :title="__('Edit') . ' — ' . __('Class Groups')">
+        <x-slot name="subtitleSlot">
+            <x-turma-label :turma="$turma" :showAno="true" />
+        </x-slot>
+    </x-page-header>
     <x-card>
         <form method="POST" action="{{ route('turmas.update', $turma) }}">@csrf @method('PUT') @include('turmas._form', ['turma' => $turma])</form>
     </x-card>

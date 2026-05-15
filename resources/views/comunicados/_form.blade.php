@@ -16,7 +16,7 @@
         @foreach($classes as $c)<option value="{{ $c->id }}" @selected(old('classe_id', $comunicado?->classe_id) == $c->id)>{{ $c->nome }}</option>@endforeach
     </x-select>
     <x-select name="turma_id" label="{{ __('Group (if audience = group)') }}">
-        @foreach($turmas as $t)<option value="{{ $t->id }}" @selected(old('turma_id', $comunicado?->turma_id) == $t->id)>{{ $t->classe->nome }} {{ $t->nome }} — {{ $t->anoLectivo->codigo }}</option>@endforeach
+        @foreach($turmas as $t)<option value="{{ $t->id }}" @selected(old('turma_id', $comunicado?->turma_id) == $t->id)>{{ $t->display_label }} — {{ $t->anoLectivo->codigo }}</option>@endforeach
     </x-select>
 </div>
 <div class="flex items-center gap-3 mt-6">

@@ -1,6 +1,8 @@
 <x-app-layout>
-    <x-page-header :title="$turma->classe->nome . ' ' . $turma->nome"
-                   :subtitle="$turma->anoLectivo->codigo . ($turma->curso ? ' · ' . $turma->curso->sigla : '')">
+    <x-page-header :title="__('Class Groups')">
+        <x-slot name="subtitleSlot">
+            <x-turma-label :turma="$turma" :showAno="true" />
+        </x-slot>
         <x-slot name="actions">
             <x-btn variant="primary" icon="pencil" :href="route('turmas.edit', $turma)">{{ __('Edit') }}</x-btn>
             <x-btn variant="secondary" :href="route('turmas.index')">{{ __('Back') }}</x-btn>

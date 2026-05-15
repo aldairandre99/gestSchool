@@ -12,7 +12,7 @@
             <span><x-lucide-clock class="inline w-3 h-3" /> {{ $comunicado->publicado_em ? $comunicado->publicado_em->format('d/m/Y H:i') : __('draft') }}</span>
             <x-badge variant="muted">{{ str_replace('_', ' ', $comunicado->alcance) }}</x-badge>
             @if($comunicado->classe)<x-badge variant="info">{{ $comunicado->classe->nome }}</x-badge>@endif
-            @if($comunicado->turma)<x-badge variant="info">{{ $comunicado->turma->classe->nome }} {{ $comunicado->turma->nome }}</x-badge>@endif
+            @if($comunicado->turma)<x-turma-label :turma="$comunicado->turma" />@endif
         </div>
         <div class="prose max-w-none text-sm text-navy whitespace-pre-line leading-relaxed">{{ $comunicado->conteudo }}</div>
     </x-card>

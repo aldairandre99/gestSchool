@@ -1,7 +1,8 @@
 <x-app-layout>
-    <x-page-header
-        :title="__('Class gradebook for a term')"
-        :subtitle="$turma->classe->nome . ' ' . $turma->nome . ($turma->curso ? ' · ' . $turma->curso->sigla : '') . ' · ' . $trimestre->numero . 'º ' . __('Term') . ' · ' . $turma->anoLectivo->codigo">
+    <x-page-header :title="__('Class gradebook for a term')">
+        <x-slot name="subtitleSlot">
+            <x-turma-label :turma="$turma" :showAno="true" /> · {{ $trimestre->numero }}º {{ __('Term') }}
+        </x-slot>
         <x-slot name="actions">
             <x-btn variant="danger" icon="file-down" :href="route('pautas.turma-trimestre.pdf', ['turma' => $turma, 'trimestre' => $trimestre])">{{ __('Export PDF') }}</x-btn>
             <x-btn variant="primary" icon="printer" href="javascript:print()">{{ __('Print') }}</x-btn>

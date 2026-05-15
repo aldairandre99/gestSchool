@@ -1,5 +1,5 @@
 @php
-    $titulo = $turma->classe->nome . ' ' . $turma->nome . ($turma->curso ? ' (' . $turma->curso->sigla . ')' : '');
+    $titulo = $turma->nome_completo;
     $subtitulo = __('Final results') . ' · ' . $turma->anoLectivo->codigo;
     $counts = [
         'aprovado' => count($agrupado['aprovado']),

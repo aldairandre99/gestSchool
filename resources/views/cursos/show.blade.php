@@ -35,7 +35,7 @@
         @else
             <ul class="space-y-1 text-sm">
                 @foreach($curso->turmas as $t)
-                    <li><a href="{{ route('turmas.show', $t) }}" class="text-primary hover:underline">{{ $t->classe->nome }} {{ $t->nome }}</a></li>
+                    <li><a href="{{ route('turmas.show', $t) }}" class="hover:underline"><x-turma-label :turma="$t" :showAno="true" /></a></li>
                 @endforeach
             </ul>
         @endif

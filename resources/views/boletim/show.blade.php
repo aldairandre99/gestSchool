@@ -10,7 +10,7 @@
     <x-card>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm mb-6">
             <div><dt class="form-label">{{ __('Student') }}</dt><dd class="text-navy font-semibold">{{ $matricula->aluno->user->name }}</dd></div>
-            <div><dt class="form-label">{{ __('Class Groups') }}</dt><dd>{{ $matricula->turma->classe->nome }} {{ $matricula->turma->nome }}</dd></div>
+            <div><dt class="form-label">{{ __('Class Groups') }}</dt><dd><x-turma-label :turma="$matricula->turma" /></dd></div>
             <div><dt class="form-label">{{ __('School Year') }}</dt><dd>{{ $matricula->anoLectivo->codigo }}</dd></div>
         </div>
 

@@ -16,7 +16,7 @@
                         <select x-model="atribuicao" class="form-select">
                             <option value="">—</option>
                             @foreach($atribuicoes as $a)
-                                <option value="{{ $a->id }}">{{ $a->turma->classe->nome }} {{ $a->turma->nome }} — {{ $a->disciplina->nome }} ({{ $a->anoLectivo->codigo }})</option>
+                                <option value="{{ $a->id }}">{{ $a->turma->display_label }} — {{ $a->disciplina->nome }} ({{ $a->anoLectivo->codigo }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -42,7 +42,7 @@
                     <select x-model="turma" class="form-select">
                         <option value="">—</option>
                         @foreach($turmas as $t)
-                            <option value="{{ $t->id }}">{{ $t->classe->nome }} {{ $t->nome }} @if($t->curso) — {{ $t->curso->sigla }} @endif ({{ $t->anoLectivo->codigo }})</option>
+                            <option value="{{ $t->id }}">{{ $t->display_label }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -67,7 +67,7 @@
                     <select x-model="turma" class="form-select">
                         <option value="">—</option>
                         @foreach($turmas as $t)
-                            <option value="{{ $t->id }}">{{ $t->classe->nome }} {{ $t->nome }} @if($t->curso) — {{ $t->curso->sigla }} @endif ({{ $t->anoLectivo->codigo }})</option>
+                            <option value="{{ $t->id }}">{{ $t->display_label }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -85,7 +85,7 @@
                     <select x-model="turma" class="form-select">
                         <option value="">—</option>
                         @foreach($turmas as $t)
-                            <option value="{{ $t->id }}">{{ $t->classe->nome }} {{ $t->nome }} @if($t->curso) — {{ $t->curso->sigla }} @endif ({{ $t->anoLectivo->codigo }})</option>
+                            <option value="{{ $t->id }}">{{ $t->display_label }}</option>
                         @endforeach
                     </select>
                 </div>

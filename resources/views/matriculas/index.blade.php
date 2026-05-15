@@ -17,7 +17,7 @@
                 <label class="form-label">{{ __('Class Groups') }}</label>
                 <select name="turma_id" class="form-select">
                     <option value="">Todas</option>
-                    @foreach($turmas as $t)<option value="{{ $t->id }}" @selected($turmaId == $t->id)>{{ $t->classe->nome }} {{ $t->nome }}</option>@endforeach
+                    @foreach($turmas as $t)<option value="{{ $t->id }}" @selected($turmaId == $t->id)>{{ $t->display_label }}</option>@endforeach
                 </select>
             </div>
         </x-slot>
@@ -38,7 +38,7 @@
                 <tr>
                     <td class="font-mono text-xs">{{ $m->numero_matricula }}</td>
                     <td class="font-semibold text-navy">{{ $m->aluno->user->name }}</td>
-                    <td>{{ $m->turma->classe->nome }} {{ $m->turma->nome }}</td>
+                    <td><x-turma-label :turma="$m->turma" /></td>
                     <td>{{ $m->anoLectivo->codigo }}</td>
                     <td><x-badge :variant="$estadoCor[$m->estado] ?? 'muted'">{{ str_replace('_', ' ', ucfirst($m->estado)) }}</x-badge></td>
                     <td class="table-actions">

@@ -5,7 +5,6 @@
         <thead>
             <tr>
                 <th>{{ __('Class Groups') }}</th>
-                <th>{{ __('Course') }}</th>
                 <th>{{ __('School Year') }}</th>
                 <th>{{ __('Room') }}</th>
                 <th>{{ __('Shift') }}</th>
@@ -17,11 +16,7 @@
         <tbody>
             @forelse($turmas as $t)
                 <tr>
-                    <td class="font-semibold text-navy">{{ $t->classe->nome }} {{ $t->nome }}</td>
-                    <td>
-                        @if($t->curso)<x-badge variant="info">{{ $t->curso->sigla }}</x-badge>
-                        @else<span class="text-muted text-xs">{{ __('base') }}</span>@endif
-                    </td>
+                    <td><x-turma-label :turma="$t" /></td>
                     <td>{{ $t->anoLectivo->codigo }}</td>
                     <td>{{ $t->sala ?? '—' }}</td>
                     <td>{{ $t->turno ?? '—' }}</td>
@@ -36,7 +31,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="8" class="table-empty">{{ __('No records found.') }}</td></tr>
+                <tr><td colspan="7" class="table-empty">{{ __('No records found.') }}</td></tr>
             @endforelse
         </tbody>
         <x-slot name="footer">{{ $turmas->links() }}</x-slot>

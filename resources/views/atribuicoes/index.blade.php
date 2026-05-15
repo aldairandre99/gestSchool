@@ -15,7 +15,7 @@
             @forelse($atribuicoes as $a)
                 <tr>
                     <td class="font-semibold text-navy">{{ $a->professor->user->name }}</td>
-                    <td>{{ $a->turma->classe->nome }} {{ $a->turma->nome }}</td>
+                    <td><x-turma-label :turma="$a->turma" /></td>
                     <td>{{ $a->disciplina->nome }}</td>
                     <td>{{ $a->anoLectivo->codigo }}</td>
                     <td class="table-actions">
