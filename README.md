@@ -25,21 +25,13 @@
 
 ## Sobre
 
-O **gestSchool** é uma aplicação web para escolas que precisam de gerir, num único sítio, todo o ciclo lectivo:
-matrícula de alunos, distribuição de turmas, lançamento de notas e faltas, emissão de pautas e boletins,
-e comunicação com encarregados de educação.
+Cobre os cursos técnicos típicos do Ensino Médio angolano — Informática, Hotelaria, Contabilidade
+e Gestão, GRH, Físicas e Biológicas — mas a estrutura é genérica e adaptável a outros sistemas
+educativos lusófonos.
 
-Foi pensado a partir da realidade do sistema de ensino angolano — Ensino de Iniciação, Ensino Base e
-Ensino Médio com os cursos técnicos típicos (Informática, Hotelaria, Contabilidade e Gestão, GRH, Físicas
-e Biológicas) — mas a estrutura é genérica e adaptável a outros sistemas educativos lusófonos.
-
-> ⚠️ **Quem pode usar:** Nesta primeira fase, o gestSchool está disponível **exclusivamente para
-> escolas públicas e instituições educativas sem fins lucrativos** (IPSS, ONG, missões, fundações).
-> A utilização comercial, a revenda e a cobrança por serviços associados estão **expressamente proibidas**.
-> Lê a [Licença](LICENSE) antes de usar.
-
-> **Estado:** em desenvolvimento activo. Apto para uso em ambiente de demo/staging; ainda não recomendado
-> para produção sem revisão de segurança e testes adicionais.
+> ⚠️ **Quem pode usar:** escolas públicas e instituições educativas sem fins lucrativos (IPSS, ONG,
+> missões, fundações). Utilização comercial, revenda e cobrança por serviços associados estão
+> **expressamente proibidas**. Lê a [Licença](LICENSE) antes de usar.
 
 ## Funcionalidades
 
