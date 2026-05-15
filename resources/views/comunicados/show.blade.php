@@ -1,16 +1,19 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800">{{ $comunicado->titulo }}</h2></x-slot>
-    <div class="py-8"><div class="max-w-3xl mx-auto sm:px-6 lg:px-8"><x-flash />
-        <article class="bg-white shadow rounded-lg p-6">
-            <p class="text-xs text-gray-500 mb-4">
-                {{ $comunicado->autor?->name }} ·
-                {{ $comunicado->publicado_em ? $comunicado->publicado_em->format('d/m/Y H:i') : 'rascunho' }} ·
-                <span class="bg-gray-100 rounded px-2 py-0.5">{{ str_replace('_', ' ', $comunicado->alcance) }}</span>
-                @if($comunicado->classe) · {{ $comunicado->classe->nome }} @endif
-                @if($comunicado->turma) · {{ $comunicado->turma->classe->nome }} {{ $comunicado->turma->nome }} @endif
-            </p>
-            <div class="prose max-w-none text-sm whitespace-pre-line">{{ $comunicado->conteudo }}</div>
-            <div class="mt-6"><a href="{{ route('comunicados.index') }}" class="px-4 py-2 bg-gray-100 text-sm rounded">{{ __('Back') }}</a></div>
-        </article>
-    </div></div>
+    <x-page-header :title="$comunicado->titulo">
+        <x-slot name="actions">
+            <x-btn variant="secondary" :href="route('comunicados.index')">{{ __('Back') }}</x-btn>
+        </x-slot>
+    </x-page-header>
+
+    <x-card>
+        <div class="flex items-center gap-2 flex-wrap text-xs text-muted mb-6 pb-4 border-b border-gray-100">
+            <span><x-lucide-user class="inline w-3 h-3" /> {{ $comunicado->autor?->name }}</span>
+            <span>·</span>
+            <span><x-lucide-clock class="inline w-3 h-3" /> {{ $comunicado->publicado_em ? $comunicado->publicado_em->format('d/m/Y H:i') : 'rascunho' }}</span>
+            <x-badge variant="muted">{{ str_replace('_', ' ', $comunicado->alcance) }}</x-badge>
+            @if($comunicado->classe)<x-badge variant="info">{{ $comunicado->classe->nome }}</x-badge>@endif
+            @if($comunicado->turma)<x-badge variant="info">{{ $comunicado->turma->classe->nome }} {{ $comunicado->turma->nome }}</x-badge>@endif
+        </div>
+        <div class="prose max-w-none text-sm text-navy whitespace-pre-line leading-relaxed">{{ $comunicado->conteudo }}</div>
+    </x-card>
 </x-app-layout>

@@ -1,41 +1,22 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+    <x-page-header :title="__('Dashboard')" :subtitle="__('School Management')" />
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            <x-flash />
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <a href="{{ route('users.index') }}" class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
-                    <div class="text-xs uppercase text-gray-500">{{ __('Users') }}</div>
-                    <div class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['users'] }}</div>
-                </a>
-                <a href="{{ route('funcionarios.index') }}" class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
-                    <div class="text-xs uppercase text-gray-500">{{ __('Staff') }}</div>
-                    <div class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['funcionarios'] }}</div>
-                </a>
-                <a href="{{ route('professores.index') }}" class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
-                    <div class="text-xs uppercase text-gray-500">{{ __('Teachers') }}</div>
-                    <div class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['professores'] }}</div>
-                </a>
-                <a href="{{ route('alunos.index') }}" class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
-                    <div class="text-xs uppercase text-gray-500">{{ __('Students') }}</div>
-                    <div class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['alunos'] }}</div>
-                </a>
-                <a href="{{ route('encarregados.index') }}" class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
-                    <div class="text-xs uppercase text-gray-500">{{ __('Guardians') }}</div>
-                    <div class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['encarregados'] }}</div>
-                </a>
-            </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="font-semibold text-gray-800 mb-2">{{ __('School Management') }}</h3>
-                <p class="text-sm text-gray-600">{{ __('Welcome') }}, {{ Auth::user()->name }}.</p>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-6">
+        <x-stat-card :label="__('Users')" :value="$stats['users']" icon="users" variant="primary" :href="route('users.index')" />
+        <x-stat-card :label="__('Staff')" :value="$stats['funcionarios']" icon="briefcase" variant="info" :href="route('funcionarios.index')" />
+        <x-stat-card :label="__('Teachers')" :value="$stats['professores']" icon="user-cog" variant="success" :href="route('professores.index')" />
+        <x-stat-card :label="__('Students')" :value="$stats['alunos']" icon="graduation-cap" variant="warning" :href="route('alunos.index')" />
+        <x-stat-card :label="__('Guardians')" :value="$stats['encarregados']" icon="user-check" variant="danger" :href="route('encarregados.index')" />
     </div>
+
+    <x-card :title="__('School Management')">
+        <p class="text-sm text-muted">{{ __('Welcome') }}, <span class="text-navy font-semibold">{{ Auth::user()->name }}</span>.</p>
+        <p class="text-sm text-muted mt-2">Atalhos rápidos:</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+            <x-btn variant="primary" size="sm" icon="clipboard-check" :href="route('aulas.index')">Aulas</x-btn>
+            <x-btn variant="secondary" size="sm" icon="clipboard-list" :href="route('avaliacoes.index')">{{ __('Evaluations') }}</x-btn>
+            <x-btn variant="secondary" size="sm" icon="table-2" :href="route('pautas.index')">{{ __('Gradebook') }}</x-btn>
+            <x-btn variant="secondary" size="sm" icon="megaphone" :href="route('comunicados.index')">{{ __('Announcements') }}</x-btn>
+        </div>
+    </x-card>
 </x-app-layout>

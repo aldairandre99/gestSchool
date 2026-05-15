@@ -1,6 +1,6 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800">{{ __('New') }} — {{ __('Staff') }}</h2></x-slot>
-    <div class="py-8"><div class="max-w-4xl mx-auto sm:px-6 lg:px-8"><x-flash />
-        <form method="POST" action="{{ route('funcionarios.store') }}" class="bg-white shadow rounded-lg p-6">@csrf @include('funcionarios._form', ['funcionario' => null])</form>
-    </div></div>
+    <x-page-header :title="__('New') . ' — ' . __('Staff')" />
+    <x-card>
+        <form method="POST" action="{{ route('funcionarios.store') }}">@csrf @include('funcionarios._form', ['funcionario' => null])</form>
+    </x-card>
 </x-app-layout>

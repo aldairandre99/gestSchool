@@ -1,36 +1,53 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800">Aula — {{ $aula->data->format('d/m/Y') }} · {{ $aula->atribuicao->turma->classe->nome }} {{ $aula->atribuicao->turma->nome }} · {{ $aula->atribuicao->disciplina->nome }}</h2></x-slot>
-    <div class="py-8"><div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-4"><x-flash />
-        <div class="bg-white shadow rounded-lg p-6 text-sm">
-            <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div><dt class="text-gray-500 text-xs">{{ __('Date') }}</dt><dd>{{ $aula->data->format('d/m/Y') }}</dd></div>
-                <div><dt class="text-gray-500 text-xs">Horário</dt><dd>{{ $aula->hora_inicio ? \Carbon\Carbon::parse($aula->hora_inicio)->format('H:i') : '—' }}@if($aula->hora_fim) – {{ \Carbon\Carbon::parse($aula->hora_fim)->format('H:i') }}@endif</dd></div>
-                <div><dt class="text-gray-500 text-xs">Nº</dt><dd>{{ $aula->numero ?? '—' }}</dd></div>
-                <div class="sm:col-span-3"><dt class="text-gray-500 text-xs">Sumário</dt><dd class="whitespace-pre-line">{{ $aula->sumario ?? '—' }}</dd></div>
-                @if($aula->conteudo_planeado)
-                    <div class="sm:col-span-3"><dt class="text-gray-500 text-xs">Conteúdo planeado</dt><dd class="whitespace-pre-line text-gray-600">{{ $aula->conteudo_planeado }}</dd></div>
-                @endif
-            </dl>
+    @php($total = $aula->presencas->count())
+    @php($presentes = $aula->presencas->where('estado', 'presente')->count())
+    @php($faltas = $aula->presencas->where('estado', 'falta')->count())
+    @php($faltasJust = $aula->presencas->where('estado', 'falta_justificada')->count())
+    @php($atrasos = $aula->presencas->where('estado', 'atraso')->count())
 
-            @php($total = $aula->presencas->count())
-            @php($presentes = $aula->presencas->where('estado', 'presente')->count())
-            @php($faltas = $aula->presencas->where('estado', 'falta')->count())
-            @php($faltasJust = $aula->presencas->where('estado', 'falta_justificada')->count())
-            @php($atrasos = $aula->presencas->where('estado', 'atraso')->count())
+    <x-page-header :title="'Aula — ' . $aula->data->format('d/m/Y')"
+                   :subtitle="$aula->atribuicao->turma->classe->nome . ' ' . $aula->atribuicao->turma->nome . ' · ' . $aula->atribuicao->disciplina->nome">
+        <x-slot name="actions">
+            <x-btn variant="primary" icon="clipboard-check" :href="route('presencas.folha', $aula)">{{ __('Mark Attendance') }}</x-btn>
+            <x-btn variant="secondary" :href="route('aulas.edit', $aula)">{{ __('Edit') }}</x-btn>
+            <x-btn variant="secondary" :href="route('aulas.index')">{{ __('Back') }}</x-btn>
+        </x-slot>
+    </x-page-header>
 
-            <div class="mt-6 grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
-                <div class="bg-gray-50 rounded p-2"><div class="text-gray-500">Total</div><div class="text-lg font-semibold">{{ $total }}</div></div>
-                <div class="bg-green-50 rounded p-2"><div class="text-green-700">Presentes</div><div class="text-lg font-semibold text-green-800">{{ $presentes }}</div></div>
-                <div class="bg-red-50 rounded p-2"><div class="text-red-700">Faltas</div><div class="text-lg font-semibold text-red-800">{{ $faltas }}</div></div>
-                <div class="bg-yellow-50 rounded p-2"><div class="text-yellow-700">Faltas just.</div><div class="text-lg font-semibold text-yellow-800">{{ $faltasJust }}</div></div>
-                <div class="bg-orange-50 rounded p-2"><div class="text-orange-700">Atrasos</div><div class="text-lg font-semibold text-orange-800">{{ $atrasos }}</div></div>
+    <x-card>
+        <dl class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
+            <div><dt class="form-label">{{ __('Date') }}</dt><dd>{{ $aula->data->format('d/m/Y') }}</dd></div>
+            <div><dt class="form-label">Horário</dt><dd>{{ $aula->hora_inicio ? \Carbon\Carbon::parse($aula->hora_inicio)->format('H:i') : '—' }}@if($aula->hora_fim) – {{ \Carbon\Carbon::parse($aula->hora_fim)->format('H:i') }}@endif</dd></div>
+            <div><dt class="form-label">Nº</dt><dd>{{ $aula->numero ?? '—' }}</dd></div>
+            <div class="sm:col-span-3"><dt class="form-label">Sumário</dt><dd class="whitespace-pre-line text-navy">{{ $aula->sumario ?? '—' }}</dd></div>
+            @if($aula->conteudo_planeado)
+                <div class="sm:col-span-3"><dt class="form-label">Conteúdo planeado</dt><dd class="whitespace-pre-line text-muted">{{ $aula->conteudo_planeado }}</dd></div>
+            @endif
+        </dl>
+    </x-card>
+
+    <x-card title="Resumo de presenças">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div class="bg-gray-50 rounded p-4 text-center">
+                <p class="stat-label">Total</p>
+                <p class="text-2xl font-bold text-navy">{{ $total }}</p>
             </div>
-
-            <div class="mt-6 flex gap-3">
-                <a href="{{ route('presencas.folha', $aula) }}" class="px-4 py-2 bg-blue-700 text-white text-sm rounded">{{ __('Mark Attendance') }}</a>
-                <a href="{{ route('aulas.edit', $aula) }}" class="px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('Edit') }}</a>
-                <a href="{{ route('aulas.index') }}" class="px-4 py-2 bg-gray-100 text-sm rounded">{{ __('Back') }}</a>
+            <div class="bg-success-soft rounded p-4 text-center">
+                <p class="stat-label text-success">Presentes</p>
+                <p class="text-2xl font-bold text-success">{{ $presentes }}</p>
+            </div>
+            <div class="bg-danger-soft rounded p-4 text-center">
+                <p class="stat-label text-danger">Faltas</p>
+                <p class="text-2xl font-bold text-danger">{{ $faltas }}</p>
+            </div>
+            <div class="bg-warning-soft rounded p-4 text-center">
+                <p class="stat-label text-yellow-800">Faltas just.</p>
+                <p class="text-2xl font-bold text-yellow-800">{{ $faltasJust }}</p>
+            </div>
+            <div class="rounded p-4 text-center" style="background:#fff1e3">
+                <p class="stat-label" style="color:#b86a14">Atrasos</p>
+                <p class="text-2xl font-bold" style="color:#b86a14">{{ $atrasos }}</p>
             </div>
         </div>
-    </div></div>
+    </x-card>
 </x-app-layout>

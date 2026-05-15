@@ -1,22 +1,24 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Dashboard') }}</h2>
-    </x-slot>
+    <x-page-header :title="__('Dashboard')" :subtitle="__('Welcome') . ', ' . Auth::user()->name" />
 
-    <div class="py-8">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            <x-flash />
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-800">{{ __('Welcome') }}, {{ Auth::user()->name }}</h3>
-                @if($professor)
-                    <dl class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                        <div><dt class="text-gray-500">{{ __('Process Number') }}</dt><dd class="font-medium">{{ $professor->numero_professor ?? '—' }}</dd></div>
-                        <div><dt class="text-gray-500">{{ __('Qualification') }}</dt><dd class="font-medium">{{ $professor->habilitacoes ?? '—' }}</dd></div>
-                        <div><dt class="text-gray-500">{{ __('Subjects') }}</dt><dd class="font-medium">{{ $professor->disciplinas ?? '—' }}</dd></div>
-                    </dl>
-                @endif
-                <a href="{{ route('meus-alunos.index') }}" class="inline-block mt-4 px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('Students') }}</a>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <x-card :title="__('Profile')">
+            @if($professor)
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div><dt class="text-muted text-xs uppercase">{{ __('Process Number') }}</dt><dd class="text-navy font-semibold">{{ $professor->numero_professor ?? '—' }}</dd></div>
+                    <div><dt class="text-muted text-xs uppercase">{{ __('Qualification') }}</dt><dd class="text-navy font-semibold">{{ $professor->habilitacoes ?? '—' }}</dd></div>
+                    <div class="sm:col-span-2"><dt class="text-muted text-xs uppercase">{{ __('Subjects') }}</dt><dd class="text-navy font-semibold">{{ $professor->disciplinas ?? '—' }}</dd></div>
+                </dl>
+            @endif
+        </x-card>
+
+        <x-card title="Atalhos">
+            <div class="grid grid-cols-2 gap-3">
+                <x-btn variant="primary" icon="clipboard-check" :href="route('aulas.index')">Aulas</x-btn>
+                <x-btn variant="secondary" icon="clipboard-list" :href="route('avaliacoes.index')">{{ __('Evaluations') }}</x-btn>
+                <x-btn variant="secondary" icon="table-2" :href="route('pautas.index')">{{ __('Gradebook') }}</x-btn>
+                <x-btn variant="secondary" icon="users" :href="route('meus-alunos.index')">{{ __('Students') }}</x-btn>
             </div>
-        </div>
+        </x-card>
     </div>
 </x-app-layout>

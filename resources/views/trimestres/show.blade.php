@@ -1,13 +1,19 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800">{{ $trimestre->numero }}º {{ __('Term') }} — {{ $trimestre->anoLectivo->codigo }}</h2></x-slot>
-    <div class="py-8"><div class="max-w-3xl mx-auto sm:px-6 lg:px-8"><x-flash />
-        <div class="bg-white shadow rounded-lg p-6 text-sm">
-            <dl class="grid grid-cols-2 gap-3">
-                <div><dt class="text-gray-500">{{ __('Start') }}</dt><dd>{{ $trimestre->inicio->format('d/m/Y') }}</dd></div>
-                <div><dt class="text-gray-500">{{ __('End') }}</dt><dd>{{ $trimestre->fim->format('d/m/Y') }}</dd></div>
-                <div><dt class="text-gray-500">{{ __('Status') }}</dt><dd>{{ $trimestre->aberto ? __('Open') : __('Closed') }}</dd></div>
-            </dl>
-            <div class="mt-6 flex gap-3"><a href="{{ route('trimestres.edit', $trimestre) }}" class="px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('Edit') }}</a><a href="{{ route('trimestres.index') }}" class="px-4 py-2 bg-gray-100 text-sm rounded">{{ __('Back') }}</a></div>
-        </div>
-    </div></div>
+    <x-page-header :title="$trimestre->numero . 'º ' . __('Term')" :subtitle="$trimestre->anoLectivo->codigo">
+        <x-slot name="actions">
+            <x-btn variant="primary" icon="pencil" :href="route('trimestres.edit', $trimestre)">{{ __('Edit') }}</x-btn>
+            <x-btn variant="secondary" :href="route('trimestres.index')">{{ __('Back') }}</x-btn>
+        </x-slot>
+    </x-page-header>
+
+    <x-card>
+        <dl class="grid grid-cols-2 gap-6 text-sm">
+            <div><dt class="form-label">{{ __('Start') }}</dt><dd>{{ $trimestre->inicio->format('d/m/Y') }}</dd></div>
+            <div><dt class="form-label">{{ __('End') }}</dt><dd>{{ $trimestre->fim->format('d/m/Y') }}</dd></div>
+            <div><dt class="form-label">{{ __('Status') }}</dt><dd>
+                @if($trimestre->aberto)<x-badge variant="success">{{ __('Open') }}</x-badge>
+                @else<x-badge variant="muted">{{ __('Closed') }}</x-badge>@endif
+            </dd></div>
+        </dl>
+    </x-card>
 </x-app-layout>
