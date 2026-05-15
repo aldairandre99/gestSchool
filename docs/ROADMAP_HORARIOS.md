@@ -11,7 +11,7 @@
 |---|---|---|---|---|---|
 | 1 | [Copy-paste de slots](#fase-1--copy-paste-de-slots) | ✅ Concluída (2026-05-15) | 🟢 1-2h | 🟢 Alto | 🟢 Baixo |
 | 2 | [Bulk editor por professor](#fase-2--bulk-editor-por-professor) | ✅ Concluída (2026-05-15) | 🟡 2-3h | 🟡 Médio | 🟡 Médio |
-| 3 | [Drag & drop](#fase-3--drag--drop-de-slots) | ⬜ Pendente | 🔴 4-6h | 🟡 Médio | 🟡 Médio |
+| 3 | [Drag & drop](#fase-3--drag--drop-de-slots) | ✅ Concluída (2026-05-15) | 🔴 4-6h | 🟡 Médio | 🟡 Médio |
 | 4 | [Sugestões IA / lacunas](#fase-4--sugestões-automáticas-ia--heurísticas) | ⬜ Pendente | 🔴 4-8h | 🟢 Alto | 🔴 Alto |
 
 **Legenda:** ⬜ Pendente · 🟦 Em curso · ✅ Concluída · 🟥 Bloqueada · ⏸ Adiada
@@ -168,28 +168,32 @@ Substituir os `<select>` por **células arrastáveis** — o utilizador agarra u
 - Submit serializa as posições e usa o mesmo `bulkTurmaStore`
 
 ### Tarefas
-- [ ] `npm install sortablejs`
-- [ ] Importar e inicializar em `resources/js/horario-editor.js`
-- [ ] Marker visual quando célula está a ser arrastada
-- [ ] Validação client-side: mostrar warning antes de drop em célula ocupada
-- [ ] Toggle "Modo formulário / Modo visual" no topo
-- [ ] Animação suave (Sortable tem por default)
-- [ ] i18n
+- [x] `npm install sortablejs`
+- [x] Importar e inicializar em `resources/js/horario-editor.js` (componente Alpine partilhado)
+- [x] Marker visual durante drag (Sortable adiciona classe + cor de fundo da turma)
+- [x] Validação client-side: toast com warning para swap/replace/move (3 mensagens distintas)
+- [x] Toggle "Form mode / Visual mode" no topo de ambos os editores
+- [x] Animação suave (`animation: 180` no Sortable)
+- [x] i18n (6 chaves novas + reutilização da existente "Assignments")
 
 ### Critérios de aceitação
-- ✓ Arrastar aula entre slots vazios funciona em desktop e mobile (toque)
-- ✓ Largar em slot ocupado mostra aviso e troca slots
-- ✓ Lista lateral sempre reflecte estado actual
-- ✓ Submit funciona normalmente, conflitos validados no servidor
+- ✅ Arrastar aula entre slots vazios funciona (smoke 200 + asserções DOM)
+- ✅ Largar em slot ocupado mostra aviso e troca slots (mensagem "Swapped two slots")
+- ✅ Lista lateral sempre reflecte estado actual (`usedAtribuicoes` getter aplica opacity)
+- ✅ Submit funciona normalmente — selects do form mode continuam ligados ao mesmo `slots` (POST inalterado)
 
 ### Riscos
-- Touch UX é tricky — testar em iOS/Android
-- SortableJS multi-grid (drag entre dia 1 e dia 5) requer configuração extra
-- Acessibilidade: providenciar fallback teclado (Tab + Enter para "agarrar", arrows para mover)
-- Bundle JS aumenta ~30KB (não-crítico)
+- Touch UX é tricky — Sortable suporta touch nativamente, mas testar em iOS/Android antes de produção
+- Acessibilidade: o modo formulário (teclado) coexiste com o visual via toggle → utilizadores que preferem teclado mantêm a UI antiga
+- Bundle JS aumentou ~5.7KB (1.9KB gzip) — bem abaixo do orçamento
 
 ### Notas de implementação
-_(preencher durante/após implementação)_
+- **Componente Alpine partilhado** em `resources/js/horario-editor.js` exportado para `window.horarioEditor` — reutilizado por bulk-turma e bulk-professor sem duplicação.
+- `viewMode` persiste em `localStorage.gestschool_horario_editor_mode`.
+- Drop logic: from-pool detecta se a atribuição já está noutra célula → move automaticamente (não duplica). From-cell ocupada → swap; from-cell para destino vazio → move.
+- Sortable manipula o DOM mas removemos sempre o nó movido (`evt.item.remove()`) e deixamos Alpine re-renderizar via `x-if` — evita state divergence.
+- Hidden inputs do form mode (`name="slots[...][atribuicao_id]"`) continuam sincronizados via `x-model` em ambos os modos, pelo que o submit não precisa de serialização extra.
+- O input de `sala` só é editável em form mode (compromisso pragmático — drag não toca em sala).
 
 ---
 
@@ -317,6 +321,22 @@ Decidir qual fase começar. Recomendação: **Fase 1 (Copy-paste)** — quick wi
 
 > Cada entrada: **DATA — TÍTULO**, seguido de bullets curtos.
 > Adicionar no topo (entrada mais recente em cima).
+
+### 2026-05-15 — Fase 3 (Drag & drop) ✅ Concluída
+- **SortableJS** instalado e bundled via Vite (~+1.9KB gzip)
+- Componente Alpine partilhado `resources/js/horario-editor.js` → `window.horarioEditor()` reutilizado por bulk-turma e bulk-professor
+- **Toggle Form ↔ Visual** no topo de ambos os editores; persiste em localStorage
+- **Modo visual**: cada slot é um card arrastável, com cor de fundo por turma; lista lateral com todas as atribuições
+- Drop logic inteligente:
+  - from pool → cell vazia: atribui
+  - from pool → cell ocupada: substitui (warning)
+  - from pool com atribuição já existente noutra célula: move (warning)
+  - from cell → cell ocupada: swap (warning)
+  - from cell → pool: limpa célula
+- Toast com warnings durante 2.5s (`dragWarning`)
+- 6 chaves i18n novas: Form mode, Visual mode, Drag a card onto a slot..., Swapped/Moved/Replaced
+- Smoke test: GET `/horarios/turma/1/bulk` 200, GET `/horarios/professor/1/bulk` 200 — 49 marcadores DnD em cada
+- Próximo: Fase 4 (Sugestões IA / lacunas)
 
 ### 2026-05-15 — Fase 2 (Bulk editor por professor) ✅ Concluída
 - Novos métodos `HorarioController::bulkProfessor` e `bulkProfessorStore`

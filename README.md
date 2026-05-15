@@ -206,9 +206,12 @@ composer test
 - [x] Sistema de roles e permissões
 - [x] Pautas e boletins
 - [x] Seed realista com 5 anos lectivos
-- [ ] Exportação de pautas/boletins em PDF
+- [x] Exportação de pautas, boletins, horários e calendário em PDF
+- [x] Calendário escolar visual (eventos com filtros, vista mensal, PDF)
+- [x] Horários com bulk editor por turma e por professor (copy-paste, clipboard persistente, validação de conflitos)
+- [x] Drag & drop no editor de horários (modo visual com SortableJS, toggle Form ↔ Visual)
+- [ ] Sugestões automáticas de horário (heurísticas / lacunas)
 - [ ] Notificações por email/SMS para encarregados
-- [ ] Calendário escolar visual
 - [ ] Estatísticas e dashboards analíticos
 - [ ] API REST pública para integrações
 - [ ] App móvel para encarregados (Flutter)
