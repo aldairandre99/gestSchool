@@ -220,6 +220,11 @@ composer test
 
 Contribuições são muito bem-vindas — desde correcções de tradução até novas funcionalidades.
 
+Lê o **[CONTRIBUTING.md](CONTRIBUTING.md)** para o guia completo: setup, padrões de código,
+convenção de commits, fluxo de PR e áreas que precisam de ajuda.
+
+Em resumo:
+
 1. Faz fork do repositório
 2. Cria uma branch: `git checkout -b feat/minha-feature`
 3. Segue o padrão de código (Pint): `./vendor/bin/pint`
