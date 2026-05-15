@@ -1,5 +1,6 @@
 import './bootstrap';
 import './sidebar';
+import './smart-search';
 
 import Alpine from 'alpinejs';
 

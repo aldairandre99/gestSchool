@@ -14,10 +14,17 @@
             <x-lucide-panel-left class="sidebar-toggle-icon" />
         </button>
 
-        <div class="hidden md:flex items-center gap-2 text-sm text-muted">
-            <x-lucide-search class="w-4 h-4" />
-            <span class="hidden xl:inline">Pesquisar…</span>
-        </div>
+        <button
+            type="button"
+            class="hidden md:flex items-center gap-2 text-sm text-muted hover:text-navy px-3 py-1.5 border border-gray-200 rounded-btn min-w-[180px] transition"
+            x-data
+            @click="$dispatch('open-smart-search')"
+            title="{{ __('Search') }} (Ctrl+K)"
+        >
+            <x-lucide-search class="w-4 h-4 shrink-0" />
+            <span class="hidden xl:inline flex-1 text-left">{{ __('Search…') }}</span>
+            <kbd class="hidden xl:inline-flex">⌘K</kbd>
+        </button>
 
         <div class="navbar-actions">
             <div class="flex items-center text-xs gap-1">
@@ -42,7 +49,7 @@
                     <div class="px-4 py-3 border-b border-gray-100">
                         <div class="text-xs text-muted">{{ __('Active session') }}</div>
                         @foreach($user?->roles ?? [] as $r)
-                            <span class="badge badge-muted mt-1 me-1">{{ str_replace('_', ' ', $r->name) }}</span>
+                            <span class="badge badge-muted mt-1 me-1">{{ __($r->name) }}</span>
                         @endforeach
                     </div>
                     <a href="{{ route('profile.edit') }}" class="dropdown-item">{{ __('Profile') }}</a>
