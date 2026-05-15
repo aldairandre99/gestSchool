@@ -1,8 +1,8 @@
 <h1 align="center">gestSchool</h1>
 
 <p align="center">
-  <strong>Sistema de gestão escolar para escolas públicas e instituições sem fins lucrativos.</strong><br>
-  Da iniciação ao ensino médio — alunos, professores, matrículas, pautas, boletins e comunicados num único sistema.
+  <strong>Tudo o que uma escola precisa para gerir um ano lectivo num único sistema</strong> — <br>
+  matrículas, pautas, boletins, presenças e comunicados, sem licenças caras.
 </p>
 
 <p align="center">
@@ -13,6 +13,13 @@
   <img src="https://img.shields.io/badge/source-available-orange.svg" alt="Source Available">
   <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome">
 </p>
+
+**TL;DR**
+- 🏫 Para Ensino de Iniciação, Base e Médio (desenhado para Angola, adaptável a outros sistemas lusófonos)
+- ⚙️ Laravel 12 + PHP 8.2 + Blade/Alpine + Tailwind 4 · SQLite por defeito
+- 👥 7 perfis pré-configurados (Director, Pedagógico, Secretário, Professor, Assistente, Encarregado, Aluno)
+- 🔓 Grátis para escolas públicas, IPSS, ONG e missões — uso comercial proibido
+- 🚧 Em desenvolvimento activo — pronto para demo/staging
 
 ---
 
