@@ -58,7 +58,7 @@
                                 </button>
                             </x-slot>
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('presencas.index')">{{ __('Attendance') }}</x-dropdown-link>
+                                <x-dropdown-link :href="route('aulas.index')">Aulas / {{ __('Attendance') }}</x-dropdown-link>
                                 <x-dropdown-link :href="route('avaliacoes.index')">{{ __('Evaluations') }}</x-dropdown-link>
                                 <x-dropdown-link :href="route('pautas.index')">{{ __('Gradebook') }}</x-dropdown-link>
                             </x-slot>
@@ -141,7 +141,7 @@
                 <x-responsive-nav-link :href="route('trimestres.index')">{{ __('Terms') }}</x-responsive-nav-link>
             @endrole
             @hasanyrole('director_geral|director_pedagogico|secretario|professor|professor_assistente')
-                <x-responsive-nav-link :href="route('presencas.index')">{{ __('Attendance') }}</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('aulas.index')">Aulas</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('avaliacoes.index')">{{ __('Evaluations') }}</x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('pautas.index')">{{ __('Gradebook') }}</x-responsive-nav-link>
             @endhasanyrole

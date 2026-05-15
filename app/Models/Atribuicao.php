@@ -37,9 +37,9 @@ class Atribuicao extends Model
         return $this->belongsTo(AnoLectivo::class);
     }
 
-    public function presencas(): HasMany
+    public function aulas(): HasMany
     {
-        return $this->hasMany(Presenca::class);
+        return $this->hasMany(Aula::class);
     }
 
     public function avaliacoes(): HasMany

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Atribuicao;
+use App\Models\Aula;
 use App\Models\Matricula;
 use App\Models\Presenca;
 use Illuminate\Http\Request;
@@ -11,58 +11,42 @@ class PresencaController extends Controller
 {
     public function index(Request $request)
     {
-        $user = $request->user();
-        $atribuicoes = Atribuicao::query()
-            ->with(['turma.classe', 'disciplina', 'anoLectivo'])
-            ->when($user->hasAnyRole(['professor', 'professor_assistente']), function ($q) use ($user) {
-                if ($prof = $user->professor) {
-                    $q->where('professor_id', $prof->id);
-                }
-            })
-            ->orderBy('id', 'desc')
-            ->get();
-
-        return view('presencas.index', compact('atribuicoes'));
+        return redirect()->route('aulas.index');
     }
 
-    public function folha(Request $request, Atribuicao $atribuicao)
+    public function folha(Request $request, Aula $aula)
     {
-        $this->authorizeAtribuicao($request, $atribuicao);
-        $data = $request->query('data', now()->toDateString());
+        $this->authorizeAula($request, $aula);
+        $aula->load(['atribuicao.turma.classe', 'atribuicao.disciplina']);
 
         $matriculas = Matricula::with('aluno.user')
-            ->where('turma_id', $atribuicao->turma_id)
-            ->where('ano_lectivo_id', $atribuicao->ano_lectivo_id)
+            ->where('turma_id', $aula->atribuicao->turma_id)
+            ->where('ano_lectivo_id', $aula->atribuicao->ano_lectivo_id)
             ->where('estado', 'activa')
             ->get()
             ->sortBy(fn ($m) => $m->aluno->user->name);
 
-        $existentes = Presenca::where('atribuicao_id', $atribuicao->id)
-            ->where('data', $data)
+        $existentes = Presenca::where('aula_id', $aula->id)
             ->get()
             ->keyBy('matricula_id');
 
-        $atribuicao->load(['turma.classe', 'disciplina']);
-
-        return view('presencas.folha', compact('atribuicao', 'data', 'matriculas', 'existentes'));
+        return view('presencas.folha', compact('aula', 'matriculas', 'existentes'));
     }
 
-    public function gravar(Request $request, Atribuicao $atribuicao)
+    public function gravar(Request $request, Aula $aula)
     {
-        $this->authorizeAtribuicao($request, $atribuicao);
+        $this->authorizeAula($request, $aula);
         $request->validate([
-            'data' => ['required', 'date'],
             'estados' => ['array'],
             'estados.*' => ['in:presente,falta,falta_justificada,atraso'],
         ]);
 
-        $data = $request->input('data');
         $estados = $request->input('estados', []);
         $observacoes = $request->input('observacoes', []);
 
         foreach ($estados as $matriculaId => $estado) {
             Presenca::updateOrCreate(
-                ['atribuicao_id' => $atribuicao->id, 'matricula_id' => $matriculaId, 'data' => $data],
+                ['aula_id' => $aula->id, 'matricula_id' => $matriculaId],
                 [
                     'estado' => $estado,
                     'observacao' => $observacoes[$matriculaId] ?? null,
@@ -71,17 +55,15 @@ class PresencaController extends Controller
             );
         }
 
-        return redirect()->route('presencas.folha', ['atribuicao' => $atribuicao->id, 'data' => $data])
+        return redirect()->route('aulas.show', $aula)
             ->with('status', __('Resource updated successfully.'));
     }
 
-    protected function authorizeAtribuicao(Request $request, Atribuicao $atribuicao): void
+    protected function authorizeAula(Request $request, Aula $aula): void
     {
         $user = $request->user();
-        if ($user->hasAnyRole(['director_geral', 'director_pedagogico', 'secretario'])) {
-            return;
-        }
+        if ($user->hasAnyRole(['director_geral', 'director_pedagogico', 'secretario'])) return;
         $prof = $user->professor;
-        abort_unless($prof && $atribuicao->professor_id === $prof->id, 403);
+        abort_unless($prof && $aula->atribuicao->professor_id === $prof->id, 403);
     }
 }

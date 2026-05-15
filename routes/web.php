@@ -3,6 +3,7 @@
 use App\Http\Controllers\AlunoController;
 use App\Http\Controllers\AnoLectivoController;
 use App\Http\Controllers\AtribuicaoController;
+use App\Http\Controllers\AulaController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\BoletimController;
 use App\Http\Controllers\ClasseController;
@@ -52,9 +53,10 @@ Route::middleware('auth')->group(function () {
 
     // Acesso para direcção + professores
     Route::middleware('role:director_geral|director_pedagogico|secretario|professor|professor_assistente')->group(function () {
+        Route::resource('aulas', AulaController::class)->parameters(['aulas' => 'aula']);
+        Route::get('/aulas/{aula}/presencas', [PresencaController::class, 'folha'])->name('presencas.folha');
+        Route::post('/aulas/{aula}/presencas', [PresencaController::class, 'gravar'])->name('presencas.gravar');
         Route::get('/presencas', [PresencaController::class, 'index'])->name('presencas.index');
-        Route::get('/presencas/{atribuicao}/folha', [PresencaController::class, 'folha'])->name('presencas.folha');
-        Route::post('/presencas/{atribuicao}/gravar', [PresencaController::class, 'gravar'])->name('presencas.gravar');
 
         Route::resource('avaliacoes', AvaliacaoController::class)->parameters(['avaliacoes' => 'avaliacao']);
 

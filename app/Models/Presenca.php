@@ -11,17 +11,12 @@ class Presenca extends Model
     use HasFactory;
 
     protected $fillable = [
-        'atribuicao_id', 'matricula_id', 'data', 'estado', 'observacao', 'registado_por',
+        'aula_id', 'matricula_id', 'estado', 'observacao', 'registado_por',
     ];
 
-    protected function casts(): array
+    public function aula(): BelongsTo
     {
-        return ['data' => 'date'];
-    }
-
-    public function atribuicao(): BelongsTo
-    {
-        return $this->belongsTo(Atribuicao::class);
+        return $this->belongsTo(Aula::class);
     }
 
     public function matricula(): BelongsTo
