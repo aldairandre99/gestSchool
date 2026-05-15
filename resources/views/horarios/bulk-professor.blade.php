@@ -1,23 +1,44 @@
+@php
+    use App\Support\TurmaColor;
+    // Mapa de cores por turma + payload por atribuição (para reactividade Alpine)
+    $turmasUnicas = $atribuicoes->pluck('turma')->unique('id')->values();
+    $turmaColors = [];
+    foreach ($turmasUnicas as $t) {
+        $turmaColors[$t->id] = TurmaColor::for($t->id);
+    }
+    $atrPayload = [];
+    foreach ($atribuicoes as $a) {
+        $atrPayload[$a->id] = [
+            'turma_id' => $a->turma_id,
+            'turma_label' => $a->turma->classe->nome . $a->turma->nome,
+            'disciplina' => $a->disciplina->sigla ?: \Illuminate\Support\Str::limit($a->disciplina->nome, 8),
+            'disciplina_full' => $a->disciplina->nome,
+        ];
+    }
+@endphp
 <x-app-layout>
-    <x-page-header :title="__('Schedule editor')">
-        <x-slot name="subtitleSlot">
-            <x-turma-label :turma="$turma" :showAno="true" />
-        </x-slot>
+    <x-page-header :title="__('Teacher schedule editor')" :subtitle="$professor->user->name">
         <x-slot name="actions">
-            <x-btn variant="secondary" :href="route('horarios.turma', $turma)">{{ __('Cancel') }}</x-btn>
+            <x-btn variant="secondary" :href="route('horarios.professor', $professor)">{{ __('Cancel') }}</x-btn>
         </x-slot>
     </x-page-header>
 
     @if($atribuicoes->isEmpty())
         <x-card>
-            <x-empty :title="__('No assignments for this class group')" icon="link" description="{{ __('Create assignments first (Atribuições).') }}">
+            <x-empty :title="__('No assignments for this teacher')" icon="link" description="{{ __('Create assignments first (Atribuições).') }}">
                 <x-btn variant="primary" :href="route('atribuicoes.index')">{{ __('Assignments') }}</x-btn>
             </x-empty>
         </x-card>
     @else
-        <x-card x-data="bulkTurmaEditor({{ \Illuminate\Support\Js::from($initialSlots) }}, {{ \Illuminate\Support\Js::from($diasLectivos) }})">
+        <x-card x-data="bulkProfessorEditor(
+            {{ \Illuminate\Support\Js::from($initialSlots) }},
+            {{ \Illuminate\Support\Js::from($diasLectivos) }},
+            {{ \Illuminate\Support\Js::from($atrPayload) }},
+            {{ \Illuminate\Support\Js::from($turmaColors) }}
+        )">
             <p class="text-sm text-muted mb-4">
-                {{ __('Pick the assignment for each slot. Empty cells stay free. Saving overwrites the previous schedule of this class group.') }}
+                {{ __('Pick an assignment for each slot. Cell color reflects the class group. Saving overwrites this teacher\'s entire schedule.') }}
+                @if($anoActivo)<span class="ms-2 text-xs">· {{ __('Active year') }}: <strong>{{ $anoActivo->codigo }}</strong></span>@endif
             </p>
 
             {{-- Toolbar global --}}
@@ -35,7 +56,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('horarios.bulk-turma.store', $turma) }}">
+            <form method="POST" action="{{ route('horarios.bulk-professor.store', $professor) }}">
                 @csrf
 
                 <div class="overflow-x-auto">
@@ -51,22 +72,14 @@
                                                 <x-lucide-more-vertical class="w-4 h-4" />
                                             </button>
                                             <div x-show="open" x-cloak class="dropdown end-0 mt-6 text-start">
-                                                <button type="button" class="dropdown-item w-full text-start" @click="copyColumn({{ $diaNum }}); open = false">
-                                                    {{ __('Copy column') }}
-                                                </button>
+                                                <button type="button" class="dropdown-item w-full text-start" @click="copyColumn({{ $diaNum }}); open = false">{{ __('Copy column') }}</button>
                                                 <button type="button" class="dropdown-item w-full text-start"
                                                         x-bind:disabled="clipboardType !== 'col'"
                                                         x-bind:class="clipboardType !== 'col' ? 'opacity-50 cursor-not-allowed' : ''"
-                                                        @click="pasteColumn({{ $diaNum }}); open = false">
-                                                    {{ __('Paste column') }}
-                                                </button>
-                                                <button type="button" class="dropdown-item w-full text-start" @click="applyToAllDays({{ $diaNum }}); open = false">
-                                                    {{ __('Apply to all weekdays') }}
-                                                </button>
+                                                        @click="pasteColumn({{ $diaNum }}); open = false">{{ __('Paste column') }}</button>
+                                                <button type="button" class="dropdown-item w-full text-start" @click="applyToAllDays({{ $diaNum }}); open = false">{{ __('Apply to all weekdays') }}</button>
                                                 <div class="dropdown-divider"></div>
-                                                <button type="button" class="dropdown-item w-full text-start text-danger" @click="clearColumn({{ $diaNum }}); open = false">
-                                                    {{ __('Clear column') }}
-                                                </button>
+                                                <button type="button" class="dropdown-item w-full text-start text-danger" @click="clearColumn({{ $diaNum }}); open = false">{{ __('Clear column') }}</button>
                                             </div>
                                         </div>
                                     </th>
@@ -86,31 +99,26 @@
                                                 <x-lucide-more-vertical class="w-4 h-4" />
                                             </button>
                                             <div x-show="open" x-cloak class="dropdown start-0 ms-8 text-start">
-                                                <button type="button" class="dropdown-item w-full text-start" @click="copyRow({{ $tempoNum }}); open = false">
-                                                    {{ __('Copy row') }}
-                                                </button>
+                                                <button type="button" class="dropdown-item w-full text-start" @click="copyRow({{ $tempoNum }}); open = false">{{ __('Copy row') }}</button>
                                                 <button type="button" class="dropdown-item w-full text-start"
                                                         x-bind:disabled="clipboardType !== 'row'"
                                                         x-bind:class="clipboardType !== 'row' ? 'opacity-50 cursor-not-allowed' : ''"
-                                                        @click="pasteRow({{ $tempoNum }}); open = false">
-                                                    {{ __('Paste row') }}
-                                                </button>
+                                                        @click="pasteRow({{ $tempoNum }}); open = false">{{ __('Paste row') }}</button>
                                                 <div class="dropdown-divider"></div>
-                                                <button type="button" class="dropdown-item w-full text-start text-danger" @click="clearRow({{ $tempoNum }}); open = false">
-                                                    {{ __('Clear row') }}
-                                                </button>
+                                                <button type="button" class="dropdown-item w-full text-start text-danger" @click="clearRow({{ $tempoNum }}); open = false">{{ __('Clear row') }}</button>
                                             </div>
                                         </div>
                                     </td>
                                     @foreach($diasLectivos as $diaNum)
-                                        <td class="align-top p-1">
+                                        <td class="align-top p-1"
+                                            x-bind:style="cellStyle(slots[{{ $diaNum }}][{{ $tempoNum }}].atribuicao_id)">
                                             <select name="slots[{{ $diaNum }}][{{ $tempoNum }}][atribuicao_id]"
                                                     x-model="slots[{{ $diaNum }}][{{ $tempoNum }}].atribuicao_id"
                                                     class="form-select text-xs">
                                                 <option value="">—</option>
                                                 @foreach($atribuicoes as $a)
                                                     <option value="{{ $a->id }}">
-                                                        {{ $a->disciplina->sigla ?: \Illuminate\Support\Str::limit($a->disciplina->nome, 8) }} · {{ \Illuminate\Support\Str::limit($a->professor->user->name, 14) }}
+                                                        [{{ $a->turma->classe->nome }}{{ $a->turma->nome }}] {{ $a->disciplina->sigla ?: \Illuminate\Support\Str::limit($a->disciplina->nome, 8) }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -131,7 +139,7 @@
 
                 <div class="flex items-center gap-3 mt-6 pt-6 border-t border-gray-100">
                     <x-btn variant="primary" type="submit" icon="save">{{ __('Save schedule') }}</x-btn>
-                    <x-btn variant="secondary" :href="route('horarios.turma', $turma)">{{ __('Cancel') }}</x-btn>
+                    <x-btn variant="secondary" :href="route('horarios.professor', $professor)">{{ __('Cancel') }}</x-btn>
                     <span class="text-xs text-muted ms-auto">
                         <span x-text="filledCount"></span> / <span x-text="totalCount"></span> {{ __('slots filled') }}
                     </span>
@@ -139,14 +147,47 @@
             </form>
         </x-card>
 
+        {{-- Stats card (reactivo) --}}
+        <x-card x-data="{}" :title="__('Workload summary')">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                <div>
+                    <div class="text-xs text-muted uppercase tracking-wide mb-1">{{ __('Periods per week') }}</div>
+                    <div class="text-3xl font-bold text-navy" x-text="$root.filledCount"></div>
+                </div>
+                <div>
+                    <div class="text-xs text-muted uppercase tracking-wide mb-2">{{ __('By subject') }}</div>
+                    <template x-for="(n, key) in $root.breakdownDisciplina" :key="'d-'+key">
+                        <div class="flex justify-between items-center py-1 border-b border-gray-50 last:border-0">
+                            <span class="text-navy" x-text="key"></span>
+                            <x-badge variant="muted"><span x-text="n + ' ' + '{{ __('periods') }}'"></span></x-badge>
+                        </div>
+                    </template>
+                    <p x-show="Object.keys($root.breakdownDisciplina).length === 0" class="text-muted italic text-xs">{{ __('No periods yet.') }}</p>
+                </div>
+                <div>
+                    <div class="text-xs text-muted uppercase tracking-wide mb-2">{{ __('By class group') }}</div>
+                    <template x-for="(info, tid) in $root.breakdownTurma" :key="'t-'+tid">
+                        <div class="flex justify-between items-center py-1 border-b border-gray-50 last:border-0">
+                            <span class="inline-flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-sm" x-bind:style="`background:${info.color}; border:1px solid ${info.border}`"></span>
+                                <span class="text-navy" x-text="info.label"></span>
+                            </span>
+                            <x-badge variant="muted"><span x-text="info.count + ' ' + '{{ __('periods') }}'"></span></x-badge>
+                        </div>
+                    </template>
+                    <p x-show="Object.keys($root.breakdownTurma).length === 0" class="text-muted italic text-xs">{{ __('No periods yet.') }}</p>
+                </div>
+            </div>
+        </x-card>
+
         <x-card :title="__('Legend')">
-            <p class="text-sm text-muted mb-3">{{ __('Available assignments for this class group:') }}</p>
+            <p class="text-sm text-muted mb-3">{{ __('Available assignments for this teacher:') }}</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                 @foreach($atribuicoes as $a)
-                    <div class="flex items-center gap-2">
-                        <x-badge variant="info">{{ $a->disciplina->sigla ?: '—' }}</x-badge>
+                    @php($c = $turmaColors[$a->turma_id])
+                    <div class="flex items-center gap-2 p-1 rounded" style="background: {{ $c['bg'] }}; border-left: 3px solid {{ $c['border'] }}">
+                        <x-badge variant="info">{{ $a->turma->classe->nome }}{{ $a->turma->nome }}</x-badge>
                         <span class="text-navy">{{ $a->disciplina->nome }}</span>
-                        <span class="text-muted text-xs">· {{ $a->professor->user->name }}</span>
                     </div>
                 @endforeach
             </div>
@@ -154,15 +195,17 @@
     @endif
 
     <script>
-        function bulkTurmaEditor(initial, diasLectivos) {
+        function bulkProfessorEditor(initial, diasLectivos, atrPayload, turmaColors) {
             const CLIPBOARD_KEY = 'gestschool_horario_clipboard';
-            const CLIPBOARD_TTL_MS = 24 * 60 * 60 * 1000;   // 24h
+            const CLIPBOARD_TTL_MS = 24 * 60 * 60 * 1000;
 
             return {
                 slots: initial,
                 diasLectivos: diasLectivos,
+                atrPayload: atrPayload,
+                turmaColors: turmaColors,
                 clipboard: null,
-                clipboardType: null,        // 'col' | 'row' | null
+                clipboardType: null,
                 clipboardOriginLabel: '',
 
                 init() {
@@ -182,6 +225,15 @@
                     }
                 },
 
+                cellStyle(atrId) {
+                    if (!atrId) return '';
+                    const info = this.atrPayload[atrId];
+                    if (!info) return '';
+                    const c = this.turmaColors[info.turma_id];
+                    if (!c) return '';
+                    return `background:${c.bg}; border-left: 3px solid ${c.border}`;
+                },
+
                 get filledCount() {
                     let n = 0;
                     for (const dia of this.diasLectivos) {
@@ -196,6 +248,38 @@
                     if (! this.diasLectivos.length) return 0;
                     const d = this.diasLectivos[0];
                     return this.diasLectivos.length * Object.keys(this.slots[d] || {}).length;
+                },
+
+                get breakdownDisciplina() {
+                    const out = {};
+                    for (const dia of this.diasLectivos) {
+                        for (const tempo in this.slots[dia]) {
+                            const id = this.slots[dia][tempo].atribuicao_id;
+                            if (!id) continue;
+                            const info = this.atrPayload[id];
+                            if (!info) continue;
+                            out[info.disciplina_full] = (out[info.disciplina_full] || 0) + 1;
+                        }
+                    }
+                    return out;
+                },
+
+                get breakdownTurma() {
+                    const out = {};
+                    for (const dia of this.diasLectivos) {
+                        for (const tempo in this.slots[dia]) {
+                            const id = this.slots[dia][tempo].atribuicao_id;
+                            if (!id) continue;
+                            const info = this.atrPayload[id];
+                            if (!info) continue;
+                            const c = this.turmaColors[info.turma_id] || {bg:'#eee', border:'#ccc'};
+                            if (!out[info.turma_id]) {
+                                out[info.turma_id] = { label: info.turma_label, color: c.bg, border: c.border, count: 0 };
+                            }
+                            out[info.turma_id].count++;
+                        }
+                    }
+                    return out;
                 },
 
                 get clipboardLabel() {

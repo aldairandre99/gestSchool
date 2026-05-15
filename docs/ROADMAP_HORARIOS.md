@@ -9,8 +9,8 @@
 
 | # | Feature | Estado | Esforço | Valor | Risco |
 |---|---|---|---|---|---|
-| 1 | [Copy-paste de slots](#fase-1--copy-paste-de-slots) | ⬜ Pendente | 🟢 1-2h | 🟢 Alto | 🟢 Baixo |
-| 2 | [Bulk editor por professor](#fase-2--bulk-editor-por-professor) | ⬜ Pendente | 🟡 2-3h | 🟡 Médio | 🟡 Médio |
+| 1 | [Copy-paste de slots](#fase-1--copy-paste-de-slots) | ✅ Concluída (2026-05-15) | 🟢 1-2h | 🟢 Alto | 🟢 Baixo |
+| 2 | [Bulk editor por professor](#fase-2--bulk-editor-por-professor) | 🟦 Em curso | 🟡 2-3h | 🟡 Médio | 🟡 Médio |
 | 3 | [Drag & drop](#fase-3--drag--drop-de-slots) | ⬜ Pendente | 🔴 4-6h | 🟡 Médio | 🟡 Médio |
 | 4 | [Sugestões IA / lacunas](#fase-4--sugestões-automáticas-ia--heurísticas) | ⬜ Pendente | 🔴 4-8h | 🟢 Alto | 🔴 Alto |
 
@@ -62,13 +62,13 @@ No editor bulk da turma, permitir **copiar uma linha (tempo) ou coluna (dia) int
 - Toolbar global: "Limpar tudo" · "Restaurar do servidor" · "Aplicar mesmo padrão à semana toda"
 
 ### Tarefas
-- [ ] Adicionar `x-data="bulkTurmaEditor()"` ao card principal de `bulk-turma.blade.php`
-- [ ] Cada select com `x-bind:value="slots[dia][tempo].atribuicao_id"` (state em Alpine)
-- [ ] Botões `Copiar` / `Colar` / `Limpar` por dia e por tempo
-- [ ] Persistir clipboard em `localStorage`
-- [ ] Botão "Aplicar a toda a semana" — copia a coluna actual para todos os dias lectivos
-- [ ] Confirmar antes de "Limpar tudo"
-- [ ] i18n das novas strings
+- [x] Adicionar `x-data="bulkTurmaEditor()"` ao card principal de `bulk-turma.blade.php`
+- [x] Cada select com `x-model="slots[dia][tempo].atribuicao_id"` (state em Alpine)
+- [x] Botões `Copiar` / `Colar` / `Limpar` por dia e por tempo
+- [x] Persistir clipboard em `localStorage` com TTL 24h
+- [x] Botão "Aplicar a toda a semana" — copia a coluna actual para todos os dias lectivos
+- [x] Confirmar antes de "Limpar tudo"
+- [x] i18n das novas strings (16 chaves PT/EN)
 
 ### Critérios de aceitação
 - ✓ Copiar segunda + colar em quarta → 8 selects e 8 inputs de sala preenchidos correctamente
@@ -81,7 +81,23 @@ No editor bulk da turma, permitir **copiar uma linha (tempo) ou coluna (dia) int
 - Conflitos só validados no servidor → mostrar toast de aviso *após* paste se duas células do mesmo dia ficarem com mesmo professor
 
 ### Notas de implementação
-_(preencher durante/após implementação — decisões que mudaram, problemas encontrados, lições aprendidas)_
+
+**Decisões:**
+- Optou-se por `x-model` em vez de `x-bind:value`+`@change` — Alpine sincroniza automaticamente e mantém o `name=` para o submit funcionar igual.
+- `$initialSlots` é pré-inicializado **no controller** com todos os pares dia/tempo (mesmo vazios) — evita ter de criar propriedades dinamicamente no Alpine.
+- Clipboard usa `JSON.stringify` para deep copy (suficiente; objectos são planos).
+- TTL do clipboard é 24h. Após expirar, é apagado silenciosamente no `init()`.
+
+**Componentes adicionados:**
+- 2 dropdowns por célula de cabeçalho (coluna e linha) com Alpine `x-data="{ open: false }"` local
+- 1 toolbar global no topo do card (status do clipboard + "Limpar tudo")
+- 1 contador "X / Y slots preenchidos" no rodapé
+
+**Riscos não materializados:**
+- Conflitos após paste — decidiu-se **não** validar client-side; o servidor já valida no submit. UX simples > aviso preventivo.
+
+**Não implementado (deferido):**
+- Aviso visual quando 2 células do mesmo dia ficam com mesmo professor após paste (cosmético, esperar feedback)
 
 ---
 
@@ -297,6 +313,17 @@ Decidir qual fase começar. Recomendação: **Fase 1 (Copy-paste)** — quick wi
 
 > Cada entrada: **DATA — TÍTULO**, seguido de bullets curtos.
 > Adicionar no topo (entrada mais recente em cima).
+
+### 2026-05-15 — Fase 1 (Copy-paste) ✅ Concluída
+- **Alpine state** completo no editor bulk de turma — todos os slots reactivos
+- **Acções por coluna** (cabeçalho dos dias): Copiar · Colar · Aplicar a todos os dias · Limpar
+- **Acções por linha** (cabeçalho dos tempos): Copiar · Colar · Limpar
+- **Toolbar global**: estado do clipboard + "Limpar tudo" (com confirmação)
+- **Clipboard persistente** em `localStorage.gestschool_horario_clipboard` com TTL 24h
+- **Contador** ao vivo "X / Y slots preenchidos"
+- 16 chaves novas em `pt.json` e `en.json`
+- Smoke test: `/horarios/turma/1/bulk` retorna 200, todas as classes/acções renderizam, x-model bindings correctos
+- Próximo: Fase 2 (Bulk editor por professor)
 
 ### 2026-05-15 — Roadmap criado
 - Documento inicial com 4 fases planeadas
