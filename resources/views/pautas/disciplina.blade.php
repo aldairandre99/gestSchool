@@ -1,10 +1,10 @@
 <x-app-layout>
-    <x-page-header
-        :title="__('Gradebook') . ' — ' . __('by subject')"
-        :subtitle="$atribuicao->turma->classe->nome . ' ' . $atribuicao->turma->nome . ($atribuicao->turma->curso ? ' · ' . $atribuicao->turma->curso->sigla : '') . ' · ' . $atribuicao->disciplina->nome . ' · ' . $trimestre->numero . 'º ' . __('Term')">
+    <x-page-header :title="__('Gradebook') . ' — ' . __('by subject')">
+        <x-slot name="subtitleSlot">
+            <x-turma-label :turma="$atribuicao->turma" /> · {{ $atribuicao->disciplina->nome }} · {{ $trimestre->numero }}º {{ __('Term') }}
+        </x-slot>
         <x-slot name="actions">
             <x-btn variant="danger" icon="file-down" :href="route('pautas.disciplina.pdf', ['atribuicao' => $atribuicao, 'trimestre' => $trimestre])">{{ __('Export PDF') }}</x-btn>
-            <x-btn variant="primary" icon="printer" href="javascript:print()">{{ __('Print') }}</x-btn>
             <x-btn variant="secondary" :href="route('pautas.index')">{{ __('Back') }}</x-btn>
         </x-slot>
     </x-page-header>

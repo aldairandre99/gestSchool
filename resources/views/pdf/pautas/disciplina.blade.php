@@ -1,5 +1,5 @@
 @php
-    $titulo = $atribuicao->turma->classe->nome . ' ' . $atribuicao->turma->nome . ' · ' . $atribuicao->disciplina->nome;
+    $titulo = $atribuicao->turma->nome_completo . ' · ' . $atribuicao->disciplina->nome;
     $subtitulo = __('Gradebook') . ' — ' . __('by subject') . ' · ' . $trimestre->numero . 'º ' . __('Term');
 @endphp
 <x-pdf-layout :titulo="$titulo" :subtitulo="$subtitulo">

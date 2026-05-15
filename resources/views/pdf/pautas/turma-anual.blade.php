@@ -1,5 +1,5 @@
 @php
-    $titulo = $turma->classe->nome . ' ' . $turma->nome . ($turma->curso ? ' (' . $turma->curso->sigla . ')' : '');
+    $titulo = $turma->nome_completo;
     $subtitulo = __('Annual gradebook') . ' · ' . $turma->anoLectivo->codigo;
 @endphp
 <x-pdf-layout :titulo="$titulo" :subtitulo="$subtitulo">

@@ -19,7 +19,7 @@
             @forelse($avaliacoes as $av)
                 <tr>
                     <td class="font-semibold text-navy">{{ $av->titulo }}</td>
-                    <td>{{ $av->atribuicao->turma->classe->nome }} {{ $av->atribuicao->turma->nome }}</td>
+                    <td><x-turma-label :turma="$av->atribuicao->turma" /></td>
                     <td>{{ $av->atribuicao->disciplina->nome }}</td>
                     <td>{{ $av->trimestre->numero }}º</td>
                     <td><x-badge :variant="$tipoCor[$av->tipo] ?? 'muted'">{{ str_replace('_', ' ', ucfirst($av->tipo)) }}</x-badge></td>

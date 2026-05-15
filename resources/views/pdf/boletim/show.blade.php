@@ -6,8 +6,7 @@
     <div class="info-row">
         <strong>{{ __('Student') }}:</strong> {{ $matricula->aluno->user->name }}
         · <strong>{{ __('Enrollment Number') }}:</strong> {{ $matricula->numero_matricula }}
-        · <strong>{{ __('Class Groups') }}:</strong> {{ $matricula->turma->classe->nome }} {{ $matricula->turma->nome }}
-        @if($matricula->turma->curso) · <strong>{{ __('Course') }}:</strong> {{ $matricula->turma->curso->sigla }} @endif
+        · <strong>{{ __('Class Groups') }}:</strong> {{ $matricula->turma->nome_completo }}
         · <strong>{{ __('School Year') }}:</strong> {{ $matricula->anoLectivo->codigo }}
     </div>
 

@@ -12,7 +12,9 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DisciplinaController;
 use App\Http\Controllers\EncarregadoController;
+use App\Http\Controllers\EventoController;
 use App\Http\Controllers\FuncionarioController;
+use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MatriculaController;
 use App\Http\Controllers\NotaController;
@@ -78,6 +80,36 @@ Route::middleware('auth')->group(function () {
         Route::get('/pautas/turma/{turma}/situacao/pdf', [PautaController::class, 'situacaoPdf'])->name('pautas.situacao.pdf');
 
         Route::get('/pautas/{atribuicao}/{trimestre}', [PautaController::class, 'disciplina'])->name('pautas.show');
+
+        // Horários — consulta para todos os roles de operação, CRUD restrito a direcção
+        Route::get('/horarios', [HorarioController::class, 'index'])->name('horarios.index');
+        Route::get('/horarios/turma/{turma}', [HorarioController::class, 'turma'])->name('horarios.turma');
+        Route::get('/horarios/turma/{turma}/pdf', [HorarioController::class, 'turmaPdf'])->name('horarios.turma.pdf');
+        Route::get('/horarios/professor/{professor}', [HorarioController::class, 'professor'])->name('horarios.professor');
+        Route::get('/horarios/professor/{professor}/pdf', [HorarioController::class, 'professorPdf'])->name('horarios.professor.pdf');
+    });
+
+    // CRUD horários só para direcção
+    Route::middleware('role:director_geral|director_pedagogico|secretario')->group(function () {
+        Route::get('/horarios/create', [HorarioController::class, 'create'])->name('horarios.create');
+        Route::post('/horarios', [HorarioController::class, 'store'])->name('horarios.store');
+        Route::get('/horarios/{horario}/edit', [HorarioController::class, 'edit'])->name('horarios.edit');
+        Route::put('/horarios/{horario}', [HorarioController::class, 'update'])->name('horarios.update');
+        Route::delete('/horarios/{horario}', [HorarioController::class, 'destroy'])->name('horarios.destroy');
+    });
+
+    // Calendário escolar — todos os autenticados visualizam
+    Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
+    Route::get('/eventos/pdf', [EventoController::class, 'pdf'])->name('eventos.pdf');
+    Route::get('/eventos/{evento}', [EventoController::class, 'show'])->name('eventos.show');
+
+    // Gestão de eventos só para direcção
+    Route::middleware('role:director_geral|director_pedagogico|secretario')->group(function () {
+        Route::get('/eventos/create/new', [EventoController::class, 'create'])->name('eventos.create');
+        Route::post('/eventos', [EventoController::class, 'store'])->name('eventos.store');
+        Route::get('/eventos/{evento}/edit', [EventoController::class, 'edit'])->name('eventos.edit');
+        Route::put('/eventos/{evento}', [EventoController::class, 'update'])->name('eventos.update');
+        Route::delete('/eventos/{evento}', [EventoController::class, 'destroy'])->name('eventos.destroy');
     });
 
     // Boletim acessível a direcção, professores e encarregado do aluno

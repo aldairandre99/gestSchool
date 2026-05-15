@@ -46,4 +46,9 @@ class Atribuicao extends Model
     {
         return $this->hasMany(Avaliacao::class);
     }
+
+    public function horarios(): HasMany
+    {
+        return $this->hasMany(Horario::class);
+    }
 }

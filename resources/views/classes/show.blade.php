@@ -44,10 +44,7 @@
     <x-card :title="__('Class Groups')">
         <ul class="space-y-1 text-sm">
             @forelse($classe->turmas as $t)
-                <li><a href="{{ route('turmas.show', $t) }}" class="text-primary hover:underline">{{ $classe->nome }} {{ $t->nome }}</a>
-                    @if($t->curso)<x-badge variant="info">{{ $t->curso->sigla }}</x-badge>@endif
-                    <span class="text-xs text-muted ms-2">{{ $t->anoLectivo->codigo }}</span>
-                </li>
+                <li><a href="{{ route('turmas.show', $t) }}" class="hover:underline"><x-turma-label :turma="$t" :showAno="true" /></a></li>
             @empty
                 <li class="text-muted">{{ __('No records found.') }}</li>
             @endforelse

@@ -50,7 +50,7 @@
                 <tr>
                     <td>{{ $a->data->format('d/m/Y') }}</td>
                     <td class="text-xs text-muted">{{ $a->hora_inicio ? \Carbon\Carbon::parse($a->hora_inicio)->format('H:i') : '—' }}@if($a->hora_fim) – {{ \Carbon\Carbon::parse($a->hora_fim)->format('H:i') }}@endif</td>
-                    <td class="font-semibold text-navy">{{ $a->atribuicao->turma->classe->nome }} {{ $a->atribuicao->turma->nome }}</td>
+                    <td><x-turma-label :turma="$a->atribuicao->turma" /></td>
                     <td>{{ $a->atribuicao->disciplina->nome }}</td>
                     <td class="text-muted">{{ $a->numero ?? '—' }}</td>
                     <td class="text-xs text-muted">{{ \Illuminate\Support\Str::limit($a->sumario, 60) ?: '—' }}</td>

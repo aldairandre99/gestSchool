@@ -3,7 +3,7 @@
     <div class="sm:col-span-2">
         <x-select name="atribuicao_id" :label="__('Class Groups') . ' / ' . __('Subjects List')" required>
             @foreach($atribuicoes as $a)
-                <option value="{{ $a->id }}" @selected(old('atribuicao_id', $avaliacao?->atribuicao_id) == $a->id)>{{ $a->turma->classe->nome }} {{ $a->turma->nome }} — {{ $a->disciplina->nome }}</option>
+                <option value="{{ $a->id }}" @selected(old('atribuicao_id', $avaliacao?->atribuicao_id) == $a->id)>{{ $a->turma->display_label }} — {{ $a->disciplina->nome }}</option>
             @endforeach
         </x-select>
     </div>

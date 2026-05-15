@@ -10,6 +10,10 @@
             <x-lucide-menu class="w-5 h-5" />
         </button>
 
+        <button type="button" class="hidden lg:inline-flex sidebar-toggle-btn" data-sb-toggle-collapse aria-label="{{ __('Toggle sidebar') }}" title="{{ __('Toggle sidebar') }} (Ctrl+B)">
+            <x-lucide-panel-left class="sidebar-toggle-icon" />
+        </button>
+
         <div class="hidden md:flex items-center gap-2 text-sm text-muted">
             <x-lucide-search class="w-4 h-4" />
             <span class="hidden xl:inline">Pesquisar…</span>

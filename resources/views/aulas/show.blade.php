@@ -5,8 +5,10 @@
     @php($faltasJust = $aula->presencas->where('estado', 'falta_justificada')->count())
     @php($atrasos = $aula->presencas->where('estado', 'atraso')->count())
 
-    <x-page-header :title="'Aula — ' . $aula->data->format('d/m/Y')"
-                   :subtitle="$aula->atribuicao->turma->classe->nome . ' ' . $aula->atribuicao->turma->nome . ' · ' . $aula->atribuicao->disciplina->nome">
+    <x-page-header :title="__('Lesson') . ' — ' . $aula->data->format('d/m/Y')">
+        <x-slot name="subtitleSlot">
+            <x-turma-label :turma="$aula->atribuicao->turma" /> · {{ $aula->atribuicao->disciplina->nome }}
+        </x-slot>
         <x-slot name="actions">
             <x-btn variant="primary" icon="clipboard-check" :href="route('presencas.folha', $aula)">{{ __('Mark Attendance') }}</x-btn>
             <x-btn variant="secondary" :href="route('aulas.edit', $aula)">{{ __('Edit') }}</x-btn>

@@ -48,7 +48,20 @@ class Turma extends Model
     public function getNomeCompletoAttribute(): string
     {
         $base = ($this->classe?->nome ?? '') . ' ' . $this->nome;
-        if ($this->curso) $base .= ' (' . $this->curso->sigla . ')';
+        if ($this->curso) $base .= ' · ' . $this->curso->sigla;
+        return $base;
+    }
+
+    /** Versão para selects/options — sem badges, com ano lectivo entre parêntesis. */
+    public function getDisplayLabelAttribute(): string
+    {
+        $base = $this->nome_completo;
+        if (! $this->curso && ($this->classe?->nivel === 'ensino_base')) {
+            $base .= ' · ' . __('base');
+        }
+        if ($this->anoLectivo) {
+            $base .= ' (' . $this->anoLectivo->codigo . ')';
+        }
         return $base;
     }
 }
