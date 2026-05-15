@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Disciplina extends Model
@@ -18,9 +17,9 @@ class Disciplina extends Model
         return ['activa' => 'boolean'];
     }
 
-    public function classes(): BelongsToMany
+    public function curriculo(): HasMany
     {
-        return $this->belongsToMany(Classe::class, 'classe_disciplina')->withTimestamps();
+        return $this->hasMany(Curriculo::class);
     }
 
     public function atribuicoes(): HasMany

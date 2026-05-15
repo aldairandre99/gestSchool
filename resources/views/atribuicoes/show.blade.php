@@ -1,14 +1,17 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800">{{ __('Assignment') }}</h2></x-slot>
-    <div class="py-8"><div class="max-w-3xl mx-auto sm:px-6 lg:px-8"><x-flash />
-        <div class="bg-white shadow rounded-lg p-6 text-sm">
-            <dl class="grid grid-cols-2 gap-3">
-                <div><dt class="text-gray-500">{{ __('Teacher') }}</dt><dd class="font-medium">{{ $atribuicao->professor->user->name }}</dd></div>
-                <div><dt class="text-gray-500">{{ __('Class Groups') }}</dt><dd>{{ $atribuicao->turma->classe->nome }} {{ $atribuicao->turma->nome }}</dd></div>
-                <div><dt class="text-gray-500">{{ __('Subjects List') }}</dt><dd>{{ $atribuicao->disciplina->nome }}</dd></div>
-                <div><dt class="text-gray-500">{{ __('School Year') }}</dt><dd>{{ $atribuicao->anoLectivo->codigo }}</dd></div>
-            </dl>
-            <div class="mt-6 flex gap-3"><a href="{{ route('atribuicoes.edit', $atribuicao) }}" class="px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('Edit') }}</a><a href="{{ route('atribuicoes.index') }}" class="px-4 py-2 bg-gray-100 text-sm rounded">{{ __('Back') }}</a></div>
-        </div>
-    </div></div>
+    <x-page-header :title="__('Assignment')">
+        <x-slot name="actions">
+            <x-btn variant="primary" icon="pencil" :href="route('atribuicoes.edit', $atribuicao)">{{ __('Edit') }}</x-btn>
+            <x-btn variant="secondary" :href="route('atribuicoes.index')">{{ __('Back') }}</x-btn>
+        </x-slot>
+    </x-page-header>
+
+    <x-card>
+        <dl class="grid grid-cols-2 gap-6 text-sm">
+            <div><dt class="form-label">{{ __('Teacher') }}</dt><dd class="text-navy font-semibold">{{ $atribuicao->professor->user->name }}</dd></div>
+            <div><dt class="form-label">{{ __('Class Groups') }}</dt><dd>{{ $atribuicao->turma->classe->nome }} {{ $atribuicao->turma->nome }}</dd></div>
+            <div><dt class="form-label">{{ __('Subjects List') }}</dt><dd>{{ $atribuicao->disciplina->nome }}</dd></div>
+            <div><dt class="form-label">{{ __('School Year') }}</dt><dd>{{ $atribuicao->anoLectivo->codigo }}</dd></div>
+        </dl>
+    </x-card>
 </x-app-layout>

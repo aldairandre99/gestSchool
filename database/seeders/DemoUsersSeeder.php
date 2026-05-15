@@ -82,9 +82,7 @@ class DemoUsersSeeder extends Seeder
         $alunoUser->syncRoles([]);
         $aluno = Aluno::firstOrCreate(['user_id' => $alunoUser->id], [
             'numero_processo' => 'AL-2026-0001',
-            'classe' => '10ª',
-            'turma' => 'A',
-            'ano_lectivo' => '2026/2027',
+            'data_nascimento' => '2010-04-12',
             'sexo' => 'M',
             'nacionalidade' => 'Angolana',
             'naturalidade' => 'Luanda',

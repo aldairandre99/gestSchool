@@ -1,19 +1,35 @@
 @php($classe = $classe ?? null)
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div><x-input-label for="nome" :value="__('Name')" /><x-text-input id="nome" name="nome" class="mt-1 block w-full" :value="old('nome', $classe?->nome)" required /></div>
-    <div><x-input-label for="ordem" :value="__('Order')" /><x-text-input id="ordem" name="ordem" type="number" class="mt-1 block w-full" :value="old('ordem', $classe?->ordem ?? 0)" /></div>
-    <div><x-input-label for="nivel" :value="__('Level')" /><x-text-input id="nivel" name="nivel" class="mt-1 block w-full" :value="old('nivel', $classe?->nivel)" /></div>
-</div>
-<div class="mt-4">
-    <x-input-label :value="__('Subjects')" />
-    <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-3 border rounded bg-gray-50">
-        @php($selected = collect(old('disciplinas', $classe?->disciplinas->pluck('id')->all() ?? [])))
-        @foreach($disciplinas as $d)
-            <label class="inline-flex items-center text-sm">
-                <input type="checkbox" name="disciplinas[]" value="{{ $d->id }}" {{ $selected->contains($d->id) ? 'checked' : '' }} class="rounded border-gray-300">
-                <span class="ms-2">{{ $d->nome }}</span>
-            </label>
-        @endforeach
+<div x-data="{ nivel: '{{ old('nivel', $classe?->nivel ?? 'ensino_base') }}' }">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <x-input name="nome" :label="__('Name')" :value="$classe?->nome" required />
+        <div class="form-group">
+            <label class="form-label">{{ __('Level') }} <span class="text-danger">*</span></label>
+            <select name="nivel" x-model="nivel" required class="form-select">
+                <option value="ensino_base">{{ __('Basic Education') }}</option>
+                <option value="ensino_medio">{{ __('Secondary Education') }}</option>
+            </select>
+        </div>
+        <x-input name="ordem" :label="__('Order')" type="number" :value="$classe?->ordem ?? 0" />
+    </div>
+
+    <div x-show="nivel === 'ensino_base'" class="form-group">
+        <label class="form-label">{{ __('Compulsory subjects (basic education)') }}</label>
+        <p class="form-help mb-2">{{ __('All students of this class will have these subjects.') }}</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-4 border border-gray-100 rounded bg-gray-50">
+            @php($selected = collect(old('disciplinas', $classe?->disciplinas->pluck('id')->all() ?? [])))
+            @foreach($disciplinas as $d)
+                <x-checkbox name="disciplinas[]" :value="$d->id" :checked="$selected->contains($d->id)" :hiddenFallback="false" :label="$d->nome" />
+            @endforeach
+        </div>
+    </div>
+
+    <div x-show="nivel === 'ensino_medio'" x-cloak class="alert alert-info">
+        Para classes do ensino médio as disciplinas variam por curso.
+        Configure-as via <a href="{{ route('cursos.index') }}" class="font-semibold underline">Cursos</a>.
     </div>
 </div>
-<div class="mt-6 flex gap-3"><button class="px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('Save') }}</button><a href="{{ route('classes.index') }}" class="px-4 py-2 bg-gray-100 text-sm rounded">{{ __('Cancel') }}</a></div>
+
+<div class="flex items-center gap-3 mt-6">
+    <x-btn variant="primary" type="submit">{{ __('Save') }}</x-btn>
+    <x-btn variant="secondary" :href="route('classes.index')">{{ __('Cancel') }}</x-btn>
+</div>

@@ -8,6 +8,7 @@ use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\BoletimController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\ComunicadoController;
+use App\Http\Controllers\CursoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DisciplinaController;
 use App\Http\Controllers\EncarregadoController;
@@ -44,6 +45,7 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('anos', AnoLectivoController::class)->parameters(['anos' => 'ano']);
         Route::resource('classes', ClasseController::class)->parameters(['classes' => 'classe']);
+        Route::resource('cursos', CursoController::class)->parameters(['cursos' => 'curso']);
         Route::resource('turmas', TurmaController::class)->parameters(['turmas' => 'turma']);
         Route::resource('disciplinas', DisciplinaController::class)->parameters(['disciplinas' => 'disciplina']);
         Route::resource('matriculas', MatriculaController::class)->parameters(['matriculas' => 'matricula']);

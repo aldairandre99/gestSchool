@@ -1,3 +1,291 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================================
+   GestSchool Design System
+   Inspirado no template BootstrapDash "Connect Plus"
+   Tokens em tailwind.config.js. Classes semânticas abaixo.
+   ============================================================ */
+
+@layer base {
+    html {
+        font-family: 'Nunito', system-ui, sans-serif;
+    }
+    body {
+        @apply bg-white text-body antialiased;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        @apply text-navy font-bold;
+    }
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.75rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+    h6 { font-size: 1rem; font-weight: 600; }
+
+    a { @apply text-primary; }
+    a:hover { @apply text-primary-600; }
+}
+
+@layer components {
+    /* ---------- LAYOUT SHELL ---------- */
+    .app-shell {
+        @apply min-h-screen bg-white;
+    }
+    .app-main {
+        @apply ms-0 lg:ms-sidebar pt-navbar min-h-screen;
+    }
+    .app-content {
+        @apply px-4 sm:px-6 lg:px-8 py-8;
+    }
+
+    /* ---------- NAVBAR ---------- */
+    .navbar {
+        @apply fixed top-0 inset-x-0 z-30 h-navbar bg-white border-b border-gray-200 flex items-stretch;
+    }
+    .navbar-brand {
+        @apply hidden lg:flex items-center justify-center w-sidebar h-navbar bg-sidebar text-white;
+    }
+    .navbar-brand-text {
+        @apply text-lg font-bold tracking-wide;
+    }
+    .navbar-inner {
+        @apply flex-1 flex items-center justify-between px-4 sm:px-6;
+    }
+    .navbar-search {
+        @apply hidden md:flex items-center gap-2 text-sm text-muted;
+    }
+    .navbar-actions {
+        @apply flex items-center gap-3;
+    }
+    .navbar-icon-btn {
+        @apply w-9 h-9 inline-flex items-center justify-center rounded-full text-muted hover:text-navy hover:bg-gray-100 transition;
+    }
+
+    /* ---------- SIDEBAR ---------- */
+    .sidebar {
+        @apply fixed top-navbar bottom-0 start-0 w-sidebar bg-sidebar text-sidebar-text overflow-y-auto z-20;
+        @apply hidden lg:block;
+    }
+    .sidebar-section {
+        @apply px-6 pt-6 pb-2 text-[10px] uppercase tracking-widest text-sidebar-text/40 font-semibold;
+    }
+    .sidebar-link {
+        @apply flex items-center gap-3 px-6 py-3 text-sm font-medium text-sidebar-text/80 border-l-4 border-transparent hover:bg-sidebar-hover hover:text-white transition;
+    }
+    .sidebar-link.is-active {
+        @apply text-success border-success bg-sidebar-hover;
+    }
+    .sidebar-link .sidebar-icon {
+        @apply w-5 h-5 shrink-0;
+    }
+    .sidebar-group {
+        @apply mt-1;
+    }
+    .sidebar-group-toggle {
+        @apply flex items-center justify-between gap-3 px-6 py-3 w-full text-sm font-medium text-sidebar-text/80 hover:bg-sidebar-hover hover:text-white transition cursor-pointer;
+    }
+    .sidebar-group-items {
+        @apply bg-black/20;
+    }
+    .sidebar-group .sidebar-link {
+        @apply pl-14 py-2 text-xs;
+    }
+
+    /* ---------- CARD ---------- */
+    .card {
+        @apply bg-white border-0 p-6 sm:p-8 lg:p-10 mb-6;
+    }
+    .card-compact {
+        @apply p-4 sm:p-6;
+    }
+    .card-title {
+        @apply text-navy text-lg font-semibold uppercase tracking-wide mb-6;
+    }
+    .card-subtitle {
+        @apply text-muted text-sm mb-4;
+    }
+    .card-section {
+        @apply border-t border-gray-100 pt-6 mt-6 first:border-0 first:pt-0 first:mt-0;
+    }
+
+    /* ---------- BUTTONS ---------- */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-btn transition;
+        @apply focus:outline-none focus:ring-2 focus:ring-offset-1;
+    }
+    .btn-sm { @apply px-3 py-1.5 text-xs; }
+    .btn-lg { @apply px-6 py-3 text-base; }
+    .btn-icon { @apply px-2 py-2; }
+
+    .btn-primary    { @apply bg-primary text-white hover:bg-primary-600 focus:ring-primary/40; }
+    .btn-success    { @apply bg-success text-white hover:brightness-95 focus:ring-success/40; }
+    .btn-danger     { @apply bg-danger text-white hover:brightness-95 focus:ring-danger/40; }
+    .btn-warning    { @apply bg-warning text-white hover:brightness-95 focus:ring-warning/40; }
+    .btn-info       { @apply bg-info text-white hover:brightness-95 focus:ring-info/40; }
+    .btn-dark       { @apply bg-navy text-white hover:bg-navy/90 focus:ring-navy/40; }
+    .btn-secondary  { @apply bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-300; }
+    .btn-ghost      { @apply text-muted hover:text-navy hover:bg-gray-100; }
+
+    .btn-outline-primary { @apply border border-primary text-primary hover:bg-primary hover:text-white; }
+    .btn-outline-danger  { @apply border border-danger text-danger hover:bg-danger hover:text-white; }
+    .btn-outline-success { @apply border border-success text-success hover:bg-success hover:text-white; }
+
+    .btn-link {
+        @apply inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary-600 transition;
+    }
+    .btn-link-danger { @apply text-danger hover:text-danger/80; }
+    .btn-link-muted  { @apply text-muted hover:text-navy; }
+
+    /* ---------- BADGES ---------- */
+    .badge {
+        @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold;
+    }
+    .badge-primary  { @apply bg-primary-soft text-primary; }
+    .badge-success  { @apply bg-success-soft text-success; }
+    .badge-danger   { @apply bg-danger-soft text-danger; }
+    .badge-warning  { @apply bg-warning-soft text-yellow-800; }
+    .badge-info     { @apply bg-info-soft text-info; }
+    .badge-muted    { @apply bg-gray-100 text-gray-700; }
+    .badge-dark     { @apply bg-navy text-white; }
+
+    /* ---------- FORMS ---------- */
+    .form-label {
+        @apply block text-xs font-semibold text-navy uppercase tracking-wide mb-1;
+    }
+    .form-input,
+    .form-select,
+    .form-textarea {
+        @apply block w-full border border-gray-300 rounded-input bg-white text-sm text-navy;
+        @apply px-3.5 py-2.5;
+        @apply focus:border-primary focus:ring-2 focus:ring-primary/20;
+    }
+    .form-textarea { @apply min-h-[80px]; }
+    .form-help {
+        @apply block text-xs text-muted mt-1;
+    }
+    .form-error {
+        @apply block text-xs text-danger mt-1;
+    }
+    .form-group { @apply mb-4; }
+
+    .form-check {
+        @apply inline-flex items-center gap-2 text-sm text-navy;
+    }
+    .form-check input[type="checkbox"],
+    .form-check input[type="radio"] {
+        @apply rounded border-gray-300 text-primary focus:ring-primary/30;
+    }
+
+    /* ---------- TABLES ---------- */
+    .table-wrapper {
+        @apply overflow-x-auto -mx-6 sm:-mx-8 lg:-mx-10;
+    }
+    .table {
+        @apply min-w-full text-sm;
+    }
+    .table thead th {
+        @apply text-left text-[11px] uppercase tracking-wider text-muted font-semibold px-6 py-3 border-b border-gray-200;
+    }
+    .table tbody td {
+        @apply px-6 py-3 border-b border-gray-100 align-middle;
+    }
+    .table tbody tr:hover td {
+        @apply bg-gray-50;
+    }
+    .table tbody tr:last-child td {
+        @apply border-b-0;
+    }
+    .table-actions {
+        @apply text-right whitespace-nowrap space-x-2;
+    }
+    .table-empty {
+        @apply text-center py-10 text-muted text-sm;
+    }
+
+    /* ---------- STAT CARDS (KPI) ---------- */
+    .stat-card {
+        @apply bg-white p-6 flex items-start justify-between gap-4 transition;
+    }
+    .stat-card:hover {
+        @apply bg-gray-50;
+    }
+    .stat-label {
+        @apply text-[11px] uppercase tracking-widest text-muted font-semibold;
+    }
+    .stat-value {
+        @apply mt-2 text-3xl font-bold text-navy leading-none;
+    }
+    .stat-trend {
+        @apply mt-2 text-xs text-muted;
+    }
+    .stat-icon {
+        @apply w-12 h-12 rounded-full inline-flex items-center justify-center;
+    }
+    .stat-icon-primary { @apply bg-primary-soft text-primary; }
+    .stat-icon-success { @apply bg-success-soft text-success; }
+    .stat-icon-info    { @apply bg-info-soft text-info; }
+    .stat-icon-warning { @apply bg-warning-soft text-yellow-700; }
+    .stat-icon-danger  { @apply bg-danger-soft text-danger; }
+
+    /* ---------- PAGE HEADER ---------- */
+    .page-header {
+        @apply flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6;
+    }
+    .page-title {
+        @apply text-2xl font-bold text-navy;
+    }
+    .page-subtitle {
+        @apply text-sm text-muted mt-1;
+    }
+    .page-breadcrumb {
+        @apply text-xs text-muted flex items-center gap-1;
+    }
+    .page-breadcrumb a:hover { @apply text-navy; }
+
+    /* ---------- ALERTS / FLASH ---------- */
+    .alert {
+        @apply px-4 py-3 rounded text-sm mb-4 border;
+    }
+    .alert-success { @apply bg-success-soft text-success border-success/30; }
+    .alert-danger  { @apply bg-danger-soft text-danger border-danger/30; }
+    .alert-info    { @apply bg-info-soft text-info border-info/30; }
+    .alert-warning { @apply bg-warning-soft text-yellow-800 border-warning/30; }
+
+    /* ---------- DROPDOWN ---------- */
+    .dropdown {
+        @apply absolute mt-2 min-w-[12rem] bg-white border border-gray-100 shadow-lg z-40;
+    }
+    .dropdown-item {
+        @apply block px-4 py-2 text-sm text-navy hover:bg-gray-50 cursor-pointer;
+    }
+    .dropdown-divider { @apply border-t border-gray-100 my-1; }
+
+    /* ---------- FILTERS BAR ---------- */
+    .filter-bar {
+        @apply flex flex-wrap items-end gap-3 mb-4;
+    }
+
+    /* ---------- EMPTY STATE ---------- */
+    .empty {
+        @apply text-center py-12 text-muted;
+    }
+    .empty-icon {
+        @apply w-12 h-12 mx-auto mb-3 text-gray-300;
+    }
+    .empty-title {
+        @apply text-base font-semibold text-navy;
+    }
+    .empty-text {
+        @apply text-sm text-muted mt-1;
+    }
+
+    /* ---------- KEYBOARD KEY ---------- */
+    kbd {
+        @apply inline-block px-1.5 py-0.5 bg-gray-100 border border-gray-200 rounded text-[10px] font-mono;
+    }
+}

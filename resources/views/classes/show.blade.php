@@ -1,25 +1,56 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800">{{ $classe->nome }}</h2></x-slot>
-    <div class="py-8"><div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-4"><x-flash />
-        <div class="bg-white shadow rounded-lg p-6 text-sm">
-            <dl class="grid grid-cols-3 gap-3">
-                <div><dt class="text-gray-500">{{ __('Name') }}</dt><dd class="font-medium">{{ $classe->nome }}</dd></div>
-                <div><dt class="text-gray-500">{{ __('Order') }}</dt><dd>{{ $classe->ordem }}</dd></div>
-                <div><dt class="text-gray-500">{{ __('Level') }}</dt><dd>{{ $classe->nivel ?? '—' }}</dd></div>
-            </dl>
-            <h3 class="text-xs uppercase text-gray-500 mt-6 mb-2">{{ __('Subjects') }}</h3>
-            <div class="flex flex-wrap gap-1">
-                @foreach($classe->disciplinas as $d)
-                    <span class="bg-gray-100 rounded px-2 py-0.5 text-xs">{{ $d->nome }}</span>
-                @endforeach
-            </div>
-            <h3 class="text-xs uppercase text-gray-500 mt-6 mb-2">{{ __('Class Groups') }}</h3>
-            <ul class="space-y-1">
-                @foreach($classe->turmas as $t)
-                    <li><a href="{{ route('turmas.show', $t) }}" class="text-blue-600 hover:underline">{{ $classe->nome }} {{ $t->nome }}</a> <span class="text-xs text-gray-500">— {{ $t->anoLectivo->codigo }}</span></li>
-                @endforeach
-            </ul>
-            <div class="mt-6 flex gap-3"><a href="{{ route('classes.edit', $classe) }}" class="px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('Edit') }}</a><a href="{{ route('classes.index') }}" class="px-4 py-2 bg-gray-100 text-sm rounded">{{ __('Back') }}</a></div>
-        </div>
-    </div></div>
+    <x-page-header :title="$classe->nome">
+        <x-slot name="actions">
+            <x-btn variant="primary" icon="pencil" :href="route('classes.edit', $classe)">{{ __('Edit') }}</x-btn>
+            <x-btn variant="secondary" :href="route('classes.index')">{{ __('Back') }}</x-btn>
+        </x-slot>
+    </x-page-header>
+
+    <x-card>
+        <dl class="grid grid-cols-3 gap-6 text-sm">
+            <div><dt class="form-label">{{ __('Name') }}</dt><dd class="text-navy font-semibold">{{ $classe->nome }}</dd></div>
+            <div><dt class="form-label">{{ __('Order') }}</dt><dd>{{ $classe->ordem }}</dd></div>
+            <div><dt class="form-label">{{ __('Level') }}</dt><dd>
+                @if($classe->nivel === 'ensino_medio')<x-badge variant="info">{{ __('Secondary Education') }}</x-badge>
+                @else<x-badge variant="muted">{{ __('Basic Education') }}</x-badge>@endif
+            </dd></div>
+        </dl>
+    </x-card>
+
+    @if($classe->nivel === 'ensino_base')
+        <x-card :title="__('Compulsory subjects (basic education)')">
+            @if($classe->disciplinas->isEmpty())
+                <x-empty title="{{ __('No subjects') }}" description="{{ __('All students of this class will have these subjects.') }}" />
+            @else
+                <div class="flex flex-wrap gap-2">
+                    @foreach($classe->disciplinas as $d)<x-badge variant="muted">{{ $d->nome }}</x-badge>@endforeach
+                </div>
+            @endif
+        </x-card>
+    @else
+        <x-card :title="__('Classes that include this class')">
+            @if($classe->cursos->isEmpty())
+                <x-empty title="{{ __('No course associated to this class.') }}" />
+            @else
+                <ul class="space-y-1 text-sm">
+                    @foreach($classe->cursos as $c)
+                        <li><x-badge variant="primary">{{ __('Year') }} {{ $c->pivot->ano }}</x-badge> <a href="{{ route('cursos.show', $c) }}" class="text-navy font-semibold hover:underline ms-2">{{ $c->sigla }} — {{ $c->nome }}</a></li>
+                    @endforeach
+                </ul>
+            @endif
+        </x-card>
+    @endif
+
+    <x-card :title="__('Class Groups')">
+        <ul class="space-y-1 text-sm">
+            @forelse($classe->turmas as $t)
+                <li><a href="{{ route('turmas.show', $t) }}" class="text-primary hover:underline">{{ $classe->nome }} {{ $t->nome }}</a>
+                    @if($t->curso)<x-badge variant="info">{{ $t->curso->sigla }}</x-badge>@endif
+                    <span class="text-xs text-muted ms-2">{{ $t->anoLectivo->codigo }}</span>
+                </li>
+            @empty
+                <li class="text-muted">{{ __('No records found.') }}</li>
+            @endforelse
+        </ul>
+    </x-card>
 </x-app-layout>

@@ -1,27 +1,29 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Dashboard') }}</h2>
-    </x-slot>
+    <x-page-header :title="__('Dashboard')" :subtitle="__('Welcome') . ', ' . Auth::user()->name" />
 
-    <div class="py-8">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            <x-flash />
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-800">{{ __('Welcome') }}, {{ Auth::user()->name }}</h3>
-                <p class="text-sm text-gray-600 mt-1">{{ __('My Children') }}</p>
-
-                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    @forelse($alunos as $aluno)
-                        <a href="{{ route('meus-educandos.show', $aluno) }}" class="block border rounded-lg p-4 hover:bg-gray-50">
-                            <div class="font-semibold text-gray-800">{{ $aluno->user->name }}</div>
-                            <div class="text-xs text-gray-500 mt-1">{{ __('Process Number') }}: {{ $aluno->numero_processo }}</div>
-                            <div class="text-xs text-gray-500">{{ __('Class') }}: {{ $aluno->turma ?? '—' }} · {{ __('Grade') }}: {{ $aluno->classe ?? '—' }}</div>
-                        </a>
-                    @empty
-                        <p class="text-sm text-gray-500 col-span-2">{{ __('No records found.') }}</p>
-                    @endforelse
-                </div>
+    <x-card :title="__('My Children')">
+        @if($alunos->isEmpty())
+            <x-empty title="{{ __('No linked students') }}" />
+        @else
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($alunos as $aluno)
+                    <a href="{{ route('meus-educandos.show', $aluno) }}" class="block border border-gray-100 hover:border-primary hover:shadow-card-hover rounded p-5 transition">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-full bg-primary-soft text-primary inline-flex items-center justify-center font-semibold text-sm">
+                                {{ collect(explode(' ', $aluno->user->name))->take(2)->map(fn($w) => substr($w, 0, 1))->join('') }}
+                            </span>
+                            <div>
+                                <div class="font-semibold text-navy">{{ $aluno->user->name }}</div>
+                                <div class="text-xs text-muted font-mono">{{ $aluno->numero_processo }}</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-xs text-muted flex items-center gap-3">
+                            <span><x-lucide-book class="w-3 h-3 inline" /> {{ $aluno->classe ?? '—' }}</span>
+                            <span><x-lucide-users class="w-3 h-3 inline" /> {{ __('Class') }}: {{ $aluno->turma ?? '—' }}</span>
+                        </div>
+                    </a>
+                @endforeach
             </div>
-        </div>
-    </div>
+        @endif
+    </x-card>
 </x-app-layout>

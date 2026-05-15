@@ -1,30 +1,37 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ config('app.name', 'GestSchool') }}</title>
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=nunito:300,400,600,700&display=swap" rel="stylesheet" />
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans bg-gray-50">
+    <div class="min-h-screen grid lg:grid-cols-2">
+        <aside class="hidden lg:flex bg-sidebar text-white flex-col justify-between p-12">
             <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
+                <h1 class="text-white text-3xl font-bold">GestSchool</h1>
+                <p class="text-sidebar-text/60 mt-2 text-sm">Sistema de gestão escolar</p>
             </div>
+            <div class="text-sidebar-text/50 text-xs">
+                <p>© {{ date('Y') }} GestSchool — {{ __('School Management') }}</p>
+            </div>
+        </aside>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+        <main class="flex items-center justify-center px-6 py-12">
+            <div class="w-full max-w-md">
+                <div class="lg:hidden mb-8 text-center">
+                    <h1 class="text-navy text-2xl font-bold">GestSchool</h1>
+                </div>
+                <x-flash />
                 {{ $slot }}
             </div>
-        </div>
-    </body>
+        </main>
+    </div>
+</body>
 </html>

@@ -1,39 +1,26 @@
 @php($avaliacao = $avaliacao ?? null)
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="sm:col-span-2">
-        <x-input-label for="atribuicao_id" :value="__('Class Groups') . ' / ' . __('Subjects List')" />
-        <select id="atribuicao_id" name="atribuicao_id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-            <option value="">—</option>
+        <x-select name="atribuicao_id" :label="__('Class Groups') . ' / ' . __('Subjects List')" required>
             @foreach($atribuicoes as $a)
                 <option value="{{ $a->id }}" @selected(old('atribuicao_id', $avaliacao?->atribuicao_id) == $a->id)>{{ $a->turma->classe->nome }} {{ $a->turma->nome }} — {{ $a->disciplina->nome }}</option>
             @endforeach
-        </select>
+        </x-select>
     </div>
-    <div>
-        <x-input-label for="trimestre_id" :value="__('Term')" />
-        <select id="trimestre_id" name="trimestre_id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-            <option value="">—</option>
-            @foreach($trimestres as $t)
-                <option value="{{ $t->id }}" @selected(old('trimestre_id', $avaliacao?->trimestre_id) == $t->id)>{{ $t->anoLectivo->codigo }} · {{ $t->numero }}º</option>
-            @endforeach
-        </select>
-    </div>
-    <div>
-        <x-input-label for="tipo" :value="__('Type')" />
-        <select id="tipo" name="tipo" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-            @foreach([
-                'prova' => 'Prova',
-                'teste' => __('Test'),
-                'avaliacao_continua' => __('Continuous Assessment'),
-                'exame' => __('Exam'),
-            ] as $k => $label)
-                <option value="{{ $k }}" @selected(old('tipo', $avaliacao?->tipo ?? 'teste') === $k)>{{ $label }}</option>
-            @endforeach
-        </select>
-    </div>
-    <div class="sm:col-span-2"><x-input-label for="titulo" :value="__('Title')" /><x-text-input id="titulo" name="titulo" class="mt-1 block w-full" :value="old('titulo', $avaliacao?->titulo)" required /></div>
-    <div><x-input-label for="data" :value="__('Date')" /><x-text-input id="data" name="data" type="date" class="mt-1 block w-full" :value="old('data', $avaliacao?->data?->format('Y-m-d'))" /></div>
-    <div><x-input-label for="peso" :value="__('Weight')" /><x-text-input id="peso" name="peso" type="number" step="0.01" min="0.1" max="10" class="mt-1 block w-full" :value="old('peso', $avaliacao?->peso ?? 1)" required /></div>
-    <div><x-input-label for="max_nota" :value="__('Max Score')" /><x-text-input id="max_nota" name="max_nota" type="number" step="0.01" min="1" max="20" class="mt-1 block w-full" :value="old('max_nota', $avaliacao?->max_nota ?? 20)" required /></div>
+    <x-select name="trimestre_id" :label="__('Term')" required>
+        @foreach($trimestres as $t)<option value="{{ $t->id }}" @selected(old('trimestre_id', $avaliacao?->trimestre_id) == $t->id)>{{ $t->anoLectivo->codigo }} · {{ $t->numero }}º</option>@endforeach
+    </x-select>
+    <x-select name="tipo" :label="__('Type')" required :placeholder="null">
+        @foreach(['prova' => 'Prova', 'teste' => __('Test'), 'avaliacao_continua' => __('Continuous Assessment'), 'exame' => __('Exam')] as $k => $label)
+            <option value="{{ $k }}" @selected(old('tipo', $avaliacao?->tipo ?? 'teste') === $k)>{{ $label }}</option>
+        @endforeach
+    </x-select>
+    <div class="sm:col-span-2"><x-input name="titulo" :label="__('Title')" :value="$avaliacao?->titulo" required /></div>
+    <x-input name="data" :label="__('Date')" type="date" :value="$avaliacao?->data?->format('Y-m-d')" />
+    <x-input name="peso" :label="__('Weight')" type="number" step="0.01" :value="$avaliacao?->peso ?? 1" required />
+    <x-input name="max_nota" :label="__('Max Score')" type="number" step="0.01" :value="$avaliacao?->max_nota ?? 20" required />
 </div>
-<div class="mt-6 flex gap-3"><button class="px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('Save') }}</button><a href="{{ route('avaliacoes.index') }}" class="px-4 py-2 bg-gray-100 text-sm rounded">{{ __('Cancel') }}</a></div>
+<div class="flex items-center gap-3 mt-6">
+    <x-btn variant="primary" type="submit">{{ __('Save') }}</x-btn>
+    <x-btn variant="secondary" :href="route('avaliacoes.index')">{{ __('Cancel') }}</x-btn>
+</div>

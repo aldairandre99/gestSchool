@@ -12,12 +12,17 @@ class Turma extends Model
     use HasFactory;
 
     protected $fillable = [
-        'classe_id', 'ano_lectivo_id', 'nome', 'sala', 'turno', 'capacidade', 'director_turma_id',
+        'classe_id', 'curso_id', 'ano_lectivo_id', 'nome', 'sala', 'turno', 'capacidade', 'director_turma_id',
     ];
 
     public function classe(): BelongsTo
     {
         return $this->belongsTo(Classe::class);
+    }
+
+    public function curso(): BelongsTo
+    {
+        return $this->belongsTo(Curso::class);
     }
 
     public function anoLectivo(): BelongsTo
@@ -42,6 +47,8 @@ class Turma extends Model
 
     public function getNomeCompletoAttribute(): string
     {
-        return ($this->classe?->nome ?? '') . ' ' . $this->nome;
+        $base = ($this->classe?->nome ?? '') . ' ' . $this->nome;
+        if ($this->curso) $base .= ' (' . $this->curso->sigla . ')';
+        return $base;
     }
 }
