@@ -1,10 +1,10 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "arseniomuanda/gestschool",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
-    "license": "MIT",
+    "description": "Sistema de gestão escolar para escolas públicas e instituições educativas sem fins lucrativos.",
+    "keywords": ["laravel", "school", "education", "angola", "lusofona", "ensino", "escola"],
+    "license": "LicenseRef-gestSchool-Public-1.0",
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
