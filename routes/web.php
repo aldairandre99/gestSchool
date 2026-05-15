@@ -66,7 +66,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/notas/{avaliacao}/gravar', [NotaController::class, 'gravar'])->name('notas.gravar');
 
         Route::get('/pautas', [PautaController::class, 'index'])->name('pautas.index');
-        Route::get('/pautas/{atribuicao}/{trimestre}', [PautaController::class, 'show'])->name('pautas.show');
+        Route::get('/pautas/disciplina/{atribuicao}/{trimestre}', [PautaController::class, 'disciplina'])->name('pautas.disciplina');
+        Route::get('/pautas/turma/{turma}/trimestre/{trimestre}', [PautaController::class, 'turmaTrimestre'])->name('pautas.turma-trimestre');
+        Route::get('/pautas/turma/{turma}/anual', [PautaController::class, 'turmaAnual'])->name('pautas.turma-anual');
+        Route::get('/pautas/turma/{turma}/situacao', [PautaController::class, 'situacao'])->name('pautas.situacao');
+        // Compatibilidade: redirecionar antiga URL para o modo disciplina
+        Route::get('/pautas/{atribuicao}/{trimestre}', [PautaController::class, 'disciplina'])->name('pautas.show');
     });
 
     // Boletim acessível a direcção, professores e encarregado do aluno
