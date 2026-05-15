@@ -74,6 +74,7 @@ educativos lusófonos.
 | Autenticação | Laravel Breeze |
 | Permissões | Spatie Laravel Permission |
 | Ícones | Blade Lucide Icons |
+| AI SDK | Laravel AI (Anthropic, OpenAI, Gemini, +12 providers) |
 
 ## Pré-requisitos
 
@@ -108,6 +109,17 @@ composer run dev
 A aplicação fica disponível em `http://localhost:8000`.
 
 > Em alternativa ao `composer run dev`, podes correr `php artisan serve` e `npm run dev` em terminais separados.
+
+### Com Docker (PHP 8.4 + Postgres 18 + Redis + Mailpit)
+
+Se preferires não instalar PHP/Composer/Node localmente, há um setup Docker completo:
+
+```bash
+make up            # bootstrap: build + composer install + npm install + migrate
+make dev           # arranca queue + pail + vite (Ctrl+C para parar)
+```
+
+A app fica em `http://localhost:8000`. Detalhes completos, comandos e troubleshooting em **[docs/DOCKER.md](docs/DOCKER.md)**.
 
 ### Configurar locale para Angola
 
