@@ -11,9 +11,9 @@
 
     <x-card :title="__('School Management')">
         <p class="text-sm text-muted">{{ __('Welcome') }}, <span class="text-navy font-semibold">{{ Auth::user()->name }}</span>.</p>
-        <p class="text-sm text-muted mt-2">Atalhos rápidos:</p>
+        <p class="text-sm text-muted mt-2">{{ __('Quick shortcuts:') }}</p>
         <div class="mt-4 flex flex-wrap gap-2">
-            <x-btn variant="primary" size="sm" icon="clipboard-check" :href="route('aulas.index')">Aulas</x-btn>
+            <x-btn variant="primary" size="sm" icon="clipboard-check" :href="route('aulas.index')">{{ __('Lessons') }}</x-btn>
             <x-btn variant="secondary" size="sm" icon="clipboard-list" :href="route('avaliacoes.index')">{{ __('Evaluations') }}</x-btn>
             <x-btn variant="secondary" size="sm" icon="table-2" :href="route('pautas.index')">{{ __('Gradebook') }}</x-btn>
             <x-btn variant="secondary" size="sm" icon="megaphone" :href="route('comunicados.index')">{{ __('Announcements') }}</x-btn>

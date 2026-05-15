@@ -11,7 +11,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="form-group">
-            <label class="form-label">Classe <span class="text-danger">*</span></label>
+            <label class="form-label">{{ __('Grade') }} <span class="text-danger">*</span></label>
             <select name="classe_id" x-model="classeId" required class="form-select">
                 <option value="">—</option>
                 @foreach($classes as $c)
@@ -24,7 +24,7 @@
         </div>
 
         <div class="form-group" x-show="isMedio" x-cloak>
-            <label class="form-label">Curso <span class="text-danger">*</span></label>
+            <label class="form-label">{{ __('Course') }} <span class="text-danger">*</span></label>
             <select name="curso_id" x-model="cursoId" class="form-select">
                 <option value="">—</option>
                 @foreach($cursos as $cu)
@@ -40,7 +40,7 @@
         <x-input name="nome" :label="__('Name')" :value="$turma?->nome" placeholder="A, B, C…" required />
         <x-input name="sala" :label="__('Room')" :value="$turma?->sala" />
         <x-select name="turno" :label="__('Shift')">
-            @foreach(['Manhã', 'Tarde', 'Noite'] as $opt)<option value="{{ $opt }}" @selected(old('turno', $turma?->turno) === $opt)>{{ $opt }}</option>@endforeach
+            @foreach(['Manhã' => __('Morning'), 'Tarde' => __('Afternoon'), 'Noite' => __('Evening')] as $val => $label)<option value="{{ $val }}" @selected(old('turno', $turma?->turno) === $val)>{{ $label }}</option>@endforeach
         </x-select>
         <x-input name="capacidade" :label="__('Capacity')" type="number" :value="$turma?->capacidade ?? 40" />
         <div class="sm:col-span-2">

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-page-header :title="__('Report Card')" :subtitle="$matricula->aluno->user->name">
         <x-slot name="actions">
-            <x-btn variant="primary" icon="printer" href="javascript:print()">Imprimir</x-btn>
+            <x-btn variant="primary" icon="printer" href="javascript:print()">{{ __('Print') }}</x-btn>
             <x-btn variant="secondary" :href="url()->previous()">{{ __('Back') }}</x-btn>
         </x-slot>
     </x-page-header>

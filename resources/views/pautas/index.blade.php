@@ -3,7 +3,7 @@
 
     <x-card>
         @if($atribuicoes->isEmpty())
-            <x-empty title="Sem atribuições" />
+            <x-empty title="{{ __('No assignments') }}" />
         @else
             <div class="table-wrapper">
                 <table class="table">

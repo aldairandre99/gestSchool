@@ -15,11 +15,17 @@
                 <tr>
                     <td class="text-muted">{{ $c->ordem }}</td>
                     <td class="font-semibold text-navy">{{ $c->nome }}</td>
-                    <td>{{ $c->nivel ?? '—' }}</td>
+                    <td>
+                        @if($c->nivel === 'ensino_medio')
+                            <x-badge variant="info">{{ __('Secondary Education') }}</x-badge>
+                        @else
+                            <x-badge variant="muted">{{ __('Basic Education') }}</x-badge>
+                        @endif
+                    </td>
                     <td class="table-actions">
-                        <x-btn-link :href="route('classes.show', $c)">Ver</x-btn-link>
+                        <x-btn-link :href="route('classes.show', $c)">{{ __('View') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('classes.edit', $c)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('classes.destroy', $c) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('classes.destroy', $c) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

@@ -3,7 +3,7 @@
 @php($selectedEnc = collect(old('encarregados', $aluno?->encarregados->map(fn($e) => ['id' => $e->id, 'parentesco' => $e->pivot->parentesco, 'principal' => $e->pivot->principal])->all() ?? []))->keyBy('id'))
 
 <div class="card-section">
-    <h4 class="card-title">Dados pessoais</h4>
+    <h4 class="card-title">{{ __('Personal Data') }}</h4>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <x-input name="name" :label="__('Name')" :value="$u?->name" required />
         <x-input name="numero_processo" :label="__('Process Number')" :value="$aluno?->numero_processo" required />
@@ -15,19 +15,19 @@
             <option value="M" @selected(old('sexo', $aluno?->sexo) === 'M')>{{ __('Male') }}</option>
             <option value="F" @selected(old('sexo', $aluno?->sexo) === 'F')>{{ __('Female') }}</option>
         </x-select>
-        <x-input name="nacionalidade" label="Nacionalidade" :value="$aluno?->nacionalidade ?? 'Angolana'" />
-        <x-input name="naturalidade" label="Naturalidade" :value="$aluno?->naturalidade" />
+        <x-input name="nacionalidade" label="{{ __('Nationality') }}" :value="$aluno?->nacionalidade ?? 'Angolana'" />
+        <x-input name="naturalidade" label="{{ __('Place of Birth') }}" :value="$aluno?->naturalidade" />
         <div class="sm:col-span-2"><x-textarea name="morada" :label="__('Address')" :value="$aluno?->morada" :rows="2" /></div>
     </div>
 </div>
 
 <div class="card-section">
-    <h4 class="card-title">Dados académicos</h4>
+    <h4 class="card-title">{{ __('Academic Data') }}</h4>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <x-input name="classe" :label="__('Grade')" :value="$aluno?->classe" />
         <x-input name="turma" :label="__('Class')" :value="$aluno?->turma" />
         <x-input name="ano_lectivo" :label="__('School Year')" :value="$aluno?->ano_lectivo" placeholder="2026/2027" />
-        <div class="sm:col-span-3"><x-textarea name="observacoes" label="Observações" :value="$aluno?->observacoes" :rows="2" /></div>
+        <div class="sm:col-span-3"><x-textarea name="observacoes" label="{{ __('Observations') }}" :value="$aluno?->observacoes" :rows="2" /></div>
     </div>
 </div>
 
@@ -56,7 +56,7 @@
                 <span class="text-xs text-muted">{{ $enc->user->email }}</span>
             </div>
         @empty
-            <x-empty title="Sem encarregados">
+            <x-empty title="{{ __('No guardians') }}">
                 <x-btn variant="primary" size="sm" :href="route('encarregados.create')">{{ __('Add Guardian') }}</x-btn>
             </x-empty>
         @endforelse
@@ -64,7 +64,7 @@
 </div>
 
 <div class="card-section">
-    <h4 class="card-title">Acesso (opcional)</h4>
+    <h4 class="card-title">{{ __('Access (optional)') }}</h4>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <x-input name="password" :label="__('Password')" type="password" />
         <x-input name="password_confirmation" :label="__('Confirm Password')" type="password" />

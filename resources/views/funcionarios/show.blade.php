@@ -10,7 +10,7 @@
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
             <div><dt class="form-label">{{ __('Email') }}</dt><dd class="text-navy">{{ $funcionario->user->email }}</dd></div>
             <div><dt class="form-label">{{ __('Phone') }}</dt><dd class="text-navy">{{ $funcionario->user->phone ?? '—' }}</dd></div>
-            <div><dt class="form-label">Nº</dt><dd class="font-mono">{{ $funcionario->numero_funcionario ?? '—' }}</dd></div>
+            <div><dt class="form-label">{{ __('Nº') ?? 'Nº' }}</dt><dd class="font-mono">{{ $funcionario->numero_funcionario ?? '—' }}</dd></div>
             <div><dt class="form-label">{{ __('Position') }}</dt><dd>{{ $funcionario->cargo ?? '—' }}</dd></div>
             <div><dt class="form-label">{{ __('Department') }}</dt><dd>{{ $funcionario->departamento ?? '—' }}</dd></div>
             <div><dt class="form-label">{{ __('Hire Date') }}</dt><dd>{{ $funcionario->data_admissao?->format('d/m/Y') ?? '—' }}</dd></div>

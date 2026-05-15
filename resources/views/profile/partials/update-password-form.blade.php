@@ -3,7 +3,7 @@
     @method('put')
 
     <x-input name="current_password" id="update_password_current_password" :label="__('Password') . ' actual'" type="password" autocomplete="current-password" />
-    <x-input name="password" id="update_password_password" :label="'Nova ' . __('Password')" type="password" autocomplete="new-password" />
+    <x-input name="password" id="update_password_password" :label="__('New Password')" type="password" autocomplete="new-password" />
     <x-input name="password_confirmation" id="update_password_password_confirmation" :label="__('Confirm Password')" type="password" autocomplete="new-password" />
 
     <div class="flex items-center gap-4 mt-4">

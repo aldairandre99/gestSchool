@@ -25,7 +25,7 @@
                     </td>
                     <td class="table-actions">
                         <x-btn-link variant="muted" :href="route('trimestres.edit', $t)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('trimestres.destroy', $t) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('trimestres.destroy', $t) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

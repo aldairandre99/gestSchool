@@ -24,7 +24,7 @@
 
         <thead>
             <tr>
-                <th>Nº</th>
+                <th>{{ __('Nº') ?? 'Nº' }}</th>
                 <th>{{ __('Student') }}</th>
                 <th>{{ __('Class Groups') }}</th>
                 <th>{{ __('School Year') }}</th>
@@ -44,7 +44,7 @@
                     <td class="table-actions">
                         <x-btn-link :href="route('boletim.show', $m)">{{ __('Report Card') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('matriculas.edit', $m)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('matriculas.destroy', $m) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('matriculas.destroy', $m) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

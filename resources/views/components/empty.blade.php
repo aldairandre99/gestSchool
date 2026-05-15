@@ -1,8 +1,9 @@
 @props([
-    'title' => 'Sem registos',
+    'title' => null,
     'description' => null,
     'icon' => 'inbox',
 ])
+@php($title = $title ?? __('No records'))
 
 <div class="empty">
     <x-dynamic-component :component="'lucide-' . $icon" class="empty-icon" />

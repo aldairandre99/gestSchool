@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="card">
         <h2 class="card-title">{{ __('Forgot your password?') }}</h2>
-        <p class="text-sm text-muted mb-6">Indique o seu e-mail e enviaremos uma hiperligação para repor a palavra-passe.</p>
+        <p class="text-sm text-muted mb-6">{{ __('Indicate your email and we will send a password reset link.') }}</p>
 
         @if(session('status'))<div class="alert alert-info">{{ session('status') }}</div>@endif
 

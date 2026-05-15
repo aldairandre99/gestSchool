@@ -28,7 +28,7 @@
                     <td class="table-actions">
                         <x-btn-link :href="route('notas.folha', $av)">{{ __('Launch Grades') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('avaliacoes.edit', $av)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('avaliacoes.destroy', $av) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('avaliacoes.destroy', $av) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

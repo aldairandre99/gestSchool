@@ -9,11 +9,11 @@
         </x-select>
     </div>
     <x-input name="data" :label="__('Date')" type="date" :value="$aula?->data?->format('Y-m-d') ?? now()->toDateString()" required />
-    <x-input name="numero" label="Nº da aula (opcional)" type="number" :value="$aula?->numero" />
-    <x-input name="hora_inicio" label="Hora início" type="time" :value="$aula?->hora_inicio" />
-    <x-input name="hora_fim" label="Hora fim" type="time" :value="$aula?->hora_fim" />
-    <div class="sm:col-span-2"><x-textarea name="sumario" label="Sumário (o que foi leccionado)" :value="$aula?->sumario" :rows="3" /></div>
-    <div class="sm:col-span-2"><x-textarea name="conteudo_planeado" label="Conteúdo planeado (opcional)" :value="$aula?->conteudo_planeado" :rows="2" /></div>
+    <x-input name="numero" label="{{ __('Lesson number (optional)') }}" type="number" :value="$aula?->numero" />
+    <x-input name="hora_inicio" label="{{ __('Start time') }}" type="time" :value="$aula?->hora_inicio" />
+    <x-input name="hora_fim" label="{{ __('End time') }}" type="time" :value="$aula?->hora_fim" />
+    <div class="sm:col-span-2"><x-textarea name="sumario" label="{{ __('Lesson summary (what was taught)') }}" :value="$aula?->sumario" :rows="3" /></div>
+    <div class="sm:col-span-2"><x-textarea name="conteudo_planeado" label="{{ __('Planned content (optional)') }}" :value="$aula?->conteudo_planeado" :rows="2" /></div>
 </div>
 <div class="flex items-center gap-3 mt-6">
     <x-btn variant="primary" type="submit">{{ __('Save') }}</x-btn>

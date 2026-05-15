@@ -4,7 +4,7 @@
     @php($hoje = now()->toDateString())
     @php($hojeActivo = $dataDe === $hoje && $dataAte === $hoje)
 
-    <x-data-table :createUrl="route('aulas.create')" :createLabel="__('New') . ' aula'">
+    <x-data-table :createUrl="route('aulas.create')" :createLabel="__('New lesson')">
         <x-slot name="filters">
             <div>
                 <label class="form-label">{{ __('Class Groups') }}</label>
@@ -40,8 +40,8 @@
                 <th>Hora</th>
                 <th>{{ __('Class Groups') }}</th>
                 <th>{{ __('Subjects List') }}</th>
-                <th>Nº</th>
-                <th>Sumário</th>
+                <th>{{ __('Nº') ?? 'Nº' }}</th>
+                <th>{{ __('Summary') }}</th>
                 <th class="text-right">{{ __('Actions') }}</th>
             </tr>
         </thead>
@@ -57,7 +57,7 @@
                     <td class="table-actions">
                         <x-btn-link :href="route('presencas.folha', $a)">{{ __('Mark Attendance') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('aulas.edit', $a)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('aulas.destroy', $a) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('aulas.destroy', $a) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

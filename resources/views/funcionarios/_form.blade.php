@@ -10,7 +10,7 @@
             <option value="{{ $role->name }}" @selected($currentRole === $role->name)>{{ str_replace('_', ' ', $role->name) }}</option>
         @endforeach
     </x-select>
-    <x-input name="numero_funcionario" label="Nº de funcionário" :value="$funcionario?->numero_funcionario" />
+    <x-input name="numero_funcionario" label="{{ __('Staff Number') }}" :value="$funcionario?->numero_funcionario" />
     <x-input name="bi" :label="__('BI Number')" :value="$funcionario?->bi" />
     <x-input name="data_nascimento" :label="__('Birth Date')" type="date" :value="$funcionario?->data_nascimento?->format('Y-m-d')" />
     <x-select name="sexo" :label="__('Gender')">

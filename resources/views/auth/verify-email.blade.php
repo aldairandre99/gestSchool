@@ -1,16 +1,16 @@
 <x-guest-layout>
     <div class="card">
-        <h2 class="card-title">Verificar e-mail</h2>
-        <p class="text-sm text-muted mb-6">Obrigado pelo registo. Confirme o seu e-mail clicando no link que enviámos.</p>
+        <h2 class="card-title">{{ __('Verify email') }}</h2>
+        <p class="text-sm text-muted mb-6">{{ __('Thanks for registering, confirm your email.') }}</p>
 
         @if (session('status') == 'verification-link-sent')
-            <div class="alert alert-success">Nova hiperligação de verificação enviada.</div>
+            <div class="alert alert-success">{{ __('New verification link sent.') }}</div>
         @endif
 
         <div class="flex items-center justify-between mt-4">
             <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
-                <x-btn variant="primary" type="submit">Reenviar e-mail</x-btn>
+                <x-btn variant="primary" type="submit">{{ __('Resend email') }}</x-btn>
             </form>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

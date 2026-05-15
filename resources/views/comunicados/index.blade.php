@@ -9,7 +9,7 @@
 
     @if($comunicados->isEmpty())
         <x-card>
-            <x-empty title="Sem comunicados" />
+            <x-empty title="{{ __('No records') }}" />
         </x-card>
     @else
         <div class="space-y-4">
@@ -23,7 +23,7 @@
                             <div class="flex items-center gap-2 mt-2 text-xs text-muted flex-wrap">
                                 <span>{{ $c->autor?->name }}</span>
                                 <span>·</span>
-                                <span>{{ $c->publicado_em ? $c->publicado_em->format('d/m/Y H:i') : 'rascunho' }}</span>
+                                <span>{{ $c->publicado_em ? $c->publicado_em->format('d/m/Y H:i') : __('draft') }}</span>
                                 <x-badge variant="muted">{{ str_replace('_', ' ', $c->alcance) }}</x-badge>
                             </div>
                             <p class="text-sm text-muted mt-3">{{ \Illuminate\Support\Str::limit(strip_tags($c->conteudo), 200) }}</p>
@@ -31,7 +31,7 @@
                         @if($podeGerir)
                             <div class="shrink-0 text-right">
                                 <x-btn-link variant="muted" :href="route('comunicados.edit', $c)">{{ __('Edit') }}</x-btn-link>
-                                <form action="{{ route('comunicados.destroy', $c) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                                <form action="{{ route('comunicados.destroy', $c) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                                     @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                                 </form>
                             </div>

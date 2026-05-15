@@ -28,9 +28,9 @@
                         @endforeach
                     </td>
                     <td class="table-actions">
-                        <x-btn-link :href="route('funcionarios.show', $f)">Ver</x-btn-link>
+                        <x-btn-link :href="route('funcionarios.show', $f)">{{ __('View') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('funcionarios.edit', $f)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('funcionarios.destroy', $f) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('funcionarios.destroy', $f) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

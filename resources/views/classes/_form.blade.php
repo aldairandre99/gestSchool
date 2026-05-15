@@ -3,18 +3,18 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <x-input name="nome" :label="__('Name')" :value="$classe?->nome" required />
         <div class="form-group">
-            <label class="form-label">Nível <span class="text-danger">*</span></label>
+            <label class="form-label">{{ __('Level') }} <span class="text-danger">*</span></label>
             <select name="nivel" x-model="nivel" required class="form-select">
-                <option value="ensino_base">Ensino de Base</option>
-                <option value="ensino_medio">Ensino Médio</option>
+                <option value="ensino_base">{{ __('Basic Education') }}</option>
+                <option value="ensino_medio">{{ __('Secondary Education') }}</option>
             </select>
         </div>
         <x-input name="ordem" :label="__('Order')" type="number" :value="$classe?->ordem ?? 0" />
     </div>
 
     <div x-show="nivel === 'ensino_base'" class="form-group">
-        <label class="form-label">Disciplinas obrigatórias (ensino de base)</label>
-        <p class="form-help mb-2">Todos os alunos desta classe terão estas disciplinas.</p>
+        <label class="form-label">{{ __('Compulsory subjects (basic education)') }}</label>
+        <p class="form-help mb-2">{{ __('All students of this class will have these subjects.') }}</p>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-4 border border-gray-100 rounded bg-gray-50">
             @php($selected = collect(old('disciplinas', $classe?->disciplinas->pluck('id')->all() ?? [])))
             @foreach($disciplinas as $d)

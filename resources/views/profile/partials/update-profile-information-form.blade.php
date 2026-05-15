@@ -9,11 +9,11 @@
 
     @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
         <p class="text-sm text-muted mt-2">
-            E-mail por verificar.
-            <button form="send-verification" class="btn-link">Reenviar verificação</button>
+            {{ __('Email is unverified.') }}
+            <button form="send-verification" class="btn-link">{{ __('Resend verification') }}</button>
         </p>
         @if (session('status') === 'verification-link-sent')
-            <p class="text-sm text-success mt-2">Hiperligação enviada.</p>
+            <p class="text-sm text-success mt-2">{{ __('Verification link sent.') }}</p>
         @endif
     @endif
 

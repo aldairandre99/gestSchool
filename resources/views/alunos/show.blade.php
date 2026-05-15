@@ -15,8 +15,8 @@
             <div><dt class="form-label">{{ __('BI Number') }}</dt><dd>{{ $aluno->bi ?? '—' }}</dd></div>
             <div><dt class="form-label">{{ __('Birth Date') }}</dt><dd>{{ $aluno->data_nascimento?->format('d/m/Y') ?? '—' }}</dd></div>
             <div><dt class="form-label">{{ __('Gender') }}</dt><dd>{{ $aluno->sexo === 'M' ? __('Male') : ($aluno->sexo === 'F' ? __('Female') : '—') }}</dd></div>
-            <div><dt class="form-label">Nacionalidade</dt><dd>{{ $aluno->nacionalidade }}</dd></div>
-            <div><dt class="form-label">Naturalidade</dt><dd>{{ $aluno->naturalidade ?? '—' }}</dd></div>
+            <div><dt class="form-label">{{ __('Nationality') }}</dt><dd>{{ $aluno->nacionalidade }}</dd></div>
+            <div><dt class="form-label">{{ __('Place of Birth') }}</dt><dd>{{ $aluno->naturalidade ?? '—' }}</dd></div>
             <div class="sm:col-span-2"><dt class="form-label">{{ __('Address') }}</dt><dd>{{ $aluno->morada ?? '—' }}</dd></div>
         </dl>
     </x-card>
@@ -31,7 +31,7 @@
 
     <x-card :title="__('Guardians of this student')">
         @if($aluno->encarregados->isEmpty())
-            <x-empty title="Sem encarregados associados" />
+            <x-empty title="{{ __('No guardians') }}" />
         @else
             <ul class="space-y-2">
                 @foreach($aluno->encarregados as $e)

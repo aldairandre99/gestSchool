@@ -12,10 +12,10 @@
         @endforeach
     </x-select>
     <x-input name="publicado_em" :label="__('Publish on')" type="datetime-local" :value="$comunicado?->publicado_em?->format('Y-m-d\TH:i') ?? now()->format('Y-m-d\TH:i')" />
-    <x-select name="classe_id" label="Classe (se alcance = classe)">
+    <x-select name="classe_id" label="{{ __('Class (if audience = class)') }}">
         @foreach($classes as $c)<option value="{{ $c->id }}" @selected(old('classe_id', $comunicado?->classe_id) == $c->id)>{{ $c->nome }}</option>@endforeach
     </x-select>
-    <x-select name="turma_id" label="Turma (se alcance = turma)">
+    <x-select name="turma_id" label="{{ __('Group (if audience = group)') }}">
         @foreach($turmas as $t)<option value="{{ $t->id }}" @selected(old('turma_id', $comunicado?->turma_id) == $t->id)>{{ $t->classe->nome }} {{ $t->nome }} — {{ $t->anoLectivo->codigo }}</option>@endforeach
     </x-select>
 </div>

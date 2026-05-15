@@ -16,7 +16,7 @@
             <option value="{{ $e }}" @selected(old('estado', $matricula?->estado ?? 'activa') === $e)>{{ str_replace('_', ' ', ucfirst($e)) }}</option>
         @endforeach
     </x-select>
-    <div class="sm:col-span-2"><x-textarea name="observacoes" label="Observações" :value="$matricula?->observacoes" :rows="2" /></div>
+    <div class="sm:col-span-2"><x-textarea name="observacoes" label="{{ __('Observations') }}" :value="$matricula?->observacoes" :rows="2" /></div>
 </div>
 <div class="flex items-center gap-3 mt-6">
     <x-btn variant="primary" type="submit">{{ __('Save') }}</x-btn>

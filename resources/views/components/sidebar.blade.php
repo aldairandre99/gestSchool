@@ -23,7 +23,7 @@
             <x-sidebar-link :href="route('anos.index')" icon="calendar" :active="request()->routeIs('anos.*')">{{ __('Academic Years') }}</x-sidebar-link>
             <x-sidebar-link :href="route('trimestres.index')" icon="calendar-clock" :active="request()->routeIs('trimestres.*')">{{ __('Terms') }}</x-sidebar-link>
             <x-sidebar-link :href="route('classes.index')" icon="layers" :active="request()->routeIs('classes.*')">{{ __('Classes') }}</x-sidebar-link>
-            <x-sidebar-link :href="route('cursos.index')" icon="award" :active="request()->routeIs('cursos.*')">Cursos</x-sidebar-link>
+            <x-sidebar-link :href="route('cursos.index')" icon="award" :active="request()->routeIs('cursos.*')">{{ __('Courses') }}</x-sidebar-link>
             <x-sidebar-link :href="route('turmas.index')" icon="users-round" :active="request()->routeIs('turmas.*')">{{ __('Class Groups') }}</x-sidebar-link>
             <x-sidebar-link :href="route('disciplinas.index')" icon="book-open" :active="request()->routeIs('disciplinas.*')">{{ __('Subjects List') }}</x-sidebar-link>
             <x-sidebar-link :href="route('matriculas.index')" icon="file-text" :active="request()->routeIs('matriculas.*')">{{ __('Enrollments') }}</x-sidebar-link>
@@ -33,7 +33,7 @@
         @if($isAdmin || $isProf)
             <div class="sidebar-section">{{ __('Operation') }}</div>
             <x-sidebar-link :href="route('aulas.index')" icon="clipboard-check" :active="request()->routeIs('aulas.*') || request()->routeIs('presencas.*')">
-                Aulas / {{ __('Attendance') }}
+                {{ __('Lessons') }} / {{ __('Attendance') }}
             </x-sidebar-link>
             <x-sidebar-link :href="route('avaliacoes.index')" icon="clipboard-list" :active="request()->routeIs('avaliacoes.*') || request()->routeIs('notas.*')">
                 {{ __('Evaluations') }}

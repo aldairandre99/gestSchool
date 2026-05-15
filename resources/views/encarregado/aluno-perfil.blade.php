@@ -14,8 +14,8 @@
             <div><dt class="form-label">{{ __('Process Number') }}</dt><dd class="font-mono text-navy">{{ $aluno->numero_processo }}</dd></div>
             <div><dt class="form-label">{{ __('Birth Date') }}</dt><dd>{{ $aluno->data_nascimento?->format('d/m/Y') ?? '—' }}</dd></div>
             <div><dt class="form-label">{{ __('Gender') }}</dt><dd>{{ $aluno->sexo === 'M' ? __('Male') : ($aluno->sexo === 'F' ? __('Female') : '—') }}</dd></div>
-            <div><dt class="form-label">Nacionalidade</dt><dd>{{ $aluno->nacionalidade }}</dd></div>
-            <div><dt class="form-label">Naturalidade</dt><dd>{{ $aluno->naturalidade ?? '—' }}</dd></div>
+            <div><dt class="form-label">{{ __('Nationality') }}</dt><dd>{{ $aluno->nacionalidade }}</dd></div>
+            <div><dt class="form-label">{{ __('Place of Birth') }}</dt><dd>{{ $aluno->naturalidade ?? '—' }}</dd></div>
         </dl>
     </x-card>
 

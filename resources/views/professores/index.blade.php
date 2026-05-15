@@ -27,9 +27,9 @@
                         @else<span class="text-muted text-xs">{{ __('No') }}</span>@endif
                     </td>
                     <td class="table-actions">
-                        <x-btn-link :href="route('professores.show', $p)">Ver</x-btn-link>
+                        <x-btn-link :href="route('professores.show', $p)">{{ __('View') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('professores.edit', $p)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('professores.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('professores.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

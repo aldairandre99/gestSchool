@@ -11,7 +11,7 @@
         <option value="M" @selected(old('sexo', $professor?->sexo) === 'M')>{{ __('Male') }}</option>
         <option value="F" @selected(old('sexo', $professor?->sexo) === 'F')>{{ __('Female') }}</option>
     </x-select>
-    <x-input name="especialidade" label="Especialidade" :value="$professor?->especialidade" />
+    <x-input name="especialidade" label="{{ __('Speciality') }}" :value="$professor?->especialidade" />
     <div class="sm:col-span-2">
         <x-input name="habilitacoes" :label="__('Qualification')" :value="$professor?->habilitacoes" />
     </div>

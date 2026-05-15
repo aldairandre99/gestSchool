@@ -20,7 +20,7 @@
                     <td>@if($d->activa)<x-badge variant="success">{{ __('Active') }}</x-badge>@else<x-badge variant="muted">{{ __('Inactive') }}</x-badge>@endif</td>
                     <td class="table-actions">
                         <x-btn-link variant="muted" :href="route('disciplinas.edit', $d)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('disciplinas.destroy', $d) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('disciplinas.destroy', $d) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

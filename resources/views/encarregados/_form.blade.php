@@ -10,8 +10,8 @@
         <option value="M" @selected(old('sexo', $encarregado?->sexo) === 'M')>{{ __('Male') }}</option>
         <option value="F" @selected(old('sexo', $encarregado?->sexo) === 'F')>{{ __('Female') }}</option>
     </x-select>
-    <x-input name="profissao" label="Profissão" :value="$encarregado?->profissao" />
-    <x-input name="local_trabalho" label="Local de trabalho" :value="$encarregado?->local_trabalho" />
+    <x-input name="profissao" label="{{ __('Profession') }}" :value="$encarregado?->profissao" />
+    <x-input name="local_trabalho" label="{{ __('Workplace') }}" :value="$encarregado?->local_trabalho" />
     <div class="sm:col-span-2"><x-textarea name="morada" :label="__('Address')" :value="$encarregado?->morada" :rows="2" /></div>
     <x-input name="password" :label="__('Password')" type="password" />
     <x-input name="password_confirmation" :label="__('Confirm Password')" type="password" />

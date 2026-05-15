@@ -17,16 +17,16 @@
     <x-card>
         <dl class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
             <div><dt class="form-label">{{ __('Date') }}</dt><dd>{{ $aula->data->format('d/m/Y') }}</dd></div>
-            <div><dt class="form-label">Horário</dt><dd>{{ $aula->hora_inicio ? \Carbon\Carbon::parse($aula->hora_inicio)->format('H:i') : '—' }}@if($aula->hora_fim) – {{ \Carbon\Carbon::parse($aula->hora_fim)->format('H:i') }}@endif</dd></div>
-            <div><dt class="form-label">Nº</dt><dd>{{ $aula->numero ?? '—' }}</dd></div>
-            <div class="sm:col-span-3"><dt class="form-label">Sumário</dt><dd class="whitespace-pre-line text-navy">{{ $aula->sumario ?? '—' }}</dd></div>
+            <div><dt class="form-label">{{ __('Time') }}</dt><dd>{{ $aula->hora_inicio ? \Carbon\Carbon::parse($aula->hora_inicio)->format('H:i') : '—' }}@if($aula->hora_fim) – {{ \Carbon\Carbon::parse($aula->hora_fim)->format('H:i') }}@endif</dd></div>
+            <div><dt class="form-label">{{ __('Nº') ?? 'Nº' }}</dt><dd>{{ $aula->numero ?? '—' }}</dd></div>
+            <div class="sm:col-span-3"><dt class="form-label">{{ __('Summary') }}</dt><dd class="whitespace-pre-line text-navy">{{ $aula->sumario ?? '—' }}</dd></div>
             @if($aula->conteudo_planeado)
-                <div class="sm:col-span-3"><dt class="form-label">Conteúdo planeado</dt><dd class="whitespace-pre-line text-muted">{{ $aula->conteudo_planeado }}</dd></div>
+                <div class="sm:col-span-3"><dt class="form-label">{{ __('Planned content') }}</dt><dd class="whitespace-pre-line text-muted">{{ $aula->conteudo_planeado }}</dd></div>
             @endif
         </dl>
     </x-card>
 
-    <x-card title="Resumo de presenças">
+    <x-card :title="__('Attendance summary')">
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
             <div class="bg-gray-50 rounded p-4 text-center">
                 <p class="stat-label">Total</p>

@@ -6,20 +6,20 @@
         </x-slot>
     </x-page-header>
 
-    <x-card title="Dados pessoais">
+    <x-card :title="__('Personal data')">
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
             <div><dt class="form-label">{{ __('Email') }}</dt><dd class="text-navy">{{ $encarregado->user->email }}</dd></div>
             <div><dt class="form-label">{{ __('Phone') }}</dt><dd class="text-navy">{{ $encarregado->user->phone ?? '—' }}</dd></div>
             <div><dt class="form-label">{{ __('BI Number') }}</dt><dd>{{ $encarregado->bi ?? '—' }}</dd></div>
-            <div><dt class="form-label">Profissão</dt><dd>{{ $encarregado->profissao ?? '—' }}</dd></div>
-            <div><dt class="form-label">Local de trabalho</dt><dd>{{ $encarregado->local_trabalho ?? '—' }}</dd></div>
+            <div><dt class="form-label">{{ __('Profession') }}</dt><dd>{{ $encarregado->profissao ?? '—' }}</dd></div>
+            <div><dt class="form-label">{{ __('Workplace') }}</dt><dd>{{ $encarregado->local_trabalho ?? '—' }}</dd></div>
             <div class="sm:col-span-2"><dt class="form-label">{{ __('Address') }}</dt><dd>{{ $encarregado->morada ?? '—' }}</dd></div>
         </dl>
     </x-card>
 
     <x-card :title="__('Linked Students')">
         @if($encarregado->alunos->isEmpty())
-            <x-empty title="Sem alunos associados" />
+            <x-empty title="{{ __('No linked students') }}" />
         @else
             <ul class="space-y-2 text-sm">
                 @foreach($encarregado->alunos as $a)

@@ -5,6 +5,7 @@
         <thead>
             <tr>
                 <th>{{ __('Class Groups') }}</th>
+                <th>{{ __('Course') }}</th>
                 <th>{{ __('School Year') }}</th>
                 <th>{{ __('Room') }}</th>
                 <th>{{ __('Shift') }}</th>
@@ -17,21 +18,25 @@
             @forelse($turmas as $t)
                 <tr>
                     <td class="font-semibold text-navy">{{ $t->classe->nome }} {{ $t->nome }}</td>
+                    <td>
+                        @if($t->curso)<x-badge variant="info">{{ $t->curso->sigla }}</x-badge>
+                        @else<span class="text-muted text-xs">{{ __('base') }}</span>@endif
+                    </td>
                     <td>{{ $t->anoLectivo->codigo }}</td>
                     <td>{{ $t->sala ?? '—' }}</td>
                     <td>{{ $t->turno ?? '—' }}</td>
                     <td>{{ $t->directorTurma?->user?->name ?? '—' }}</td>
                     <td><x-badge variant="primary">{{ $t->alunos_count }}</x-badge></td>
                     <td class="table-actions">
-                        <x-btn-link :href="route('turmas.show', $t)">Ver</x-btn-link>
+                        <x-btn-link :href="route('turmas.show', $t)">{{ __('View') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('turmas.edit', $t)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('turmas.destroy', $t) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('turmas.destroy', $t) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="7" class="table-empty">{{ __('No records found.') }}</td></tr>
+                <tr><td colspan="8" class="table-empty">{{ __('No records found.') }}</td></tr>
             @endforelse
         </tbody>
         <x-slot name="footer">{{ $turmas->links() }}</x-slot>

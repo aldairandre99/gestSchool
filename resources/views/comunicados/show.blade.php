@@ -9,7 +9,7 @@
         <div class="flex items-center gap-2 flex-wrap text-xs text-muted mb-6 pb-4 border-b border-gray-100">
             <span><x-lucide-user class="inline w-3 h-3" /> {{ $comunicado->autor?->name }}</span>
             <span>·</span>
-            <span><x-lucide-clock class="inline w-3 h-3" /> {{ $comunicado->publicado_em ? $comunicado->publicado_em->format('d/m/Y H:i') : 'rascunho' }}</span>
+            <span><x-lucide-clock class="inline w-3 h-3" /> {{ $comunicado->publicado_em ? $comunicado->publicado_em->format('d/m/Y H:i') : __('draft') }}</span>
             <x-badge variant="muted">{{ str_replace('_', ' ', $comunicado->alcance) }}</x-badge>
             @if($comunicado->classe)<x-badge variant="info">{{ $comunicado->classe->nome }}</x-badge>@endif
             @if($comunicado->turma)<x-badge variant="info">{{ $comunicado->turma->classe->nome }} {{ $comunicado->turma->nome }}</x-badge>@endif

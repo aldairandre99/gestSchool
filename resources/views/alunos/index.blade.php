@@ -24,10 +24,10 @@
                     <td>{{ $a->turma ?? '—' }}</td>
                     <td class="text-muted">{{ $a->ano_lectivo ?? '—' }}</td>
                     <td class="table-actions">
-                        <x-btn-link :href="route('alunos.show', $a)">Ver</x-btn-link>
+                        <x-btn-link :href="route('alunos.show', $a)">{{ __('View') }}</x-btn-link>
                         @hasanyrole('director_geral|director_pedagogico|secretario')
                             <x-btn-link variant="muted" :href="route('alunos.edit', $a)">{{ __('Edit') }}</x-btn-link>
-                            <form action="{{ route('alunos.destroy', $a) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                            <form action="{{ route('alunos.destroy', $a) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                                 @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                             </form>
                         @endhasanyrole

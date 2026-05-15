@@ -36,7 +36,7 @@
 
                 <div x-show="open" x-cloak x-transition class="dropdown end-0">
                     <div class="px-4 py-3 border-b border-gray-100">
-                        <div class="text-xs text-muted">Sessão activa</div>
+                        <div class="text-xs text-muted">{{ __('Active session') }}</div>
                         @foreach($user?->roles ?? [] as $r)
                             <span class="badge badge-muted mt-1 me-1">{{ str_replace('_', ' ', $r->name) }}</span>
                         @endforeach

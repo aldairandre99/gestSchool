@@ -10,7 +10,7 @@
                 <th>{{ __('Name') }}</th>
                 <th>{{ __('Email') }}</th>
                 <th>{{ __('Phone') }}</th>
-                <th>Profissão</th>
+                <th>{{ __('Profession') }}</th>
                 <th class="text-right">{{ __('Actions') }}</th>
             </tr>
         </thead>
@@ -22,9 +22,9 @@
                     <td>{{ $e->user->phone ?? '—' }}</td>
                     <td>{{ $e->profissao ?? '—' }}</td>
                     <td class="table-actions">
-                        <x-btn-link :href="route('encarregados.show', $e)">Ver</x-btn-link>
+                        <x-btn-link :href="route('encarregados.show', $e)">{{ __('View') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('encarregados.edit', $e)">{{ __('Edit') }}</x-btn-link>
-                        <form action="{{ route('encarregados.destroy', $e) }}" method="POST" class="inline" onsubmit="return confirm('Eliminar?');">
+                        <form action="{{ route('encarregados.destroy', $e) }}" method="POST" class="inline" onsubmit="return confirm('{{ __('Delete?') }}');">
                             @csrf @method('DELETE')<button class="btn-link btn-link-danger">{{ __('Delete') }}</button>
                         </form>
                     </td>

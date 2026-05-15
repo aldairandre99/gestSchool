@@ -12,9 +12,9 @@
             @endif
         </x-card>
 
-        <x-card title="Atalhos">
+        <x-card :title="__('Shortcuts')">
             <div class="grid grid-cols-2 gap-3">
-                <x-btn variant="primary" icon="clipboard-check" :href="route('aulas.index')">Aulas</x-btn>
+                <x-btn variant="primary" icon="clipboard-check" :href="route('aulas.index')">{{ __('Lessons') }}</x-btn>
                 <x-btn variant="secondary" icon="clipboard-list" :href="route('avaliacoes.index')">{{ __('Evaluations') }}</x-btn>
                 <x-btn variant="secondary" icon="table-2" :href="route('pautas.index')">{{ __('Gradebook') }}</x-btn>
                 <x-btn variant="secondary" icon="users" :href="route('meus-alunos.index')">{{ __('Students') }}</x-btn>
