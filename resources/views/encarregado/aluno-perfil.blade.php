@@ -96,7 +96,7 @@
                                             <div class="text-xs text-muted">{{ $m->turma->curso?->nome ?? __('Common Core') }}</div>
                                         </td>
                                         <td>
-                                            <x-badge :variant="$estVar">{{ __(ucfirst($m->estado)) }}</x-badge>
+                                            <x-badge :variant="$estVar">{{ __($m->estado) }}</x-badge>
                                         </td>
                                         <td class="text-right">
                                             @if($r['media_anual'] !== null)
@@ -175,7 +175,7 @@
                             <div class="flex-1 min-w-0">
                                 <div class="text-navy font-semibold truncate">{{ $e->user->name }}</div>
                                 <div class="flex items-center gap-1.5 mt-0.5">
-                                    <x-badge variant="muted">{{ __(ucfirst($e->pivot->parentesco)) }}</x-badge>
+                                    <x-badge variant="muted">{{ __($e->pivot->parentesco) }}</x-badge>
                                     @if($e->pivot->principal)
                                         <x-badge variant="primary">{{ __('Primary') }}</x-badge>
                                     @endif
@@ -195,7 +195,7 @@
                             <x-lucide-file-down class="w-4 h-4 text-muted group-hover:text-primary" />
                             <div class="flex-1 min-w-0">
                                 <div class="text-sm font-semibold text-navy truncate">{{ __('Report Card') }} {{ $m->anoLectivo->codigo }}</div>
-                                <div class="text-xs text-muted truncate">{{ $m->turma->classe->nome }} {{ $m->turma->nome }} · {{ __(ucfirst($m->estado)) }}</div>
+                                <div class="text-xs text-muted truncate">{{ $m->turma->classe->nome }} {{ $m->turma->nome }} · {{ __($m->estado) }}</div>
                             </div>
                             <x-lucide-arrow-down class="w-4 h-4 text-muted group-hover:text-primary" />
                         </a>

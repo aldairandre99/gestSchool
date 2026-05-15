@@ -16,7 +16,7 @@
             <div><dt class="form-label">{{ __('Hire Date') }}</dt><dd>{{ $funcionario->data_admissao?->format('d/m/Y') ?? '—' }}</dd></div>
             <div class="sm:col-span-2">
                 <dt class="form-label">{{ __('Roles') }}</dt>
-                <dd class="space-x-1">@foreach($funcionario->user->roles as $r)<x-badge variant="muted">{{ str_replace('_', ' ', $r->name) }}</x-badge>@endforeach</dd>
+                <dd class="space-x-1">@foreach($funcionario->user->roles as $r)<x-badge variant="muted">{{ __($r->name) }}</x-badge>@endforeach</dd>
             </div>
         </dl>
     </x-card>

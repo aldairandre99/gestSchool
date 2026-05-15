@@ -21,7 +21,7 @@
             <div class="flex items-end gap-2">
                 <button type="submit" class="btn btn-secondary">{{ __('Search') }}</button>
                 @if(request()->query())
-                    <a href="{{ url()->current() }}" class="btn-link-muted text-xs">Limpar</a>
+                    <a href="{{ url()->current() }}" class="btn-link-muted text-xs">{{ __('Clear') }}</a>
                 @endif
             </div>
             @if($createUrl)

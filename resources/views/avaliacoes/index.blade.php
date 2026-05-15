@@ -22,7 +22,7 @@
                     <td><x-turma-label :turma="$av->atribuicao->turma" /></td>
                     <td>{{ $av->atribuicao->disciplina->nome }}</td>
                     <td>{{ $av->trimestre->numero }}º</td>
-                    <td><x-badge :variant="$tipoCor[$av->tipo] ?? 'muted'">{{ str_replace('_', ' ', ucfirst($av->tipo)) }}</x-badge></td>
+                    <td><x-badge :variant="$tipoCor[$av->tipo] ?? 'muted'">{{ __($av->tipo) }}</x-badge></td>
                     <td>{{ rtrim(rtrim($av->peso, '0'), '.') }}</td>
                     <td>{{ $av->data?->format('d/m') ?? '—' }}</td>
                     <td class="table-actions">

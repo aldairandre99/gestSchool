@@ -21,28 +21,28 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
             <div class="bg-gray-50 rounded p-4 text-center">
-                <p class="stat-label">Total</p>
+                <p class="stat-label">{{ __('Total') }}</p>
                 <p class="text-2xl font-bold text-navy" x-text="alunos.length"></p>
             </div>
             <button type="button" @click="marcarTodos('presente')" class="bg-success-soft rounded p-4 text-center hover:brightness-95">
-                <p class="stat-label text-success">Presentes</p>
+                <p class="stat-label text-success">{{ __('Present') }}</p>
                 <p class="text-2xl font-bold text-success" x-text="counts.presente"></p>
             </button>
             <button type="button" @click="marcarTodos('falta')" class="bg-danger-soft rounded p-4 text-center hover:brightness-95">
-                <p class="stat-label text-danger">Faltas</p>
+                <p class="stat-label text-danger">{{ __('Absent') }}</p>
                 <p class="text-2xl font-bold text-danger" x-text="counts.falta"></p>
             </button>
             <button type="button" @click="marcarTodos('falta_justificada')" class="bg-warning-soft rounded p-4 text-center hover:brightness-95">
-                <p class="stat-label text-yellow-800">Faltas just.</p>
+                <p class="stat-label text-yellow-800">{{ __('Justified Absence') }}</p>
                 <p class="text-2xl font-bold text-yellow-800" x-text="counts.falta_justificada"></p>
             </button>
             <button type="button" @click="marcarTodos('atraso')" class="rounded p-4 text-center hover:brightness-95" style="background:#fff1e3">
-                <p class="stat-label" style="color:#b86a14">Atrasos</p>
+                <p class="stat-label" style="color:#b86a14">{{ __('Late') }}</p>
                 <p class="text-2xl font-bold" style="color:#b86a14" x-text="counts.atraso"></p>
             </button>
         </div>
 
-        <p class="text-xs text-muted mb-4">Clica num cabeçalho colorido para marcar todos os alunos com esse estado.</p>
+        <p class="text-xs text-muted mb-4">{{ __('Click a coloured header to mark all students with that state.') }}</p>
 
         <form method="POST" action="{{ route('presencas.gravar', $aula) }}">
             @csrf
@@ -55,7 +55,7 @@
                             <th class="text-center bg-danger-soft !text-danger">F</th>
                             <th class="text-center bg-warning-soft !text-yellow-800">FJ</th>
                             <th class="text-center !text-orange-700" style="background:#fff1e3">A</th>
-                            <th>Observação</th>
+                            <th>{{ __('Note') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,7 +88,7 @@
                                 <td>
                                     <input type="text" :name="'observacoes[' + a.id + ']'" x-model="a.observacao"
                                            class="form-input"
-                                           :placeholder="a.estado === 'presente' ? '' : 'Justificação / nota'">
+                                           :placeholder="a.estado === 'presente' ? '' : '{{ __('Justification / note') }}'">
                                 </td>
                             </tr>
                         </template>

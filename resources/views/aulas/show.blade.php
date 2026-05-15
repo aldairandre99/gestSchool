@@ -31,23 +31,23 @@
     <x-card :title="__('Attendance summary')">
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
             <div class="bg-gray-50 rounded p-4 text-center">
-                <p class="stat-label">Total</p>
+                <p class="stat-label">{{ __('Total') }}</p>
                 <p class="text-2xl font-bold text-navy">{{ $total }}</p>
             </div>
             <div class="bg-success-soft rounded p-4 text-center">
-                <p class="stat-label text-success">Presentes</p>
+                <p class="stat-label text-success">{{ __('Present') }}</p>
                 <p class="text-2xl font-bold text-success">{{ $presentes }}</p>
             </div>
             <div class="bg-danger-soft rounded p-4 text-center">
-                <p class="stat-label text-danger">Faltas</p>
+                <p class="stat-label text-danger">{{ __('Absent') }}</p>
                 <p class="text-2xl font-bold text-danger">{{ $faltas }}</p>
             </div>
             <div class="bg-warning-soft rounded p-4 text-center">
-                <p class="stat-label text-yellow-800">Faltas just.</p>
+                <p class="stat-label text-yellow-800">{{ __('Justified Absence') }}</p>
                 <p class="text-2xl font-bold text-yellow-800">{{ $faltasJust }}</p>
             </div>
             <div class="rounded p-4 text-center" style="background:#fff1e3">
-                <p class="stat-label" style="color:#b86a14">Atrasos</p>
+                <p class="stat-label" style="color:#b86a14">{{ __('Late') }}</p>
                 <p class="text-2xl font-bold" style="color:#b86a14">{{ $atrasos }}</p>
             </div>
         </div>

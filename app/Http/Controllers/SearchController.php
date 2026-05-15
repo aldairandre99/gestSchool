@@ -296,7 +296,7 @@ class SearchController extends Controller
                 'subtitle' => $this->joinParts([
                     $m->classe_nome.($m->turma_nome ? ' '.$m->turma_nome : ''),
                     $m->ano_codigo,
-                    $m->estado ? __(ucfirst($m->estado)) : null,
+                    $m->estado ? __($m->estado) : null,
                 ]),
                 'url' => route('matriculas.show', $m->id),
             ])->all(),

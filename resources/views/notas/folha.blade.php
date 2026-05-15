@@ -21,7 +21,7 @@
                         <tr>
                             <th>{{ __('Student') }}</th>
                             <th>{{ __('Score') }}</th>
-                            <th>Observação</th>
+                            <th>{{ __('Note') }}</th>
                         </tr>
                     </thead>
                     <tbody>

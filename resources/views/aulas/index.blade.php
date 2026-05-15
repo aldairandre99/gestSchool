@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-page-header title="Aulas" subtitle="Livro de ponto digital" />
+    <x-page-header :title="__('Lessons')" :subtitle="__('Digital attendance book')" />
 
     @php($hoje = now()->toDateString())
     @php($hojeActivo = $dataDe === $hoje && $dataAte === $hoje)
@@ -21,23 +21,23 @@
                 </select>
             </div>
             <div>
-                <label class="form-label">De</label>
+                <label class="form-label">{{ __('From') }}</label>
                 <input type="date" name="data_de" value="{{ $dataDe }}" class="form-input">
             </div>
             <div>
-                <label class="form-label">Até</label>
+                <label class="form-label">{{ __('Until') }}</label>
                 <input type="date" name="data_ate" value="{{ $dataAte }}" class="form-input">
             </div>
             <div class="self-end">
                 <a href="{{ route('aulas.index', array_filter(['turma_id' => $turmaId, 'disciplina_id' => $disciplinaId, 'data_de' => $hoje, 'data_ate' => $hoje])) }}"
-                   class="btn {{ $hojeActivo ? 'btn-dark' : 'btn-secondary' }} btn-sm">Hoje</a>
+                   class="btn {{ $hojeActivo ? 'btn-dark' : 'btn-secondary' }} btn-sm">{{ __('Today') }}</a>
             </div>
         </x-slot>
 
         <thead>
             <tr>
                 <th>{{ __('Date') }}</th>
-                <th>Hora</th>
+                <th>{{ __('Time') }}</th>
                 <th>{{ __('Class Groups') }}</th>
                 <th>{{ __('Subjects List') }}</th>
                 <th>{{ __('Nº') ?? 'Nº' }}</th>
