@@ -7,7 +7,7 @@
     <x-input name="phone" :label="__('Phone')" :value="$u?->phone" />
     <x-select name="role" :label="__('Roles')" required :placeholder="null">
         @foreach($roles as $role)
-            <option value="{{ $role->name }}" @selected($currentRole === $role->name)>{{ str_replace('_', ' ', $role->name) }}</option>
+            <option value="{{ $role->name }}" @selected($currentRole === $role->name)>{{ __($role->name) }}</option>
         @endforeach
     </x-select>
     <x-input name="numero_funcionario" label="{{ __('Staff Number') }}" :value="$funcionario?->numero_funcionario" />

@@ -24,8 +24,8 @@
     </div>
 
     <div x-show="nivel === 'ensino_medio'" x-cloak class="alert alert-info">
-        Para classes do ensino médio as disciplinas variam por curso.
-        Configure-as via <a href="{{ route('cursos.index') }}" class="font-semibold underline">Cursos</a>.
+        {{ __('For secondary education classes the subjects vary by course. Configure them via') }}
+        <a href="{{ route('cursos.index') }}" class="font-semibold underline">{{ __('Courses') }}</a>.
     </div>
 </div>
 

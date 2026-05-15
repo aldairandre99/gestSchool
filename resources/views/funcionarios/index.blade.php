@@ -24,7 +24,7 @@
                     <td>{{ $f->departamento ?? '—' }}</td>
                     <td>
                         @foreach($f->user->roles as $r)
-                            <x-badge variant="muted">{{ str_replace('_', ' ', $r->name) }}</x-badge>
+                            <x-badge variant="muted">{{ __($r->name) }}</x-badge>
                         @endforeach
                     </td>
                     <td class="table-actions">

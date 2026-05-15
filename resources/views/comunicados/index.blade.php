@@ -24,7 +24,7 @@
                                 <span>{{ $c->autor?->name }}</span>
                                 <span>·</span>
                                 <span>{{ $c->publicado_em ? $c->publicado_em->format('d/m/Y H:i') : __('draft') }}</span>
-                                <x-badge variant="muted">{{ str_replace('_', ' ', $c->alcance) }}</x-badge>
+                                <x-badge variant="muted">{{ __($c->alcance) }}</x-badge>
                             </div>
                             <p class="text-sm text-muted mt-3">{{ \Illuminate\Support\Str::limit(strip_tags($c->conteudo), 200) }}</p>
                         </div>

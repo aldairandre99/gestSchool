@@ -1,6 +1,6 @@
 @php
-    $meses = [1=>'Janeiro',2=>'Fevereiro',3=>'Março',4=>'Abril',5=>'Maio',6=>'Junho',7=>'Julho',8=>'Agosto',9=>'Setembro',10=>'Outubro',11=>'Novembro',12=>'Dezembro'];
-    $diasSem = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+    $meses = [1=>__('January'),2=>__('February'),3=>__('March'),4=>__('April'),5=>__('May'),6=>__('June'),7=>__('July'),8=>__('August'),9=>__('September'),10=>__('October'),11=>__('November'),12=>__('December')];
+    $diasSem = [__('Mon'),__('Tue'),__('Wed'),__('Thu'),__('Fri'),__('Sat'),__('Sun')];
     $titulo = $meses[$mes] . ' ' . $ano;
 @endphp
 <x-pdf-layout :titulo="$titulo" :subtitulo="__('School Calendar')">

@@ -12,7 +12,7 @@
             <div><dt class="form-label">{{ __('Class Groups') }}</dt><dd><x-turma-label :turma="$avaliacao->atribuicao->turma" /></dd></div>
             <div><dt class="form-label">{{ __('Subjects List') }}</dt><dd>{{ $avaliacao->atribuicao->disciplina->nome }}</dd></div>
             <div><dt class="form-label">{{ __('Term') }}</dt><dd>{{ $avaliacao->trimestre->numero }}º</dd></div>
-            <div><dt class="form-label">{{ __('Type') }}</dt><dd>{{ ucfirst(str_replace('_', ' ', $avaliacao->tipo)) }}</dd></div>
+            <div><dt class="form-label">{{ __('Type') }}</dt><dd>{{ __($avaliacao->tipo) }}</dd></div>
             <div><dt class="form-label">{{ __('Date') }}</dt><dd>{{ $avaliacao->data?->format('d/m/Y') ?? '—' }}</dd></div>
             <div><dt class="form-label">{{ __('Weight') }}</dt><dd>{{ $avaliacao->peso }}</dd></div>
             <div><dt class="form-label">{{ __('Max Score') }}</dt><dd>{{ $avaliacao->max_nota }}</dd></div>

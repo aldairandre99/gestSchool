@@ -17,7 +17,7 @@
             <div class="sm:col-span-2">
                 <dt class="form-label">{{ __('Roles') }}</dt>
                 <dd class="space-x-1">
-                    @foreach($user->roles as $r)<x-badge variant="muted">{{ str_replace('_', ' ', $r->name) }}</x-badge>@endforeach
+                    @foreach($user->roles as $r)<x-badge variant="muted">{{ __($r->name) }}</x-badge>@endforeach
                 </dd>
             </div>
         </dl>

@@ -9,6 +9,8 @@
    ============================================================ */
 
 @layer base {
+    [x-cloak] { display: none !important; }
+
     html {
         font-family: 'Nunito', system-ui, sans-serif;
     }

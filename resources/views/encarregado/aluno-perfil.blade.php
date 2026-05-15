@@ -1,40 +1,207 @@
 <x-app-layout>
-    <x-page-header :title="__('Student Profile')" :subtitle="$aluno->user->name">
+    @php
+        $resumoActivo = $matriculaActiva ? ($resumos[$matriculaActiva->id] ?? null) : null;
+        $anosNaEscola = $aluno->matriculas->pluck('ano_lectivo_id')->unique()->count();
+        $estadoVariant = match ($matriculaActiva?->estado) {
+            'activa' => 'success',
+            'aprovado' => 'success',
+            'reprovado' => 'danger',
+            'transferido' => 'info',
+            'desistente' => 'muted',
+            default => 'muted',
+        };
+    @endphp
+
+    <x-page-header :title="$aluno->user->name" :subtitle="__('Process') . ': ' . $aluno->numero_processo">
         <x-slot name="actions">
-            @php($ma = $aluno->matriculaActiva())
-            @if($ma)
-                <x-btn variant="primary" icon="file-text" :href="route('boletim.show', $ma)">{{ __('Report Card') }}</x-btn>
+            @if($matriculaActiva)
+                <x-btn variant="primary" icon="file-text" :href="route('boletim.show', $matriculaActiva)">{{ __('Report Card') }}</x-btn>
+                <x-btn variant="dark" icon="printer" :href="route('boletim.pdf', $matriculaActiva)">PDF</x-btn>
             @endif
-            <x-btn variant="secondary" :href="route('meus-educandos.index')">{{ __('Back') }}</x-btn>
+            <x-btn variant="secondary" icon="arrow-left" :href="route('meus-educandos.index')">{{ __('Back') }}</x-btn>
         </x-slot>
     </x-page-header>
 
-    <x-card :title="__('Personal Data')">
-        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-            <div><dt class="form-label">{{ __('Process Number') }}</dt><dd class="font-mono text-navy">{{ $aluno->numero_processo }}</dd></div>
-            <div><dt class="form-label">{{ __('Birth Date') }}</dt><dd>{{ $aluno->data_nascimento?->format('d/m/Y') ?? '—' }}</dd></div>
-            <div><dt class="form-label">{{ __('Gender') }}</dt><dd>{{ $aluno->sexo === 'M' ? __('Male') : ($aluno->sexo === 'F' ? __('Female') : '—') }}</dd></div>
-            <div><dt class="form-label">{{ __('Nationality') }}</dt><dd>{{ $aluno->nacionalidade }}</dd></div>
-            <div><dt class="form-label">{{ __('Place of Birth') }}</dt><dd>{{ $aluno->naturalidade ?? '—' }}</dd></div>
-        </dl>
-    </x-card>
+    {{-- ========== KPIs ========== --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <x-stat-card
+            :label="__('Current Class')"
+            :value="$matriculaActiva ? ($matriculaActiva->turma->classe->nome . ' ' . $matriculaActiva->turma->nome) : '—'"
+            icon="layers"
+            variant="primary"
+            :trend="$matriculaActiva?->turma?->curso?->sigla ?? __('Common Core')" />
 
-    <x-card :title="__('Academic Data')">
-        <dl class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
-            <div><dt class="form-label">{{ __('Grade') }}</dt><dd class="text-navy">{{ $aluno->classe ?? '—' }}</dd></div>
-            <div><dt class="form-label">{{ __('Class') }}</dt><dd class="text-navy">{{ $aluno->turma ?? '—' }}</dd></div>
-            <div><dt class="form-label">{{ __('School Year') }}</dt><dd class="text-navy">{{ $aluno->ano_lectivo ?? '—' }}</dd></div>
-        </dl>
-    </x-card>
+        <x-stat-card
+            :label="__('Current Average')"
+            :value="$resumoActivo && $resumoActivo['media_anual'] !== null ? number_format($resumoActivo['media_anual'], 1) : '—'"
+            icon="gauge"
+            :variant="($resumoActivo['media_anual'] ?? 0) >= 10 ? 'success' : 'danger'"
+            :trend="__('Out of 20')" />
 
-    <x-card :title="__('Guardians of this student')">
-        <ul class="space-y-2 text-sm">
-            @foreach($aluno->encarregados as $e)
-                <li class="flex items-center gap-3">
-                    <span class="text-navy font-semibold">{{ $e->user->name }}</span>
-                    <x-badge variant="muted">{{ ucfirst($e->pivot->parentesco) }}</x-badge>
-                </li>
-            @endforeach
-        </ul>
-    </x-card>
+        <x-stat-card
+            :label="__('Attendance')"
+            :value="($resumoActivo['presencas_pct'] ?? null) !== null ? $resumoActivo['presencas_pct'] . '%' : '—'"
+            icon="clipboard-check"
+            :variant="($resumoActivo['presencas_pct'] ?? 100) >= 85 ? 'success' : 'warning'"
+            :trend="$resumoActivo ? ($resumoActivo['faltas'] . ' ' . __('absences')) : null" />
+
+        <x-stat-card
+            :label="__('Years at school')"
+            :value="$anosNaEscola"
+            icon="calendar"
+            variant="info"
+            :trend="$matriculaActiva?->anoLectivo?->codigo" />
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- ========== Coluna 1-2: Percurso académico ========== --}}
+        <div class="lg:col-span-2 space-y-6">
+            <x-card :title="__('Academic Path')">
+                <x-slot name="actions">
+                    <span class="text-xs text-muted">{{ $aluno->matriculas->count() }} {{ __('enrollments') }}</span>
+                </x-slot>
+
+                @if($aluno->matriculas->isEmpty())
+                    <x-empty icon="inbox" :title="__('No enrollments yet')" :description="__('No enrollment records found for this student.')" />
+                @else
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('School Year') }}</th>
+                                    <th>{{ __('Class Groups') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                    <th class="text-right">{{ __('Average') }}</th>
+                                    <th class="text-right">{{ __('Attendance') }}</th>
+                                    <th class="text-right">{{ __('Actions') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($aluno->matriculas as $m)
+                                    @php
+                                        $r = $resumos[$m->id] ?? ['media_anual' => null, 'presencas_pct' => null, 'faltas' => 0];
+                                        $estVar = match ($m->estado) {
+                                            'activa' => 'success',
+                                            'aprovado' => 'success',
+                                            'reprovado' => 'danger',
+                                            'transferido' => 'info',
+                                            'desistente' => 'muted',
+                                            default => 'muted',
+                                        };
+                                    @endphp
+                                    <tr>
+                                        <td class="font-semibold text-navy">{{ $m->anoLectivo->codigo }}</td>
+                                        <td>
+                                            <div class="text-navy">{{ $m->turma->classe->nome }} {{ $m->turma->nome }}</div>
+                                            <div class="text-xs text-muted">{{ $m->turma->curso?->nome ?? __('Common Core') }}</div>
+                                        </td>
+                                        <td>
+                                            <x-badge :variant="$estVar">{{ __($m->estado) }}</x-badge>
+                                        </td>
+                                        <td class="text-right">
+                                            @if($r['media_anual'] !== null)
+                                                <span @class([
+                                                    'font-semibold tabular-nums',
+                                                    'text-danger' => $r['media_anual'] < 10,
+                                                    'text-success' => $r['media_anual'] >= 14,
+                                                    'text-navy' => $r['media_anual'] >= 10 && $r['media_anual'] < 14,
+                                                ])>{{ number_format($r['media_anual'], 1) }}</span>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-right">
+                                            @if($r['presencas_pct'] !== null)
+                                                <span @class([
+                                                    'tabular-nums',
+                                                    'text-warning' => $r['presencas_pct'] < 85,
+                                                    'text-navy' => $r['presencas_pct'] >= 85,
+                                                ])>{{ $r['presencas_pct'] }}%</span>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+                                        <td class="table-actions">
+                                            <x-btn-link :href="route('boletim.show', $m)">{{ __('View') }}</x-btn-link>
+                                            <x-btn-link :href="route('boletim.pdf', $m)">PDF</x-btn-link>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </x-card>
+
+            <x-card :title="__('Personal Data')">
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <dt class="form-label">{{ __('Process Number') }}</dt>
+                        <dd class="font-mono text-navy">{{ $aluno->numero_processo }}</dd>
+                    </div>
+                    <div>
+                        <dt class="form-label">{{ __('Birth Date') }}</dt>
+                        <dd class="text-navy">{{ $aluno->data_nascimento?->format('d/m/Y') ?? '—' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="form-label">{{ __('Gender') }}</dt>
+                        <dd class="text-navy">{{ $aluno->sexo === 'M' ? __('Male') : ($aluno->sexo === 'F' ? __('Female') : '—') }}</dd>
+                    </div>
+                    <div>
+                        <dt class="form-label">{{ __('Nationality') }}</dt>
+                        <dd class="text-navy">{{ $aluno->nacionalidade }}</dd>
+                    </div>
+                    <div>
+                        <dt class="form-label">{{ __('Place of Birth') }}</dt>
+                        <dd class="text-navy">{{ $aluno->naturalidade ?? '—' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="form-label">{{ __('Address') }}</dt>
+                        <dd class="text-navy">{{ $aluno->morada ?? '—' }}</dd>
+                    </div>
+                </dl>
+            </x-card>
+        </div>
+
+        {{-- ========== Coluna 3: Encarregados + atalhos ========== --}}
+        <div class="space-y-6">
+            <x-card :title="__('Guardians of this student')">
+                <ul class="divide-y divide-gray-100 -my-2">
+                    @foreach($aluno->encarregados as $e)
+                        <li class="py-3 flex items-start gap-3">
+                            <div class="w-9 h-9 rounded-full bg-primary-soft text-primary-600 font-bold flex items-center justify-center text-sm shrink-0">
+                                {{ collect(explode(' ', $e->user->name))->take(2)->map(fn($w) => mb_substr($w, 0, 1))->join('') }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-navy font-semibold truncate">{{ $e->user->name }}</div>
+                                <div class="flex items-center gap-1.5 mt-0.5">
+                                    <x-badge variant="muted">{{ __($e->pivot->parentesco) }}</x-badge>
+                                    @if($e->pivot->principal)
+                                        <x-badge variant="primary">{{ __('Primary') }}</x-badge>
+                                    @endif
+                                </div>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            </x-card>
+
+            <x-card :title="__('Quick print')" compact>
+                <p class="text-sm text-muted mb-4">{{ __('Download report cards directly') }}.</p>
+                <div class="space-y-2">
+                    @foreach($aluno->matriculas as $m)
+                        <a href="{{ route('boletim.pdf', $m) }}"
+                           class="flex items-center gap-3 px-3 py-2 rounded-input border border-gray-200 hover:border-primary hover:bg-primary-soft/40 transition group">
+                            <x-lucide-file-down class="w-4 h-4 text-muted group-hover:text-primary" />
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-semibold text-navy truncate">{{ __('Report Card') }} {{ $m->anoLectivo->codigo }}</div>
+                                <div class="text-xs text-muted truncate">{{ $m->turma->classe->nome }} {{ $m->turma->nome }} · {{ __($m->estado) }}</div>
+                            </div>
+                            <x-lucide-arrow-down class="w-4 h-4 text-muted group-hover:text-primary" />
+                        </a>
+                    @endforeach
+                </div>
+            </x-card>
+        </div>
+    </div>
 </x-app-layout>

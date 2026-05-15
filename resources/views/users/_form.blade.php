@@ -15,7 +15,7 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
         @foreach($roles as $role)
             @php($checked = collect(old('roles', $user?->roles->pluck('name')->all() ?? []))->contains($role->name))
-            <x-checkbox name="roles[]" :value="$role->name" :checked="$checked" :hiddenFallback="false" :label="str_replace('_', ' ', $role->name)" />
+            <x-checkbox name="roles[]" :value="$role->name" :checked="$checked" :hiddenFallback="false" :label="__($role->name)" />
         @endforeach
     </div>
 </div>

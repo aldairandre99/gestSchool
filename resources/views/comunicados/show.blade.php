@@ -10,7 +10,7 @@
             <span><x-lucide-user class="inline w-3 h-3" /> {{ $comunicado->autor?->name }}</span>
             <span>·</span>
             <span><x-lucide-clock class="inline w-3 h-3" /> {{ $comunicado->publicado_em ? $comunicado->publicado_em->format('d/m/Y H:i') : __('draft') }}</span>
-            <x-badge variant="muted">{{ str_replace('_', ' ', $comunicado->alcance) }}</x-badge>
+            <x-badge variant="muted">{{ __($comunicado->alcance) }}</x-badge>
             @if($comunicado->classe)<x-badge variant="info">{{ $comunicado->classe->nome }}</x-badge>@endif
             @if($comunicado->turma)<x-turma-label :turma="$comunicado->turma" />@endif
         </div>

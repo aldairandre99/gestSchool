@@ -37,7 +37,7 @@
                                             <x-turma-text :turma="$h->atribuicao->turma" />
                                         @endif
                                     </span>
-                                    @if($h->sala)<br><span style="color: #76838f; font-size: 8px">Sala {{ $h->sala }}</span>@endif
+                                    @if($h->sala)<br><span style="color: #76838f; font-size: 8px">{{ __('Room') }} {{ $h->sala }}</span>@endif
                                 </div>
                             @endforeach
                         @else

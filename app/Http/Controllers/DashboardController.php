@@ -16,11 +16,50 @@ class DashboardController extends Controller
         $user = $request->user();
 
         if ($user->hasRole('encarregado')) {
-            $encarregado = $user->encarregado()->with('alunos.user')->first();
-            return view('dashboard.encarregado', [
-                'encarregado' => $encarregado,
-                'alunos' => $encarregado?->alunos ?? collect(),
-            ]);
+            $encarregado = $user->encarregado()
+                ->with([
+                    'alunos.user',
+                    'alunos.matriculas.turma.classe',
+                    'alunos.matriculas.anoLectivo',
+                ])
+                ->first();
+
+            $alunos = $encarregado?->alunos ?? collect();
+
+            // Alertas por aluno: notas baixas (<10) e faltas recentes (≥3 últimos 30 dias)
+            $alertas = [];
+            $diasAlerta = now()->subDays(30);
+
+            foreach ($alunos as $aluno) {
+                $matriculaActiva = $aluno->matriculas->firstWhere('estado', 'activa');
+                if (! $matriculaActiva) {
+                    continue;
+                }
+
+                $notasBaixas = \App\Models\Nota::where('matricula_id', $matriculaActiva->id)
+                    ->where('valor', '<', 10)
+                    ->whereNotNull('valor')
+                    ->with(['avaliacao.atribuicao.disciplina', 'avaliacao.trimestre'])
+                    ->orderByDesc('id')
+                    ->take(3)
+                    ->get();
+
+                $faltasRecentes = \App\Models\Presenca::where('matricula_id', $matriculaActiva->id)
+                    ->whereIn('estado', ['falta', 'falta_justificada'])
+                    ->whereHas('aula', fn ($q) => $q->where('data', '>=', $diasAlerta))
+                    ->count();
+
+                if ($notasBaixas->isNotEmpty() || $faltasRecentes >= 3) {
+                    $alertas[$aluno->id] = [
+                        'aluno' => $aluno,
+                        'matricula' => $matriculaActiva,
+                        'notas_baixas' => $notasBaixas,
+                        'faltas_recentes' => $faltasRecentes,
+                    ];
+                }
+            }
+
+            return view('dashboard.encarregado', compact('encarregado', 'alunos', 'alertas'));
         }
 
         if ($user->hasAnyRole(['professor', 'professor_assistente'])) {

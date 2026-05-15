@@ -27,7 +27,7 @@
                     @foreach($trimestres as $t)
                         <th style="font-size:7px">{{ $t->numero }}º</th>
                     @endforeach
-                    <th style="font-size:7px; background:#f0f1f6">An.</th>
+                    <th style="font-size:7px; background:#f0f1f6">{{ __('An.') }}</th>
                 @endforeach
             </tr>
         </thead>

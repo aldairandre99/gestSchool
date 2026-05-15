@@ -8,6 +8,7 @@ use App\Models\Professor;
 use App\Models\Turma;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -83,6 +84,115 @@ class HorarioController extends Controller
     {
         $horario->delete();
         return redirect()->route('horarios.index')->with('status', __('Resource deleted successfully.'));
+    }
+
+    /**
+     * Grelha de bulk edit do horário de uma turma — preenchimento da semana inteira.
+     */
+    public function bulkTurma(Request $request, Turma $turma)
+    {
+        $turma->load(['classe', 'curso', 'anoLectivo']);
+
+        $atribuicoes = Atribuicao::with(['disciplina', 'professor.user'])
+            ->where('turma_id', $turma->id)
+            ->where('ano_lectivo_id', $turma->ano_lectivo_id)
+            ->get()
+            ->sortBy('disciplina.nome');
+
+        $horariosActuais = Horario::whereHas('atribuicao', fn ($q) => $q->where('turma_id', $turma->id))
+            ->get()
+            ->keyBy(fn ($h) => $h->dia_semana . '-' . $h->tempo);
+
+        return view('horarios.bulk-turma', [
+            'turma' => $turma,
+            'atribuicoes' => $atribuicoes,
+            'horariosActuais' => $horariosActuais,
+            'tempos' => config('escola.tempos_lectivos'),
+            'diasSemana' => Horario::diasSemana(),
+            'diasLectivos' => config('escola.dias_lectivos', [1,2,3,4,5]),
+        ]);
+    }
+
+    public function bulkTurmaStore(Request $request, Turma $turma)
+    {
+        $slots = $request->input('slots', []);   // [dia][tempo] => ['atribuicao_id' => X, 'sala' => Y]
+
+        $validIds = Atribuicao::where('turma_id', $turma->id)
+            ->where('ano_lectivo_id', $turma->ano_lectivo_id)
+            ->pluck('id')->all();
+
+        // ---- validação em lote (não escreve nada até confirmar tudo OK) ----
+        $aGravar = [];           // linhas a inserir
+        $vistosProf = [];        // [dia-tempo] => professor_id (para detectar choque entre slots do próprio submit)
+        $vistosTurma = [];       // não há choque dentro da turma porque seleccionamos 1 atribuicao por (dia, tempo)
+
+        foreach ($slots as $dia => $temposArr) {
+            $dia = (int) $dia;
+            if (! in_array($dia, [1,2,3,4,5,6,7], true)) continue;
+
+            foreach ($temposArr as $tempo => $info) {
+                $tempo = (int) $tempo;
+                if (! array_key_exists($tempo, config('escola.tempos_lectivos'))) continue;
+
+                $atrId = $info['atribuicao_id'] ?? null;
+                if (! $atrId) continue;
+                if (! in_array((int) $atrId, $validIds, true)) {
+                    return back()->withErrors(['slots' => sprintf(__('Invalid assignment for this class in slot %d/%dº.'), $dia, $tempo)])->withInput();
+                }
+
+                $atribuicao = Atribuicao::find($atrId);
+                $key = "{$dia}-{$tempo}";
+
+                if (isset($vistosProf[$key]) && $vistosProf[$key] !== $atribuicao->professor_id) {
+                    // Não deveria acontecer, pois fixmos 1 célula por slot
+                }
+                $vistosProf[$key] = $atribuicao->professor_id;
+
+                // Conflito com horários de OUTRAS turmas (mesmo professor)
+                $conflitoExterno = Horario::where('dia_semana', $dia)
+                    ->where('tempo', $tempo)
+                    ->whereHas('atribuicao', function ($q) use ($atribuicao, $turma) {
+                        $q->where('professor_id', $atribuicao->professor_id)
+                          ->where('turma_id', '!=', $turma->id);
+                    })
+                    ->with(['atribuicao.turma.classe', 'atribuicao.disciplina'])
+                    ->first();
+
+                if ($conflitoExterno) {
+                    return back()->withErrors([
+                        'slots' => sprintf(
+                            __('Schedule conflict: %s already teaches %s in class %s (day %s, period %d).'),
+                            $atribuicao->professor->user->name,
+                            $conflitoExterno->atribuicao->disciplina->nome,
+                            $conflitoExterno->atribuicao->turma->nome_completo,
+                            $dia,
+                            $tempo
+                        ),
+                    ])->withInput();
+                }
+
+                $aGravar[] = [
+                    'atribuicao_id' => $atrId,
+                    'dia_semana' => $dia,
+                    'tempo' => $tempo,
+                    'sala' => $info['sala'] ?: null,
+                ];
+            }
+        }
+
+        // ---- gravação atómica ----
+        DB::transaction(function () use ($turma, $aGravar) {
+            // Apagar horários antigos desta turma (clean slate)
+            Horario::whereHas('atribuicao', fn ($q) => $q->where('turma_id', $turma->id))->delete();
+
+            // Inserir novos
+            foreach ($aGravar as $row) {
+                Horario::create($row);
+            }
+        });
+
+        return redirect()->route('horarios.turma', $turma)
+            ->with('status', sprintf(__('%d slots saved.'), count($aGravar)));
     }
 
     public function turmaPdf(Request $request, Turma $turma)
@@ -165,7 +275,7 @@ class HorarioController extends Controller
         if ($conflitoProf) {
             throw ValidationException::withMessages([
                 'atribuicao_id' => sprintf(
-                    'O professor já lecciona %s na turma %s neste dia/tempo.',
+                    __('Teacher already has a lesson in this slot: %s in class %s.'),
                     $conflitoProf->atribuicao->disciplina->nome,
                     $conflitoProf->atribuicao->turma->nome_completo
                 ),
@@ -183,7 +293,7 @@ class HorarioController extends Controller
         if ($conflitoTurma) {
             throw ValidationException::withMessages([
                 'atribuicao_id' => sprintf(
-                    'A turma já tem %s neste dia/tempo.',
+                    __('Class already has a lesson in this slot: %s.'),
                     $conflitoTurma->atribuicao->disciplina->nome
                 ),
             ]);

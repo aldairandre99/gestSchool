@@ -32,13 +32,13 @@ class Horario extends Model
     public static function diasSemana(): array
     {
         return [
-            1 => 'Segunda',
-            2 => 'Terça',
-            3 => 'Quarta',
-            4 => 'Quinta',
-            5 => 'Sexta',
-            6 => 'Sábado',
-            7 => 'Domingo',
+            1 => __('Monday'),
+            2 => __('Tuesday'),
+            3 => __('Wednesday'),
+            4 => __('Thursday'),
+            5 => __('Friday'),
+            6 => __('Saturday'),
+            7 => __('Sunday'),
         ];
     }
 }

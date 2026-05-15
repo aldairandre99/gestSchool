@@ -1,8 +1,8 @@
 <x-app-layout>
-    <x-page-header :title="__('Users')" subtitle="Gestão de utilizadores do sistema" />
+    <x-page-header :title="__('Users')" :subtitle="__('System user management')" />
 
     <x-data-table
-        :searchPlaceholder="__('Search') . ' nome ou email'"
+        :searchPlaceholder="__('Search') . ' ' . __('name or email')"
         :searchValue="$q ?? ''"
         :createUrl="route('users.create')">
         <thead>
@@ -21,7 +21,7 @@
                     <td class="text-muted">{{ $user->email }}</td>
                     <td>
                         @foreach($user->roles as $r)
-                            <x-badge variant="muted">{{ str_replace('_', ' ', $r->name) }}</x-badge>
+                            <x-badge variant="muted">{{ __($r->name) }}</x-badge>
                         @endforeach
                     </td>
                     <td>

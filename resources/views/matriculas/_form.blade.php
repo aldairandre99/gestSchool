@@ -40,7 +40,7 @@
     <x-select name="estado" :label="__('Status')" required :placeholder="null">
         @foreach(['activa', 'transferido', 'desistente', 'aprovado', 'reprovado'] as $e)
             <option value="{{ $e }}" @selected(old('estado', $matricula?->estado ?? 'activa') === $e)>
-                {{ str_replace('_', ' ', ucfirst($e)) }}
+                {{ __($e) }}
             </option>
         @endforeach
     </x-select>

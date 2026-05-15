@@ -40,7 +40,7 @@
                     <td class="font-semibold text-navy">{{ $m->aluno->user->name }}</td>
                     <td><x-turma-label :turma="$m->turma" /></td>
                     <td>{{ $m->anoLectivo->codigo }}</td>
-                    <td><x-badge :variant="$estadoCor[$m->estado] ?? 'muted'">{{ str_replace('_', ' ', ucfirst($m->estado)) }}</x-badge></td>
+                    <td><x-badge :variant="$estadoCor[$m->estado] ?? 'muted'">{{ __($m->estado) }}</x-badge></td>
                     <td class="table-actions">
                         <x-btn-link :href="route('boletim.show', $m)">{{ __('Report Card') }}</x-btn-link>
                         <x-btn-link variant="muted" :href="route('matriculas.edit', $m)">{{ __('Edit') }}</x-btn-link>

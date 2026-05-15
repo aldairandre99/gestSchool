@@ -16,7 +16,7 @@
         <aside class="hidden lg:flex bg-sidebar text-white flex-col justify-between p-12">
             <div>
                 <h1 class="text-white text-3xl font-bold">GestSchool</h1>
-                <p class="text-sidebar-text/60 mt-2 text-sm">Sistema de gestão escolar</p>
+                <p class="text-sidebar-text/60 mt-2 text-sm">{{ __('School Management') }}</p>
             </div>
             <div class="text-sidebar-text/50 text-xs">
                 <p>© {{ date('Y') }} GestSchool — {{ __('School Management') }}</p>

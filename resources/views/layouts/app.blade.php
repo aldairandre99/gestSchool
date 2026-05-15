@@ -25,6 +25,7 @@
     <div class="app-shell">
         <x-navbar />
         <x-sidebar />
+        @auth<x-smart-search />@endauth
 
         <main class="app-main">
             <div class="app-content">

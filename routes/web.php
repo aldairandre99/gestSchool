@@ -22,6 +22,7 @@ use App\Http\Controllers\PautaController;
 use App\Http\Controllers\PresencaController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\TurmaController;
 use App\Http\Controllers\UserController;
@@ -34,6 +35,8 @@ Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('local
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -93,6 +96,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:director_geral|director_pedagogico|secretario')->group(function () {
         Route::get('/horarios/create', [HorarioController::class, 'create'])->name('horarios.create');
         Route::post('/horarios', [HorarioController::class, 'store'])->name('horarios.store');
+        Route::get('/horarios/turma/{turma}/bulk', [HorarioController::class, 'bulkTurma'])->name('horarios.bulk-turma');
+        Route::post('/horarios/turma/{turma}/bulk', [HorarioController::class, 'bulkTurmaStore'])->name('horarios.bulk-turma.store');
         Route::get('/horarios/{horario}/edit', [HorarioController::class, 'edit'])->name('horarios.edit');
         Route::put('/horarios/{horario}', [HorarioController::class, 'update'])->name('horarios.update');
         Route::delete('/horarios/{horario}', [HorarioController::class, 'destroy'])->name('horarios.destroy');
@@ -123,18 +128,53 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:encarregado')->group(function () {
-        Route::get('/meus-educandos', function () {
-            $encarregado = auth()->user()->encarregado()->with('alunos.user')->first();
-            return view('encarregado.meus-educandos', [
-                'alunos' => $encarregado?->alunos ?? collect(),
-            ]);
+        Route::get('/meus-educandos', function (\App\Services\BoletimService $boletimService) {
+            $encarregado = auth()->user()->encarregado()
+                ->with([
+                    'alunos.user',
+                    'alunos.matriculas.turma.classe',
+                    'alunos.matriculas.turma.curso',
+                    'alunos.matriculas.anoLectivo',
+                ])
+                ->first();
+
+            $alunos = $encarregado?->alunos ?? collect();
+
+            $resumosActivos = [];
+            foreach ($alunos as $aluno) {
+                $activa = $aluno->matriculas->firstWhere('estado', 'activa');
+                if ($activa) {
+                    $resumosActivos[$aluno->id] = [
+                        'matricula' => $activa,
+                        'summary' => $boletimService->quickSummary($activa),
+                    ];
+                }
+            }
+
+            return view('encarregado.meus-educandos', compact('alunos', 'resumosActivos'));
         })->name('meus-educandos.index');
 
-        Route::get('/meus-educandos/{aluno}', function (\App\Models\Aluno $aluno) {
+        Route::get('/meus-educandos/{aluno}', function (\App\Models\Aluno $aluno, \App\Services\BoletimService $boletimService) {
             $encarregado = auth()->user()->encarregado;
             abort_unless($encarregado && $encarregado->alunos()->whereKey($aluno->id)->exists(), 403);
-            $aluno->load(['user', 'encarregados.user', 'matriculas.turma.classe', 'matriculas.anoLectivo']);
-            return view('encarregado.aluno-perfil', compact('aluno'));
+
+            $aluno->load([
+                'user',
+                'encarregados.user',
+                'matriculas' => fn ($q) => $q->orderByDesc('ano_lectivo_id'),
+                'matriculas.turma.classe',
+                'matriculas.turma.curso',
+                'matriculas.anoLectivo',
+            ]);
+
+            $resumos = [];
+            foreach ($aluno->matriculas as $m) {
+                $resumos[$m->id] = $boletimService->quickSummary($m);
+            }
+
+            $matriculaActiva = $aluno->matriculas->firstWhere('estado', 'activa');
+
+            return view('encarregado.aluno-perfil', compact('aluno', 'resumos', 'matriculaActiva'));
         })->name('meus-educandos.show');
     });
 });
