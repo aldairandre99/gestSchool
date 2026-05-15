@@ -2,53 +2,80 @@
 
 namespace Database\Seeders;
 
-use App\Models\Aluno;
 use App\Models\AnoLectivo;
-use App\Models\Atribuicao;
 use App\Models\Classe;
 use App\Models\Curriculo;
 use App\Models\Curso;
 use App\Models\Disciplina;
-use App\Models\Matricula;
-use App\Models\Professor;
 use App\Models\Trimestre;
-use App\Models\Turma;
 use Illuminate\Database\Seeder;
 
 class AcademicSeeder extends Seeder
 {
     public function run(): void
     {
-        // ===== Ano Lectivo + Trimestres =====
-        $ano = AnoLectivo::firstOrCreate(
-            ['codigo' => '2026/2027'],
-            ['inicio' => '2026-09-15', 'fim' => '2027-07-31', 'activo' => true]
-        );
+        $this->seedAnosLectivosTrimestres();
+        $classes = $this->seedClasses();
+        $disciplinas = $this->seedDisciplinas();
+        $cursos = $this->seedCursos($classes);
+        $this->seedCurriculo($classes, $disciplinas, $cursos);
+    }
 
-        foreach ([
-            ['numero' => 1, 'inicio' => '2026-09-15', 'fim' => '2026-12-15'],
-            ['numero' => 2, 'inicio' => '2027-01-10', 'fim' => '2027-04-10'],
-            ['numero' => 3, 'inicio' => '2027-04-15', 'fim' => '2027-07-15'],
-        ] as $t) {
-            Trimestre::firstOrCreate(
-                ['ano_lectivo_id' => $ano->id, 'numero' => $t['numero']],
-                ['inicio' => $t['inicio'], 'fim' => $t['fim'], 'aberto' => $t['numero'] === 1]
-            );
+    private function seedAnosLectivosTrimestres(): void
+    {
+        // 5 anos lectivos: 2022/2023 → 2026/2027 (último activo)
+        $anos = [
+            ['codigo' => '2022/2023', 'inicio' => '2022-09-12', 'fim' => '2023-07-28', 'activo' => false],
+            ['codigo' => '2023/2024', 'inicio' => '2023-09-11', 'fim' => '2024-07-26', 'activo' => false],
+            ['codigo' => '2024/2025', 'inicio' => '2024-09-09', 'fim' => '2025-07-25', 'activo' => false],
+            ['codigo' => '2025/2026', 'inicio' => '2025-09-15', 'fim' => '2026-07-31', 'activo' => false],
+            ['codigo' => '2026/2027', 'inicio' => '2026-09-14', 'fim' => '2027-07-30', 'activo' => true],
+        ];
+
+        foreach ($anos as $a) {
+            $ano = AnoLectivo::firstOrCreate(['codigo' => $a['codigo']], $a);
+
+            [$inicioAno, $fimAno] = [$ano->inicio, $ano->fim];
+            $base = (int) substr($a['codigo'], 0, 4);
+
+            $trimestres = [
+                ['numero' => 1, 'inicio' => $inicioAno, 'fim' => "{$base}-12-15"],
+                ['numero' => 2, 'inicio' => ($base + 1).'-01-10', 'fim' => ($base + 1).'-04-10'],
+                ['numero' => 3, 'inicio' => ($base + 1).'-04-22', 'fim' => $fimAno],
+            ];
+
+            foreach ($trimestres as $t) {
+                Trimestre::firstOrCreate(
+                    ['ano_lectivo_id' => $ano->id, 'numero' => $t['numero']],
+                    [
+                        'inicio' => $t['inicio'],
+                        'fim' => $t['fim'],
+                        'aberto' => $a['activo'] && $t['numero'] === 1,
+                    ]
+                );
+            }
         }
+    }
 
-        // ===== Classes (1ª-9ª base, 10ª-13ª médio) =====
-        $classeModels = [];
+    /** @return array<string, Classe> */
+    private function seedClasses(): array
+    {
+        $classes = [];
         $nomes = ['1ª', '2ª', '3ª', '4ª', '5ª', '6ª', '7ª', '8ª', '9ª', '10ª', '11ª', '12ª', '13ª'];
         foreach ($nomes as $i => $nome) {
             $ordem = $i + 1;
-            $nivel = $ordem >= 10 ? 'ensino_medio' : 'ensino_base';
-            $classeModels[$nome] = Classe::firstOrCreate(
+            $classes[$nome] = Classe::firstOrCreate(
                 ['nome' => $nome],
-                ['nivel' => $nivel, 'ordem' => $ordem]
+                ['nivel' => $ordem >= 10 ? 'ensino_medio' : 'ensino_base', 'ordem' => $ordem]
             );
         }
 
-        // ===== Disciplinas =====
+        return $classes;
+    }
+
+    /** @return array<string, Disciplina> */
+    private function seedDisciplinas(): array
+    {
         $disciplinas = [
             // tronco comum
             ['nome' => 'Língua Portuguesa', 'sigla' => 'POR', 'h' => 5],
@@ -56,26 +83,41 @@ class AcademicSeeder extends Seeder
             ['nome' => 'Educação Moral e Cívica', 'sigla' => 'EMC', 'h' => 2],
             ['nome' => 'Educação Física', 'sigla' => 'EDF', 'h' => 2],
             ['nome' => 'Inglês', 'sigla' => 'ING', 'h' => 3],
+            ['nome' => 'Francês', 'sigla' => 'FRA', 'h' => 3],
             ['nome' => 'História', 'sigla' => 'HIS', 'h' => 3],
             ['nome' => 'Geografia', 'sigla' => 'GEO', 'h' => 3],
             // ciências
             ['nome' => 'Física', 'sigla' => 'FIS', 'h' => 4],
             ['nome' => 'Química', 'sigla' => 'QUI', 'h' => 4],
-            ['nome' => 'Biologia', 'sigla' => 'BIO', 'h' => 3],
-            // humanas/filosofia
+            ['nome' => 'Biologia', 'sigla' => 'BIO', 'h' => 4],
+            // humanas
             ['nome' => 'Filosofia', 'sigla' => 'FIL', 'h' => 2],
             ['nome' => 'Sociologia', 'sigla' => 'SOC', 'h' => 2],
-            // económicas
+            ['nome' => 'Psicologia', 'sigla' => 'PSI', 'h' => 3],
+            // económicas / contabilidade
             ['nome' => 'Economia', 'sigla' => 'ECO', 'h' => 3],
             ['nome' => 'Direito', 'sigla' => 'DIR', 'h' => 3],
-            ['nome' => 'Contabilidade', 'sigla' => 'CTB', 'h' => 4],
+            ['nome' => 'Direito do Trabalho', 'sigla' => 'DT', 'h' => 3],
+            ['nome' => 'Contabilidade Geral', 'sigla' => 'CTB', 'h' => 5],
+            ['nome' => 'Auditoria', 'sigla' => 'AUD', 'h' => 3],
+            ['nome' => 'Estatística', 'sigla' => 'EST', 'h' => 3],
+            ['nome' => 'Gestão', 'sigla' => 'GEST', 'h' => 4],
+            ['nome' => 'Recursos Humanos', 'sigla' => 'RH', 'h' => 4],
             // técnicas/informática
             ['nome' => 'Tecnologias de Informação', 'sigla' => 'TIC', 'h' => 3],
-            ['nome' => 'Programação', 'sigla' => 'PROG', 'h' => 4],
+            ['nome' => 'Programação', 'sigla' => 'PROG', 'h' => 5],
             ['nome' => 'Sistemas Operativos', 'sigla' => 'SO', 'h' => 3],
+            ['nome' => 'Bases de Dados', 'sigla' => 'BD', 'h' => 4],
+            ['nome' => 'Redes de Computadores', 'sigla' => 'RED', 'h' => 4],
+            // hotelaria
+            ['nome' => 'Cozinha e Pastelaria', 'sigla' => 'COZ', 'h' => 6],
+            ['nome' => 'Restaurante e Bar', 'sigla' => 'RB', 'h' => 4],
+            ['nome' => 'Técnicas de Hotelaria', 'sigla' => 'THT', 'h' => 4],
+            ['nome' => 'Higiene e Segurança Alimentar', 'sigla' => 'HSA', 'h' => 2],
             // ensino primário
             ['nome' => 'Estudo do Meio', 'sigla' => 'EM', 'h' => 3],
         ];
+
         $disc = [];
         foreach ($disciplinas as $d) {
             $disc[$d['sigla']] = Disciplina::firstOrCreate(
@@ -84,148 +126,115 @@ class AcademicSeeder extends Seeder
             );
         }
 
-        // ===== Cursos (ensino médio) =====
+        return $disc;
+    }
+
+    /**
+     * @param  array<string, Classe>  $classes
+     * @return array<string, Curso>
+     */
+    private function seedCursos(array $classes): array
+    {
         $cursosData = [
-            ['nome' => 'Ciências Físicas e Biológicas', 'sigla' => 'CFB', 'descricao' => 'Saídas profissionais para ciências da saúde e engenharias.'],
-            ['nome' => 'Ciências Económicas e Jurídicas', 'sigla' => 'CEJ', 'descricao' => 'Saídas para direito, gestão, contabilidade.'],
-            ['nome' => 'Ciências Humanas', 'sigla' => 'CH', 'descricao' => 'Saídas para humanidades, línguas, ciências sociais.'],
-            ['nome' => 'Informática de Gestão', 'sigla' => 'IG', 'descricao' => 'Curso técnico de informática (4 anos).'],
+            ['nome' => 'Informática', 'sigla' => 'INF', 'descricao' => 'Curso técnico de informática (4 anos): programação, sistemas, bases de dados e redes.'],
+            ['nome' => 'Gestão de Recursos Humanos', 'sigla' => 'GRH', 'descricao' => 'Saídas para gestão de pessoas, recrutamento, formação e direito do trabalho.'],
+            ['nome' => 'Hotelaria', 'sigla' => 'HOT', 'descricao' => 'Formação em cozinha, restaurante, bar e gestão hoteleira.'],
+            ['nome' => 'Contabilidade e Gestão', 'sigla' => 'CG', 'descricao' => 'Saídas para contabilidade, auditoria e gestão de empresas.'],
+            ['nome' => 'Físicas e Biológicas', 'sigla' => 'FB', 'descricao' => 'Saídas para ciências da saúde, engenharias e biotecnologia.'],
         ];
+
         $cursos = [];
         foreach ($cursosData as $c) {
             $cursos[$c['sigla']] = Curso::firstOrCreate(['sigla' => $c['sigla']], $c);
         }
 
-        // ===== Curso ↔ Classes (médio) =====
-        // CFB, CEJ, CH: 3 anos (10ª-12ª)
-        // IG (técnico): 4 anos (10ª-13ª)
-        foreach (['CFB', 'CEJ', 'CH'] as $sigla) {
+        // INF: 4 anos (10ª-13ª). Restantes: 3 anos (10ª-12ª)
+        foreach (['GRH', 'HOT', 'CG', 'FB'] as $sigla) {
             $cursos[$sigla]->classes()->syncWithoutDetaching([
-                $classeModels['10ª']->id => ['ano' => 1],
-                $classeModels['11ª']->id => ['ano' => 2],
-                $classeModels['12ª']->id => ['ano' => 3],
+                $classes['10ª']->id => ['ano' => 1],
+                $classes['11ª']->id => ['ano' => 2],
+                $classes['12ª']->id => ['ano' => 3],
             ]);
         }
-        $cursos['IG']->classes()->syncWithoutDetaching([
-            $classeModels['10ª']->id => ['ano' => 1],
-            $classeModels['11ª']->id => ['ano' => 2],
-            $classeModels['12ª']->id => ['ano' => 3],
-            $classeModels['13ª']->id => ['ano' => 4],
+        $cursos['INF']->classes()->syncWithoutDetaching([
+            $classes['10ª']->id => ['ano' => 1],
+            $classes['11ª']->id => ['ano' => 2],
+            $classes['12ª']->id => ['ano' => 3],
+            $classes['13ª']->id => ['ano' => 4],
         ]);
 
-        // ===== Currículo =====
-        // ENSINO BASE (1ª-9ª) — sem curso (curso_id NULL)
-        $baseDisciplinas = [
-            '1ª'  => ['POR', 'MAT', 'EM', 'EDF'],
-            '2ª'  => ['POR', 'MAT', 'EM', 'EDF'],
-            '3ª'  => ['POR', 'MAT', 'EM', 'EDF'],
-            '4ª'  => ['POR', 'MAT', 'EM', 'EDF', 'EMC'],
-            '5ª'  => ['POR', 'MAT', 'EM', 'EDF', 'EMC', 'HIS'],
-            '6ª'  => ['POR', 'MAT', 'EM', 'EDF', 'EMC', 'HIS', 'GEO'],
-            '7ª'  => ['POR', 'MAT', 'EMC', 'EDF', 'ING', 'HIS', 'GEO', 'BIO'],
-            '8ª'  => ['POR', 'MAT', 'EMC', 'EDF', 'ING', 'HIS', 'GEO', 'BIO', 'FIS', 'QUI'],
-            '9ª'  => ['POR', 'MAT', 'EMC', 'EDF', 'ING', 'HIS', 'GEO', 'BIO', 'FIS', 'QUI'],
+        return $cursos;
+    }
+
+    /**
+     * @param  array<string, Classe>  $classes
+     * @param  array<string, Disciplina>  $disc
+     * @param  array<string, Curso>  $cursos
+     */
+    private function seedCurriculo(array $classes, array $disc, array $cursos): void
+    {
+        // ENSINO BASE (1ª-9ª) — sem curso
+        $base = [
+            '1ª' => ['POR', 'MAT', 'EM', 'EDF'],
+            '2ª' => ['POR', 'MAT', 'EM', 'EDF'],
+            '3ª' => ['POR', 'MAT', 'EM', 'EDF'],
+            '4ª' => ['POR', 'MAT', 'EM', 'EDF', 'EMC'],
+            '5ª' => ['POR', 'MAT', 'EM', 'EDF', 'EMC', 'HIS'],
+            '6ª' => ['POR', 'MAT', 'EM', 'EDF', 'EMC', 'HIS', 'GEO'],
+            '7ª' => ['POR', 'MAT', 'EMC', 'EDF', 'ING', 'HIS', 'GEO', 'BIO'],
+            '8ª' => ['POR', 'MAT', 'EMC', 'EDF', 'ING', 'HIS', 'GEO', 'BIO', 'FIS', 'QUI'],
+            '9ª' => ['POR', 'MAT', 'EMC', 'EDF', 'ING', 'HIS', 'GEO', 'BIO', 'FIS', 'QUI'],
         ];
-        foreach ($baseDisciplinas as $classeNome => $siglas) {
+        foreach ($base as $classeNome => $siglas) {
             foreach ($siglas as $s) {
                 Curriculo::firstOrCreate([
-                    'classe_id' => $classeModels[$classeNome]->id,
+                    'classe_id' => $classes[$classeNome]->id,
                     'curso_id' => null,
                     'disciplina_id' => $disc[$s]->id,
                 ]);
             }
         }
 
-        // ENSINO MÉDIO (10ª-12ª/13ª) — disciplinas por curso (repetidas em cada curso)
-        $medioPorCurso = [
-            'CFB' => [
-                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIS', 'QUI', 'BIO', 'FIL'],
-                '11ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIS', 'QUI', 'BIO', 'FIL'],
-                '12ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIS', 'QUI', 'BIO', 'FIL'],
+        // ENSINO MÉDIO — disciplinas por curso
+        $medio = [
+            'INF' => [
+                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIL', 'TIC', 'PROG', 'SO'],
+                '11ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIL', 'PROG', 'SO', 'BD'],
+                '12ª' => ['POR', 'MAT', 'ING', 'EDF', 'PROG', 'BD', 'RED', 'GEST'],
+                '13ª' => ['POR', 'PROG', 'BD', 'RED', 'GEST', 'EST'],
             ],
-            'CEJ' => [
-                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'ECO', 'DIR', 'CTB', 'FIL'],
-                '11ª' => ['POR', 'MAT', 'ING', 'EDF', 'ECO', 'DIR', 'CTB', 'FIL'],
-                '12ª' => ['POR', 'MAT', 'ING', 'EDF', 'ECO', 'DIR', 'CTB', 'FIL'],
+            'GRH' => [
+                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIL', 'PSI', 'GEST', 'DIR'],
+                '11ª' => ['POR', 'MAT', 'ING', 'EDF', 'PSI', 'GEST', 'RH', 'DT'],
+                '12ª' => ['POR', 'ING', 'EDF', 'GEST', 'RH', 'DT', 'EST', 'SOC'],
             ],
-            'CH' => [
-                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'HIS', 'GEO', 'FIL', 'SOC'],
-                '11ª' => ['POR', 'MAT', 'ING', 'EDF', 'HIS', 'GEO', 'FIL', 'SOC'],
-                '12ª' => ['POR', 'MAT', 'ING', 'EDF', 'HIS', 'GEO', 'FIL', 'SOC'],
+            'HOT' => [
+                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIL', 'COZ', 'THT', 'HSA'],
+                '11ª' => ['POR', 'ING', 'FRA', 'EDF', 'COZ', 'RB', 'THT', 'HSA'],
+                '12ª' => ['POR', 'ING', 'FRA', 'EDF', 'COZ', 'RB', 'THT', 'GEST'],
             ],
-            'IG' => [
-                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'TIC', 'PROG', 'FIL'],
-                '11ª' => ['POR', 'MAT', 'ING', 'EDF', 'TIC', 'PROG', 'SO'],
-                '12ª' => ['POR', 'MAT', 'ING', 'EDF', 'PROG', 'SO', 'CTB'],
-                '13ª' => ['POR', 'PROG', 'SO', 'CTB', 'TIC'],
+            'CG' => [
+                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIL', 'ECO', 'CTB', 'DIR'],
+                '11ª' => ['POR', 'MAT', 'ING', 'EDF', 'ECO', 'CTB', 'DIR', 'EST'],
+                '12ª' => ['POR', 'MAT', 'ING', 'EDF', 'CTB', 'AUD', 'GEST', 'EST'],
+            ],
+            'FB' => [
+                '10ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIL', 'FIS', 'QUI', 'BIO'],
+                '11ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIS', 'QUI', 'BIO', 'EST'],
+                '12ª' => ['POR', 'MAT', 'ING', 'EDF', 'FIS', 'QUI', 'BIO', 'GEO'],
             ],
         ];
-        foreach ($medioPorCurso as $cursoSigla => $porClasse) {
+
+        foreach ($medio as $cursoSigla => $porClasse) {
             foreach ($porClasse as $classeNome => $siglas) {
                 foreach ($siglas as $s) {
                     Curriculo::firstOrCreate([
-                        'classe_id' => $classeModels[$classeNome]->id,
+                        'classe_id' => $classes[$classeNome]->id,
                         'curso_id' => $cursos[$cursoSigla]->id,
                         'disciplina_id' => $disc[$s]->id,
                     ]);
                 }
             }
-        }
-
-        // ===== Turmas demo =====
-        $turmas = [];
-        // 10ª A de CFB
-        $turmas['10A-CFB'] = Turma::firstOrCreate(
-            ['classe_id' => $classeModels['10ª']->id, 'ano_lectivo_id' => $ano->id, 'nome' => 'A'],
-            ['curso_id' => $cursos['CFB']->id, 'sala' => 'Sala 1', 'turno' => 'Manhã', 'capacidade' => 40]
-        );
-        // 8ª A (ensino base)
-        $turmas['8A'] = Turma::firstOrCreate(
-            ['classe_id' => $classeModels['8ª']->id, 'ano_lectivo_id' => $ano->id, 'nome' => 'A'],
-            ['curso_id' => null, 'sala' => 'Sala 5', 'turno' => 'Tarde', 'capacidade' => 40]
-        );
-
-        // ===== Matrícula demo =====
-        $alunoDemo = Aluno::where('numero_processo', 'AL-2026-0001')->first();
-        if ($alunoDemo) {
-            Matricula::firstOrCreate(
-                ['aluno_id' => $alunoDemo->id, 'ano_lectivo_id' => $ano->id],
-                [
-                    'turma_id' => $turmas['10A-CFB']->id,
-                    'numero_matricula' => 'M-2026-0001',
-                    'data_matricula' => $ano->inicio,
-                    'estado' => 'activa',
-                ]
-            );
-        }
-
-        // ===== Atribuições demo =====
-        $professorDemo = Professor::where('numero_professor', 'PROF-0001')->first();
-        if ($professorDemo) {
-            foreach (['MAT', 'FIS'] as $s) {
-                Atribuicao::firstOrCreate([
-                    'professor_id' => $professorDemo->id,
-                    'turma_id' => $turmas['10A-CFB']->id,
-                    'disciplina_id' => $disc[$s]->id,
-                    'ano_lectivo_id' => $ano->id,
-                ]);
-            }
-        }
-        $assistenteDemo = Professor::where('numero_professor', 'PROF-0002')->first();
-        if ($assistenteDemo) {
-            Atribuicao::firstOrCreate([
-                'professor_id' => $assistenteDemo->id,
-                'turma_id' => $turmas['10A-CFB']->id,
-                'disciplina_id' => $disc['POR']->id,
-                'ano_lectivo_id' => $ano->id,
-            ]);
-            // Português na 8ª também
-            Atribuicao::firstOrCreate([
-                'professor_id' => $assistenteDemo->id,
-                'turma_id' => $turmas['8A']->id,
-                'disciplina_id' => $disc['POR']->id,
-                'ano_lectivo_id' => $ano->id,
-            ]);
         }
     }
 }
