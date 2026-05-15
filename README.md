@@ -1,59 +1,247 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<h1 align="center">gestSchool</h1>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <strong>Sistema de gestão escolar open-source para o ensino angolano.</strong><br>
+  Da iniciação ao ensino médio — alunos, professores, matrículas, pautas, boletins e comunicados num único sistema.
 </p>
 
-## About Laravel
+<p align="center">
+  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel 12"></a>
+  <a href="https://www.php.net"><img src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white" alt="PHP 8.2+"></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind 4"></a>
+  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License">
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome">
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Sobre
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+O **gestSchool** é uma aplicação web para escolas que precisam de gerir, num único sítio, todo o ciclo lectivo:
+matrícula de alunos, distribuição de turmas, lançamento de notas e faltas, emissão de pautas e boletins,
+e comunicação com encarregados de educação.
 
-## Learning Laravel
+Foi pensado a partir da realidade do sistema de ensino angolano — Ensino de Iniciação, Ensino Base e
+Ensino Médio com os cursos técnicos típicos (Informática, Hotelaria, Contabilidade e Gestão, GRH, Físicas
+e Biológicas) — mas a estrutura é genérica e adaptável a outros sistemas educativos lusófonos.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+> **Estado:** em desenvolvimento activo. Apto para uso em ambiente de demo/staging; ainda não recomendado
+> para produção sem revisão de segurança e testes adicionais.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Funcionalidades
 
-## Laravel Sponsors
+### Gestão de pessoas
+- **Alunos**: ficha completa (BI, naturalidade, encarregados, histórico de matrículas)
+- **Encarregados**: associação a múltiplos educandos com parentesco e responsável principal
+- **Professores**: especialidade, habilitações, distinção entre titular e assistente
+- **Funcionários**: secretaria, direcção pedagógica, direcção geral
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Estrutura académica
+- **Anos lectivos** com trimestres configuráveis
+- **Classes** (1ª-9ª Ensino Base, 10ª-13ª Ensino Médio) com nivelamento automático
+- **Cursos** do ensino médio (com duração 3 ou 4 anos) ligados às classes que os compõem
+- **Turmas** por classe + curso + ano lectivo, com sala, turno, capacidade e director de turma
+- **Disciplinas** com currículo configurável por classe e curso
 
-### Premium Partners
+### Operação pedagógica
+- **Matrículas** por aluno/turma/ano lectivo, com estado (activa, aprovado, reprovado, transferido, desistente)
+- **Atribuições** professor × turma × disciplina × ano lectivo
+- **Aulas** com sumário, conteúdo planeado e registo de presenças
+- **Avaliações** por trimestre (prova, teste, avaliação contínua, exame) com peso configurável
+- **Notas** por avaliação e matrícula
+- **Pautas** por disciplina/trimestre, por turma/trimestre, e anuais
+- **Boletim individual** por aluno
+- **Comunicados** com alcance segmentado (todos, professores, encarregados, classe, turma)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Acesso e segurança
+- Autenticação via Laravel Breeze (login, registo, recuperação de password, verificação de email)
+- 7 perfis pré-configurados via Spatie Permissions (ver tabela [abaixo](#perfis-de-acesso))
+- Internacionalização: **Português (PT-AO)** e **Inglês**
+- Logs de auditoria via timestamps em todas as entidades
 
-## Contributing
+## Stack
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Camada | Tecnologia |
+|---|---|
+| Backend | PHP 8.2+, Laravel 12 |
+| Frontend | Blade + Alpine.js + Tailwind CSS 4 (Vite) |
+| Base de dados | SQLite por defeito (MySQL/PostgreSQL suportados) |
+| Autenticação | Laravel Breeze |
+| Permissões | Spatie Laravel Permission |
+| Ícones | Blade Lucide Icons |
 
-## Code of Conduct
+## Pré-requisitos
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- PHP 8.2 ou superior com extensões: `pdo_sqlite`, `mbstring`, `xml`, `bcmath`, `intl`
+- Composer 2.x
+- Node.js 20+ e npm
+- (opcional) MySQL 8+ ou PostgreSQL 14+ se quiseres mudar de SQLite
 
-## Security Vulnerabilities
+## Instalação rápida
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# 1. Clonar
+git clone https://github.com/arseniomuanda/gestSchool.git
+cd gestSchool
 
-## License
+# 2. Dependências
+composer install
+npm install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 3. Configuração
+cp .env.example .env
+php artisan key:generate
+
+# 4. Base de dados (SQLite por defeito)
+touch database/database.sqlite
+php artisan migrate --seed
+
+# 5. Arrancar (servidor + queue + logs + vite num único comando)
+composer run dev
+```
+
+A aplicação fica disponível em `http://localhost:8000`.
+
+> Em alternativa ao `composer run dev`, podes correr `php artisan serve` e `npm run dev` em terminais separados.
+
+### Configurar locale para Angola
+
+No `.env`:
+
+```env
+APP_NAME="gestSchool"
+APP_LOCALE=pt
+APP_FALLBACK_LOCALE=pt
+APP_FAKER_LOCALE=pt_PT
+APP_TIMEZONE=Africa/Luanda
+```
+
+## Dados de exemplo
+
+O comando `php artisan migrate --seed` (ou `migrate:fresh --seed` para começar do zero) gera uma escola
+realista para testares a aplicação:
+
+| Recurso | Quantidade |
+|---|---|
+| Anos lectivos | 5 (2022/2023 → 2026/2027, este último activo) |
+| Classes | 13 (1ª-13ª) |
+| Cursos | 5 (Informática, GRH, Hotelaria, Contabilidade e Gestão, Físicas e Biológicas) |
+| Disciplinas | 32 |
+| Turmas | ~290 distribuídas pelos 5 anos |
+| Professores | 55 |
+| Alunos únicos | ~3000 |
+| Encarregados | ~2100 (alguns partilhados entre irmãos) |
+| Matrículas | ~6700 (histórico de 5 anos) |
+| Atribuições | ~2000 |
+| Avaliações + notas | ~190 mil |
+| Aulas + presenças | ~120 mil |
+
+A geração demora cerca de 40 segundos em hardware moderno.
+
+### Perfis de acesso
+
+Todos os utilizadores demo usam a password **`password`**.
+
+| Email | Perfil | O que pode fazer |
+|---|---|---|
+| `director@gestschool.test` | Director Geral | Acesso total |
+| `pedagogico@gestschool.test` | Director Pedagógico | Gestão académica completa |
+| `secretario@gestschool.test` | Secretário | Inscrições, matrículas, encarregados |
+| `professor@gestschool.test` | Professor | Aulas, presenças, notas, avaliações |
+| `assistente@gestschool.test` | Professor Assistente | Aulas, presenças (sem notas) |
+| `encarregado@gestschool.test` | Encarregado | Boletim, presenças e comunicados dos seus educandos |
+| `aluno@gestschool.test` | Aluno | Acesso de leitura ao próprio percurso |
+
+## Estrutura do projecto
+
+```
+gestSchool/
+├── app/
+│   ├── Http/Controllers/         # Controladores REST (CRUD por recurso)
+│   ├── Models/                   # 19 modelos Eloquent
+│   └── Policies/                 # Autorização por recurso
+├── database/
+│   ├── migrations/               # 29 migrations
+│   ├── seeders/
+│   │   ├── AcademicSeeder.php          # estrutura: anos, classes, cursos, disciplinas
+│   │   ├── ProfessoresSeeder.php       # 50 professores
+│   │   ├── TurmasSeeder.php            # turmas por ano lectivo
+│   │   ├── AlunosEncarregadosSeeder.php # 3000 alunos + encarregados
+│   │   ├── AtribuicoesSeeder.php       # professores × turmas × disciplinas
+│   │   └── PautasNotasPresencasSeeder.php # avaliações, notas, aulas, presenças
+│   └── factories/
+├── lang/                         # pt.json + en.json
+├── resources/views/              # Blade templates organizados por recurso
+└── routes/web.php
+```
+
+Para detalhes do schema, ver `database/migrations/` ou correr `php artisan model:show Aluno` (etc.).
+
+## Comandos úteis
+
+```bash
+# Reseedar tudo do zero
+php artisan migrate:fresh --seed
+
+# Correr os testes (PHPUnit)
+composer test
+
+# Linter (Pint, padrão Laravel)
+./vendor/bin/pint
+
+# Mudar de SQLite para MySQL
+# 1. comentar DB_CONNECTION=sqlite no .env
+# 2. configurar DB_HOST/DB_DATABASE/DB_USERNAME/DB_PASSWORD
+# 3. php artisan migrate:fresh --seed
+```
+
+## Roadmap
+
+- [x] CRUD completo de todas as entidades
+- [x] Sistema de roles e permissões
+- [x] Pautas e boletins
+- [x] Seed realista com 5 anos lectivos
+- [ ] Exportação de pautas/boletins em PDF
+- [ ] Notificações por email/SMS para encarregados
+- [ ] Calendário escolar visual
+- [ ] Estatísticas e dashboards analíticos
+- [ ] API REST pública para integrações
+- [ ] App móvel para encarregados (Flutter)
+- [ ] Gestão financeira (propinas, recibos)
+- [ ] Suite de testes automatizados
+
+## Como contribuir
+
+Contribuições são muito bem-vindas — desde correcções de tradução até novas funcionalidades.
+
+1. Faz fork do repositório
+2. Cria uma branch: `git checkout -b feat/minha-feature`
+3. Segue o padrão de código (Pint): `./vendor/bin/pint`
+4. Faz commit com mensagens claras (preferencialmente em português)
+5. Abre um Pull Request descrevendo o **porquê** da mudança
+
+### Reportar bugs
+
+Abre uma [issue](https://github.com/arseniomuanda/gestSchool/issues) com:
+- Versão do PHP e do gestSchool (commit hash)
+- Passos para reproduzir
+- Comportamento esperado vs observado
+- Screenshots quando aplicável
+
+### Áreas que precisam de ajuda
+
+- Tradução para outras línguas (Kimbundu, Umbundu, Francês)
+- Documentação para administradores escolares
+- Testes automatizados
+- Acessibilidade (WCAG)
+
+## Licença
+
+Distribuído sob a licença [MIT](https://opensource.org/licenses/MIT) — usa, modifica e partilha
+livremente, inclusive em projectos comerciais.
+
+## Autor
+
+Desenvolvido por **Arsénio Muanda** — [@arseniomuanda](https://github.com/arseniomuanda)
+
+Construído sobre o framework [Laravel](https://laravel.com).
