@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Aluno extends Model
 {
@@ -45,5 +46,19 @@ class Aluno extends Model
         return $this->belongsToMany(Encarregado::class, 'aluno_encarregado')
             ->withPivot(['parentesco', 'principal'])
             ->withTimestamps();
+    }
+
+    public function matriculas(): HasMany
+    {
+        return $this->hasMany(Matricula::class);
+    }
+
+    public function matriculaActiva()
+    {
+        $anoActivo = AnoLectivo::activo();
+        return $this->matriculas()
+            ->when($anoActivo, fn ($q) => $q->where('ano_lectivo_id', $anoActivo->id))
+            ->where('estado', 'activa')
+            ->first();
     }
 }

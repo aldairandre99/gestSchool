@@ -30,7 +30,11 @@
                 @endforeach
             </ul>
 
-            <div class="mt-6">
+            <div class="mt-6 flex gap-3">
+                @php($ma = $aluno->matriculaActiva())
+                @if($ma)
+                    <a href="{{ route('boletim.show', $ma) }}" class="px-4 py-2 bg-blue-700 text-white text-sm rounded">{{ __('Report Card') }}</a>
+                @endif
                 <a href="{{ route('meus-educandos.index') }}" class="px-4 py-2 bg-gray-100 text-sm rounded">{{ __('Back') }}</a>
             </div>
         </div>
