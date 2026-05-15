@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Atribuicao;
 use App\Models\Aula;
+use App\Models\Disciplina;
+use App\Models\Turma;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -12,17 +14,47 @@ class AulaController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $turmaId = $request->query('turma_id');
+        $disciplinaId = $request->query('disciplina_id');
+        $dataDe = $request->query('data_de');
+        $dataAte = $request->query('data_ate');
+
         $aulas = Aula::with(['atribuicao.turma.classe', 'atribuicao.disciplina'])
             ->when($user->hasAnyRole(['professor', 'professor_assistente']), function ($q) use ($user) {
                 if ($prof = $user->professor) {
                     $q->whereHas('atribuicao', fn ($a) => $a->where('professor_id', $prof->id));
                 }
             })
+            ->when($turmaId, fn ($q) => $q->whereHas('atribuicao', fn ($a) => $a->where('turma_id', $turmaId)))
+            ->when($disciplinaId, fn ($q) => $q->whereHas('atribuicao', fn ($a) => $a->where('disciplina_id', $disciplinaId)))
+            ->when($dataDe, fn ($q) => $q->whereDate('data', '>=', $dataDe))
+            ->when($dataAte, fn ($q) => $q->whereDate('data', '<=', $dataAte))
             ->orderBy('data', 'desc')
             ->orderBy('hora_inicio')
-            ->paginate(20);
+            ->paginate(20)
+            ->withQueryString();
 
-        return view('aulas.index', compact('aulas'));
+        $turmas = Turma::with(['classe', 'anoLectivo'])
+            ->when($user->hasAnyRole(['professor', 'professor_assistente']), function ($q) use ($user) {
+                if ($prof = $user->professor) {
+                    $q->whereHas('atribuicoes', fn ($a) => $a->where('professor_id', $prof->id));
+                }
+            })
+            ->orderBy('classe_id')->orderBy('nome')
+            ->get();
+
+        $disciplinas = Disciplina::query()
+            ->when($user->hasAnyRole(['professor', 'professor_assistente']), function ($q) use ($user) {
+                if ($prof = $user->professor) {
+                    $q->whereHas('atribuicoes', fn ($a) => $a->where('professor_id', $prof->id));
+                }
+            })
+            ->orderBy('nome')->get();
+
+        return view('aulas.index', compact(
+            'aulas', 'turmas', 'disciplinas',
+            'turmaId', 'disciplinaId', 'dataDe', 'dataAte'
+        ));
     }
 
     public function create(Request $request)

@@ -2,7 +2,45 @@
     <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800">Aulas</h2></x-slot>
     <div class="py-8"><div class="max-w-6xl mx-auto sm:px-6 lg:px-8 space-y-4"><x-flash />
         <div class="bg-white shadow rounded-lg p-6">
-            <div class="flex justify-end mb-3"><a href="{{ route('aulas.create') }}" class="px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('New') }} aula</a></div>
+            @php($hoje = now()->toDateString())
+            @php($hojeActivo = $dataDe === $hoje && $dataAte === $hoje)
+            <form method="GET" class="flex flex-wrap items-end gap-3 mb-4">
+                <div>
+                    <label for="turma_id" class="block text-xs text-gray-500">{{ __('Class Groups') }}</label>
+                    <select id="turma_id" name="turma_id" class="mt-1 border-gray-300 rounded-md text-sm">
+                        <option value="">Todas</option>
+                        @foreach($turmas as $t)
+                            <option value="{{ $t->id }}" @selected($turmaId == $t->id)>{{ $t->classe->nome }} {{ $t->nome }} — {{ $t->anoLectivo->codigo }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="disciplina_id" class="block text-xs text-gray-500">{{ __('Subjects List') }}</label>
+                    <select id="disciplina_id" name="disciplina_id" class="mt-1 border-gray-300 rounded-md text-sm">
+                        <option value="">Todas</option>
+                        @foreach($disciplinas as $d)
+                            <option value="{{ $d->id }}" @selected($disciplinaId == $d->id)>{{ $d->nome }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="data_de" class="block text-xs text-gray-500">De</label>
+                    <input type="date" id="data_de" name="data_de" value="{{ $dataDe }}" class="mt-1 border-gray-300 rounded-md text-sm">
+                </div>
+                <div>
+                    <label for="data_ate" class="block text-xs text-gray-500">Até</label>
+                    <input type="date" id="data_ate" name="data_ate" value="{{ $dataAte }}" class="mt-1 border-gray-300 rounded-md text-sm">
+                </div>
+                <button class="px-3 py-2 bg-gray-100 text-sm rounded">{{ __('Search') }}</button>
+                <a href="{{ route('aulas.index', array_filter(['turma_id' => $turmaId, 'disciplina_id' => $disciplinaId, 'data_de' => $hoje, 'data_ate' => $hoje])) }}"
+                   class="px-3 py-2 text-sm rounded {{ $hojeActivo ? 'bg-gray-800 text-white' : 'bg-gray-100 hover:bg-gray-200' }}">
+                    Hoje
+                </a>
+                @if($turmaId || $disciplinaId || $dataDe || $dataAte)
+                    <a href="{{ route('aulas.index') }}" class="px-3 py-2 text-xs text-gray-500 hover:text-gray-700">Limpar</a>
+                @endif
+                <a href="{{ route('aulas.create') }}" class="ms-auto px-4 py-2 bg-gray-800 text-white text-sm rounded">{{ __('New') }} aula</a>
+            </form>
             <div class="overflow-x-auto">
             <table class="min-w-full text-sm"><thead class="text-left text-gray-500 border-b"><tr>
                 <th class="py-2 pr-3">{{ __('Date') }}</th>
