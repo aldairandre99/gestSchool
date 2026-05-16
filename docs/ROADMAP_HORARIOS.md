@@ -5,6 +5,8 @@
 
 ---
 
+> 📜 **Conformidade legal:** ver [docs/CONFORMIDADE_DECRETO_162-23.md](./CONFORMIDADE_DECRETO_162-23.md) — auditoria face ao Decreto Presidencial n.º 162/23 com 10 gaps identificados (pausas entre tempos, intervalo no sítio errado, tempos por nível, etc). Implementação adiada.
+
 ## 🚦 Estado das fases
 
 | # | Feature | Estado | Esforço | Valor | Risco |
@@ -12,7 +14,7 @@
 | 1 | [Copy-paste de slots](#fase-1--copy-paste-de-slots) | ✅ Concluída (2026-05-15) | 🟢 1-2h | 🟢 Alto | 🟢 Baixo |
 | 2 | [Bulk editor por professor](#fase-2--bulk-editor-por-professor) | ✅ Concluída (2026-05-15) | 🟡 2-3h | 🟡 Médio | 🟡 Médio |
 | 3 | [Drag & drop](#fase-3--drag--drop-de-slots) | ✅ Concluída (2026-05-15) | 🔴 4-6h | 🟡 Médio | 🟡 Médio |
-| 4 | [Sugestões IA / lacunas](#fase-4--sugestões-automáticas-ia--heurísticas) | 🟦 Em curso | 🔴 4-8h | 🟢 Alto | 🔴 Alto |
+| 4 | [Sugestões IA / lacunas](#fase-4--sugestões-automáticas-ia--heurísticas) | ✅ Concluída (2026-05-15) | 🔴 4-8h | 🟢 Alto | 🔴 Alto |
 
 **Legenda:** ⬜ Pendente · 🟦 Em curso · ✅ Concluída · 🟥 Bloqueada · ⏸ Adiada
 
@@ -209,17 +211,33 @@ Sistema sugere/avisa sobre **lacunas** e **má distribuição** no horário, e p
 - Identifica **atribuições não escaladas** (atribuições sem nenhum slot no horário)
 - Identifica **carga horária semanal** vs. `disciplina.carga_horaria_semanal` (config) → assinala quando difere
 
-#### 4.2 — Análise de distribuição
-- Detectar **disciplinas pesadas** (Mat, Port) concentradas num só dia → sugerir espalhar
-- Detectar **prof. sobrecarregado** (>X tempos consecutivos) → avisar
-- Detectar **disciplina + prof. em horas más** (ex: Mat no 8º tempo de 6ª) → assinalar
+#### 4.2 — Análise de distribuição ✅ Concluída (2026-05-15)
+- ✅ Detectar **disciplinas pesadas** (Mat, Port, Fis, Qui, Bio) concentradas num só dia
+- ✅ Detectar **prof. sobrecarregado** (>3 tempos consecutivos, configurável)
+- ✅ Detectar **disciplina + prof. em horas más** (config `escola.horas_dificeis`, default sex 7º+8º)
 
-#### 4.3 — Auto-gerador inicial (greedy)
-- Algoritmo guloso simples:
-  1. Para cada atribuição, calcular `slots_alvo = disciplina.carga_horaria_semanal`
-  2. Distribuir nos dias, dando prioridade a não pôr a mesma disciplina 2× seguido
-  3. Evitar conflitos professor (já tem aula esse slot) e turma
-  4. Apresentar como **proposta** que o utilizador aceita/edita antes de gravar
+**Notas de implementação 4.2:**
+- Config novo em `config/escola.php`: `disciplinas_pesadas`, `max_tempos_consecutivos`, `horas_dificeis`
+- 3 getters Alpine em `resources/js/horario-editor.js`: `concentracaoDiaria`, `tempasConsecutivos`, `horasMas`
+- 3 métodos novos em `App\Services\HorarioAnalyser` espelham a mesma lógica server-side
+- Painel diagnóstico extraído para partial `resources/views/horarios/_diagnostic-panel.blade.php`, incluído em bulk-turma + bulk-professor
+- `atrPayload` enriquecido com `professor_id` e `eh_pesada` (boolean derivado da sigla)
+- 13 chaves i18n novas em pt/en
+
+#### 4.3 — Auto-gerador inicial (greedy + IA) ✅ Concluída (2026-05-15)
+- ✅ Greedy: `App\Services\HorarioGenerator::propor(Turma)` com scoring (mesma disciplina consecutiva: +100, concentração: +50, pesada em horas difíceis: +30, pesada na tarde: +10)
+- ✅ IA: `App\Ai\Agents\HorarioSugestor` (Gemini 2.0 Flash) com structured output via `HasStructuredOutput`
+- ✅ Endpoints `POST /horarios/turma/{turma}/auto-generate` (greedy) e `auto-generate-ai` (Gemini)
+- ✅ Botões "Sugerir horário" dropdown no bulk-turma com 2 opções: Rápido (heurística) e Com IA (Gemini)
+- ✅ Modal de confirmação `<x-confirm-dialog>` se a grelha já tem dados; aplica directo se vazia
+- ✅ Toast de feedback verde/vermelho após sugestão
+- ✅ Fallback gracioso quando IA falha (502 com mensagem amigável)
+
+**Notas de implementação 4.3:**
+- Greedy é determinístico e síncrono (~50ms). IA leva 1-3s e depende de internet/quota Gemini.
+- A proposta popula apenas o state Alpine — user revê visualmente, ajusta drag&drop ou selects, e clica Save (passa pelo `bulkTurmaStore` com validação completa de conflitos cross-turma).
+- AI provider configurado por defeito como Gemini (memory `ai-provider-gemini`).
+- Restart obrigatório do container PHP depois de definir `GEMINI_API_KEY` no `.env` (Docker carrega env só no boot).
 
 #### 4.4 — (Futuro) Solver real
 - Constraint solver (CSP) com biblioteca PHP ou chamada à OR-Tools via micro-serviço
